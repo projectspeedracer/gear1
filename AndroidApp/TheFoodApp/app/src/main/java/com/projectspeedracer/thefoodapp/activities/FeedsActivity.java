@@ -1,24 +1,25 @@
-package com.projectspeedracer.thefoodapp;
+package com.projectspeedracer.thefoodapp.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.projectspeedracer.thefoodapp.R;
 
-public class LoginActivity extends ActionBarActivity {
+public class FeedsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_feeds);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
+        getMenuInflater().inflate(R.menu.menu_feeds, menu);
         return true;
     }
 
