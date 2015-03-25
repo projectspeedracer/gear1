@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 
 /**
  * Created by avkadam on 3/24/15.
@@ -27,6 +28,9 @@ public class TheFoodApplication extends Application {
         // Initialize Facebook
         String appId = getString(R.string.facebook_app_id);
         ParseFacebookUtils.initialize(appId);
+
+        // Required for push notifications
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 
 }
