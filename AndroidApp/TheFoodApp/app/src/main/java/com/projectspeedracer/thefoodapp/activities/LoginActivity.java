@@ -31,6 +31,8 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //Remove the action bar when displaying full size image
+        getSupportActionBar().hide();
 
         setupViews();
     }

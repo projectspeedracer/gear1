@@ -7,32 +7,49 @@
         android:layout_width="fill_parent" android:layout_height="fill_parent"
         android:src="@drawable/background" android:scaleType="fitXY" />
 
-
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
     >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="50dp"
+        >
 
-        <Button
-                android:id="@+id/action_fb_login_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/fb_login"
-                android:background="@color/facebook"
-                android:padding="20dp"
-        />
+    <Button
+        android:id="@+id/action_fb_login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fb_login"
+        android:background="@color/facebook"
+        android:padding="20dp"
+        android:textColor="@color/white"
+        android:layout_gravity="center"/>
 
-        <Button
-            android:id="@+id/action_tw_login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tw_login"
-            android:layout_centerHorizontal="true"
-            android:background="@color/twitter"
-            android:padding="20dp"/>
+    <Button
+        android:id="@+id/action_tw_login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tw_login"
+        android:background="@color/twitter"
+        android:layout_marginTop="10dp"
+        android:padding="20dp"
+        android:textColor="@color/white"
+        android:layout_gravity="center"/>
 
     </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="157dp" android:layout_height="176dp"
+        android:src="@drawable/logo"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="50dp"/>
 
 </FrameLayout>

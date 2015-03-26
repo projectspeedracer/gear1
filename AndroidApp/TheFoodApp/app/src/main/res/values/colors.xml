@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item name="primary" type="color">#8BC34A</item>
-    <item name="secondary" type="color">#558B2F</item>
-    <item name="accent" type="color">#8BC34A</item>
+    <item name="primary" type="color">#FF9800</item>
+    <item name="secondary" type="color">#EF6C00</item>
+    <item name="accent" type="color">#FF9800</item>
     <item name="facebook" type="color">#3b579d</item>
     <item name="twitter" type="color">#5ea9dd</item>
+    <item name="white" type="color">#ffffff</item>
 
     <integer-array name="androidcolors">
         <item>@color/primary</item>
@@ -13,6 +14,7 @@
         <item>@color/accent</item>
         <item>@color/facebook</item>
         <item>@color/twitter</item>
+        <item>@color/white</item>
     </integer-array>
 
 </resources>
