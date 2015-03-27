@@ -64,7 +64,7 @@ public class LoginActivity extends ActionBarActivity {
             }
         });
 
-        actionTwitterLoginButton = (Button) findViewById(R.id.action_twitter_login_button);
+        actionTwitterLoginButton = (Button) findViewById(R.id.action_tw_login_button);
         actionTwitterLoginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 onTwitterLoginButtonClicked();

@@ -52,4 +52,11 @@
         android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="50dp"/>
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBarLogin"
+        android:layout_gravity="center" />
+
 </FrameLayout>
