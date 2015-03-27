@@ -5,6 +5,7 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
+import com.parse.ParseTwitterUtils;
 
 /**
  * Created by avkadam on 3/24/15.
@@ -25,9 +26,14 @@ public class TheFoodApplication extends Application {
         Parse.initialize(this, getString(R.string.parse_application_id),
                 getString(R.string.parse_client_key));
 
+
         // Initialize Facebook
         String appId = getString(R.string.facebook_app_id);
         ParseFacebookUtils.initialize(appId);
+
+        // Initialize Twitter
+        ParseTwitterUtils.initialize(getString(R.string.twitter_consumer_key),
+                                     getString(R.string.twitter_consumer_secret));
 
         // Required for push notifications
         ParseInstallation.getCurrentInstallation().saveInBackground();

@@ -25,4 +25,6 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:3.23.1'
     compile files('libs/Parse-1.8.4.jar')
     compile files('libs/ParseFacebookUtilsV3-1.8.4.jar')
+    // Android Async Http for sending async network requests
+    compile 'com.loopj.android:android-async-http:1.4.6'
 }
