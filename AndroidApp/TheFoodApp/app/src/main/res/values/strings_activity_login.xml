@@ -21,6 +21,6 @@
     <string name="signup">Sign up</string>
 
     <string name="fb_login">Login using Facebook</string>
-    <string name="twitter_login">Login using Twitter</string>
+    <string name="tw_login">Login using Twitter</string>
 
 </resources>
