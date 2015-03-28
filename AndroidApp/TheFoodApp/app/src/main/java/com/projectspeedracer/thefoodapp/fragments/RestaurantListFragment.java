@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Marker;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.projectspeedracer.thefoodapp.R;
@@ -38,6 +39,11 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
     private ListView lvResults;
     private ArrayList<Restaurant> listRestaurants;
     private RestaurantsArrayAdapter aRestaurants;
+
+    private final String TAG = "RestaurantList";
+
+    // Fields for the map radius in feet
+    private float radius;
 
 
 
@@ -73,6 +79,8 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
         Button b = (Button) view.findViewById(R.id.btnSearch);
         b.setOnClickListener(this);
 
+        radius = TheFoodApplication.getSearchDistance();
+
         return view;
     }
 
@@ -95,8 +103,25 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
                 "&key="+ TheFoodApplication.getGoogleApiKey()+
                 "&keyword="+searchQ+"&rankby=distance"; // WORKS
 
+        Log.e("GAPI", "Getting restaurant details - "+places_search_q);
 
+        clearMarkers();
         doSearch(places_search_q);
+    }
+
+    private void clearMarkers() {
+        // Clear markers if present.
+        if (aRestaurants == null) {
+            return;
+        }
+
+        for (int i = 0; i < aRestaurants.getCount(); i++) {
+            Restaurant restaurant = (Restaurant) aRestaurants.getItem(i);
+            Marker m = restaurant.getMarker();
+            if (m != null){
+                m.remove();
+            }
+        }
     }
 
     private void doSearch(String places_search_q) {
@@ -139,6 +164,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
     }
 
+    static int counter=0;
     // Retrieve address from Place ID and update UI
     // Eg. https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyB0YUvMN8cjlP41ZC-IGajc9m2J5oEn4nE&placeid=ChIJxTtMZDXJj4ARCgnf_1hmV6I
     // >>>>> bhimas - has 360 view
@@ -149,11 +175,14 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
     private ArrayList<Restaurant> getPlaceDetails() {
         ArrayList listRestaurants = new ArrayList();
         String detailsQ = "https://maps.googleapis.com/maps/api/place/details/json?key="+TheFoodApplication.getGoogleApiKey()+"&placeid=";
+
         for (int i = 0; i < aRestaurants.getCount(); i++) {
+            counter++;
             Restaurant restaurant = (Restaurant) aRestaurants.getItem(i);
             String currPlaceId = restaurant.getPlaces_id();
             AsyncHttpClient client = new AsyncHttpClient();
-            client.get(getActivity(), detailsQ+currPlaceId, new JsonHttpResponseHandler(){
+            Log.e("GAPI", "Getting details of "+ restaurant.getName()+"- "+detailsQ+currPlaceId);
+            client.get(getActivity(), detailsQ + currPlaceId, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     for (int i = 0; i < aRestaurants.getCount(); i++) {
@@ -168,6 +197,8 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
                 }
             });
         }
+        //todo change to info
+        Log.e(TAG, "Getting details of "+aRestaurants.getCount()+"restaurants (counter=)"+counter);
         return listRestaurants;
     }
 
@@ -180,4 +211,5 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
                 break;
         }
     }
+
 }
