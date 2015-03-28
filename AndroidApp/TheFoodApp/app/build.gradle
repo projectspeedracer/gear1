@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.projectspeedracer.thefoodapp"
         minSdkVersion 16
-        targetSdkVersion 19
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -25,4 +25,5 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:3.23.1'
     compile files('libs/Parse-1.8.4.jar')
     compile files('libs/ParseFacebookUtilsV3-1.8.4.jar')
+    compile 'com.squareup.picasso:picasso:2.4.0'
 }

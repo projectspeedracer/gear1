@@ -5,15 +5,38 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.adapters.RestaurantAdapter;
+import com.projectspeedracer.thefoodapp.models.Restaurant;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FeedsActivity extends ActionBarActivity {
+
+    List<Restaurant> restaurants = new ArrayList<Restaurant>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feeds);
+        ListView lvRestaurants = (ListView) findViewById(R.id.lvRestaurants);
+        // Lorem ipsuming the restaurant list
+        Restaurant r = new Restaurant();
+        r.setName("True Normand");
+        r.setAddress("140 New Montgomery St, San Francisco, CA 94105");
+        r.setPhotoUrl("https://cdn1.vox-cdn.com/thumbor/DlndxVgDozxAhQlpxLbUZi0CBaM=/0x59:624x410/350x197/cdn0.vox-cdn.com/uploads/chorus_image/image/44365122/Screen_Shot_2014-12-18_at_11.25.21_AM.0.0.png");
+        r.setRating(4.5f);
+        restaurants.add(r);
+        r = new Restaurant();
+        r.setName("Lorem Ipsum Trattoria");
+        r.setAddress("200 Dolor Sit Amet, Lorem Ipsum, LI");
+        r.setPhotoUrl("http://1.bp.blogspot.com/-IUNKJxWXI1Y/VIPTxwNDDxI/AAAAAAABF_E/rJ9YslS76g0/s1600/DSCF3818-001.jpg");
+        r.setRating(3.9f);
+        restaurants.add(r);
+        lvRestaurants.setAdapter(new RestaurantAdapter(this,restaurants, 0));
     }
 
 
