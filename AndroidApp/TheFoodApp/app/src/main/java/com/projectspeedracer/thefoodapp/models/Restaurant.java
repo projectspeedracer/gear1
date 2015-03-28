@@ -18,6 +18,7 @@ public class Restaurant {
     private String address; // formatted_address
     private String places_id;
     private String photo_id;
+    private float rating;
 
     private Marker marker; // to show a pin on map
 
@@ -70,6 +71,10 @@ public class Restaurant {
     public void setMarker(Marker marker) {
         this.marker = marker;
     }
+
+    public float getRating() { return rating; }
+
+    public void setRating(float rating) { this.rating = rating; }
 
     public static void updateFromJSON(JSONObject jsonObject, Restaurant restaurant) {
         try {

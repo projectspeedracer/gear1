@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class RestaurantsArrayAdapter extends ArrayAdapter {
         TextView tvAddress;
         TextView tvDistance;
         ImageView ivBanner;
+        Button btRestaurantReview;
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_restaurant, parent, false);
@@ -58,13 +60,15 @@ public class RestaurantsArrayAdapter extends ArrayAdapter {
         tvAddress.setText(restaurant.getAddress());
 
         tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
+
         if (restaurant.getLocation() != null) {
             Float distance = PickRestaurantActivity.getCurrentLocation().distanceTo(restaurant.getLocation());
             String distanceShort = FoodAppUtils.getShortDistance(distance);
             tvDistance.setText( distanceShort + " mi");
         }
 
-
+        btRestaurantReview = (Button) convertView.findViewById(R.id.btRestaurantReview);
+        btRestaurantReview.setText(String.valueOf(restaurant.getRating()));
 
         return convertView;
     }
