@@ -12,7 +12,13 @@ import com.parse.ParseTwitterUtils;
  */
 public class TheFoodApplication extends Application {
 
+    public static final String GOOGLE_API_KEY = "AIzaSyD6UJCC4Ey_VdaWqVB-AVEdur7_yu-cAyM"; // server key - works
+
     public TheFoodApplication() {
+    }
+
+    public static String getGoogleApiKey() {
+        return GOOGLE_API_KEY;
     }
 
     @Override
@@ -38,5 +44,6 @@ public class TheFoodApplication extends Application {
         // Required for push notifications
         ParseInstallation.getCurrentInstallation().saveInBackground();
     }
+
 
 }
