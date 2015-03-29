@@ -1,144 +1,187 @@
 package com.projectspeedracer.thefoodapp.models;
 
-import com.parse.ParseClassName;
-import com.parse.ParseObject;
-import com.projectspeedracer.thefoodapp.utils.Helpers;
+import android.location.Location;
 
-@ParseClassName("Restaurants")
-public class Restaurant extends ParseObject {
+import com.google.android.gms.maps.model.Marker;
 
-	public String getEmail() {
-		return getString(Fields.EMAIL);
-	}
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-	public void setEmail(String email) {
-		Helpers.EnsureNotBlank(email, "Invalid email address");
-		put(Fields.EMAIL, email);
-	}
+import java.util.ArrayList;
 
-	public String getContactPerson() {
-		return getString(Fields.CONTACT_PERSON);
-	}
+/**
+ * Created by avkadam on 3/28/15.
+ */
+public class Restaurant {
+    private String name;
+    private String address; // formatted_address
+    private String places_id;
+    private String photo_id;
+    private Double rating;
 
-	public void setContactPerson(String contactPerson) {
-		put(Fields.CONTACT_PERSON, contactPerson == null ? "" : contactPerson);
-	}
+    private Marker marker; // to show a pin on map
 
-	public Address getAddress() {
-		return (Address) get(Fields.ADDRESS);
-	}
+    private Location location;
 
-	public void setAddress(Address address) {
-		put(Fields.ADDRESS, address);
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getLatitude() {
-		return getString(Fields.LATITUDE);
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setLatitude(String latitude) {
-		put(Fields.LATITUDE, latitude);
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public String getLocationId() {
-		return getString(Fields.LOCATION_ID);
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setLocationId(String locationId) {
-		put(Fields.LOCATION_ID, locationId);
-	}
+    public String getPlaces_id() {
+        return places_id;
+    }
 
-	public String getLongitude() {
-		return getString(Fields.LONGITUDE);
-	}
+    public void setPlaces_id(String places_id) {
+        this.places_id = places_id;
+    }
 
-	public void setLongitude(String longitude) {
-		put(Fields.LONGITUDE, longitude);
-	}
+    public String getPhoto_id() {
+        return photo_id;
+    }
 
-	public String getName() {
-		return getString(Fields.NAME);
-	}
+    public void setPhoto_id(String photo_id) {
+        this.photo_id = photo_id;
+    }
 
-	public void setName(String restaurant_name) {
-		put(Fields.NAME, restaurant_name);
-	}
+    public Location getLocation() {
+        return location;
+    }
 
-	public String getWebsiteUrl() {
-		return getString(Fields.URL);
-	}
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
-	public void setWebsiteUrl(String url) {
-		put(Fields.URL, url);
-	}
+    public Marker getMarker() {
+        return marker;
+    }
 
-	public String getPhone() {
-		return getString(Fields.PHONE);
-	}
+    public void setMarker(Marker marker) {
+        this.marker = marker;
+    }
 
-	public void setPhone(String phone) {
-		put(Fields.PHONE, phone);
-	}
+    public Double getRating() { return rating; }
 
-	public String getDescription() {
-		return getString(Fields.DESCRIPTION);
-	}
+    public void setRating(float Double) { this.rating = rating; }
 
-	public void setDescription(String brief_description) {
-		put(Fields.DESCRIPTION, brief_description);
-	}
+    public static void updateFromJSON(JSONObject jsonObject, Restaurant restaurant) {
+        try {
+            if (jsonObject.getString("status").equals("OK")) {
+                if (restaurant.places_id.equals(jsonObject.getJSONObject("result").getString("place_id"))) {
+                    restaurant.address = jsonObject.getJSONObject("result").getString("formatted_address");
+                    restaurant.rating = jsonObject.getJSONObject("result").getDouble("rating");
 
-	public String getBusinessType() {
-		return getString(Fields.BUSINESS_TYPE);
-	}
+                    // Save location
+                    JSONObject jsonLocation = jsonObject.getJSONObject("result").getJSONObject("geometry").getJSONObject("location");
+                    Double lat = jsonLocation.getDouble("lat");
+                    Double lng = jsonLocation.getDouble("lng");
+                    restaurant.location = new Location("");
+                    restaurant.location.setLatitude(lat);
+                    restaurant.location.setLongitude(lng);
 
-	public void setBusinessType(String businessType) {
-		put(Fields.BUSINESS_TYPE, businessType);
-	}
+                    // Choose a photo
+                    //photos[x]->photo_reference
+                    //photos[x]->height, width
+                    JSONArray photos = jsonObject.getJSONObject("result").getJSONArray("photos");
+                    for (int i = 0; i < photos.length(); i++) {
+                        JSONObject photo = photos.getJSONObject(i);
+                        restaurant.photo_id = photo.getString("photo_reference");
+                        int height = new Integer(photo.getString("height").toString());
+                        int width = new Integer(photo.getString("height").toString());
+                        if (width > height) {
+                            // preferred image, done choose
+                            break;
+                        }
+                    }
+                }
+            }
 
-	public class Address {
-		public String address1;
-		public String address2;
-		public String city;
-		public String state;
-		public String zip;
-		public String country = "US";
-	}
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static class Fields {
-		public static final String NAME           = "name";
-		public static final String EMAIL          = "email";
-		public static final String CONTACT_PERSON = "contact_person";
-		public static final String BUSINESS_TYPE  = "business_type";
-		public static final String LATITUDE       = "latitude";
-		public static final String LONGITUDE      = "longitude";
-		public static final String LOCATION_ID    = "location_id";
-		public static final String URL            = "website_url";
-		public static final String DESCRIPTION    = "description";
-		public static final String PHONE          = "phone";
-		public static final String ADDRESS        = "ADDRESS";
-	}
+    public static Restaurant fromJSON(JSONObject jsonObject) {
+        Restaurant restaurant = new Restaurant();
+        try {
+            restaurant.name = jsonObject.getString("name");
+            restaurant.places_id = jsonObject.getString("place_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return restaurant;
+    }
+
+    public static Restaurant fromJSONLocal(JSONObject jsonObject) {
+        Restaurant restaurant = new Restaurant();
+        try {
+
+
+            JSONObject resultJson = jsonObject.getJSONObject("result");
+            restaurant.address = resultJson.getString("formatted_address");
+
+            if (resultJson.has("rating")) {
+                restaurant.rating = resultJson.getDouble("rating");
+            }
+
+            restaurant.places_id = resultJson.getString("place_id");
+            restaurant.name = resultJson.getString("name");
+
+
+            // Save location
+            JSONObject jsonLocation = resultJson.getJSONObject("geometry").getJSONObject("location");
+            Double lat = jsonLocation.getDouble("lat");
+            Double lng = jsonLocation.getDouble("lng");
+            restaurant.location = new Location("");
+            restaurant.location.setLatitude(lat);
+            restaurant.location.setLongitude(lng);
+
+            // Choose a photo
+            //photos[x]->photo_reference
+            //photos[x]->height, width
+            JSONArray photos = resultJson.getJSONArray("photos");
+            for (int i = 0; i < photos.length(); i++) {
+                JSONObject photo = photos.getJSONObject(i);
+                restaurant.photo_id = photo.getString("photo_reference");
+                int height = new Integer(photo.getString("height").toString());
+                int width = new Integer(photo.getString("height").toString());
+                if (width > height) {
+                    // preferred image, done choose
+                    break;
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return restaurant;
+    }
+
+
+    public static ArrayList<Restaurant> fromJSONArray(JSONArray jsonArray) {
+        ArrayList listRestaurants = new ArrayList();
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject restaurantJSON = jsonArray.getJSONObject(i);
+                listRestaurants.add(fromJSON(restaurantJSON));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return listRestaurants;
+    }
+
 }
-
-/*"restaurant_info": {
-        "address_1": "803 Gervais St.",
-        "address_2": "",
-        "brief_description": "Sample restaurant on OpenMenu. From this powerful website, to mobile, to Facebook, a restaurant's OpenMenu can power your entire online presence.",
-        "business_type": "independent",
-        "city_town": "Columbia",
-        "country": "US",
-        "fax": "(555) 888-8888",
-        "full_description": "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Vestibulum ac libero neque, quis laoreet dolor. Proin vitae erat lacus. \r\n\t \r\nAliquam sed lectus ligula, sed pharetra tortor. Nam rutrum ipsum ut quam vestibulum vestibulum. Ut posuere rhoncus quam, id semper ligula bibendum quis. Vestibulum accumsan, neque id tristique accumsan, risus diam vehicula massa, at facilisis ligula tortor et elit. Nulla facilisi. Mauris ultrices volutpat lorem eu convallis.",
-        "latitude": "34.000146",
-        "location_id": "x12345",
-        "longitude": "-81.038241",
-        "mobile": "0",
-        "omf_file_url": "http://openmenu.com/menu/sample",
-        "omf_private": "0",
-        "phone": "(555) 777-7777",
-        "postal_code": "29202",
-        "restaurant_name": "My Restaurant",
-        "state_province": "SC",
-        "utc_offset": "-5.00",
-        "website_url": "http://openmenu.com"
-    }*/
