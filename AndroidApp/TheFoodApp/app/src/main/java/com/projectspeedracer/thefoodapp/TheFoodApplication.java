@@ -6,6 +6,7 @@ import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseTwitterUtils;
+import com.projectspeedracer.thefoodapp.models.Restaurant;
 
 /**
  * Created by avkadam on 3/24/15.
@@ -16,7 +17,11 @@ public class TheFoodApplication extends Application {
 
     private static final float DEFAULT_SEARCH_DISTANCE = 500.0f; // in feet
 
-    public static final Boolean isLocal = true; // true for testing
+    public static final Boolean isLocal = false; // true for testing
+
+    public static final int MAX_NUM_PLACES = 4;
+
+    public static Restaurant currentRestaurant;
 
     public TheFoodApplication() {
     }
@@ -52,6 +57,15 @@ public class TheFoodApplication extends Application {
     public static float getSearchDistance() {
         return DEFAULT_SEARCH_DISTANCE;
     }
+
+    public static void storeCurrentRestaurant(Restaurant restaurant) {
+        currentRestaurant = restaurant;
+    }
+
+    public static Restaurant getCurrentRestaurant() {
+        return currentRestaurant;
+    }
+
 
 
 }

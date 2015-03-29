@@ -19,4 +19,8 @@
     <string name="show_map">Show Map</string>
     <string name="hide_map">Hide Map</string>
 
+    <string name="enter_into">Enter in</string>
+    <string name="get_closer">is too far. Get closer!</string>
+    <string name="pick_it">Pick a restaurant</string>
+
 </resources>

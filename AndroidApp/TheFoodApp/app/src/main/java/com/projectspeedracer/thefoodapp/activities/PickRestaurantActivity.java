@@ -14,7 +14,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.BounceInterpolator;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -373,6 +375,10 @@ public class PickRestaurantActivity extends ActionBarActivity implements
     @Override
     public void show_restaurant_on_map(Location location, Restaurant restaurant) {
 
+        // User selected a restaurant from the list
+
+        Button btnEnter;
+
         if (previousMarker != null) {
             // lower the emphasis on other markers
             FoodAppUtils.lowerEmphasis(previousMarker);
@@ -388,7 +394,20 @@ public class PickRestaurantActivity extends ActionBarActivity implements
             FoodAppUtils.emphasisMarker(currMarker, restaurant);
         }
 
+        // Show button according to radius
+        btnEnter = (Button) findViewById(R.id.btnEnter);
+        if (restaurant.isInMyRange()) {
+            btnEnter.setText(getString(R.string.enter_into)+" "+restaurant.getName());
+        }
+        else {
+            btnEnter.setText(restaurant.getName()+" "+getString(R.string.get_closer));
+        }
+
         previousMarker = currMarker;
+
+        // Save this as currentRestaurant, we will validate it later
+        // when user clicks 'Enter here' button
+        TheFoodApplication.storeCurrentRestaurant(restaurant);
     }
 
     // Listener for RestaurantListFragment
@@ -465,6 +484,25 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
         mapCircle.setCenter(myLatLng);
         mapCircle.setRadius(radius * METERS_PER_FEET); // Convert radius in feet to meters.
+    }
+
+    // onClick for Enter in restaurant button (btnEnter)
+    public void onPickRestaurant(View v) {
+        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
+
+        if (restaurant == null) {
+            Toast.makeText(this, "Please select a restaurant.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // validate that this restaurant is in Range
+        if(restaurant.isInMyRange()){
+            // Restaurant is in Range, user wants to select this one.
+            // Finalize this and show next
+            startActivity(new Intent(this, FeedsActivity.class));
+        }
+        else {
+            Toast.makeText(this, restaurant.getName()+" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

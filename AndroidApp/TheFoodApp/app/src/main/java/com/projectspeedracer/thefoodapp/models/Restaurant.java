@@ -3,6 +3,9 @@ package com.projectspeedracer.thefoodapp.models;
 import android.location.Location;
 
 import com.google.android.gms.maps.model.Marker;
+import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -173,8 +176,14 @@ public class Restaurant {
 
     public static ArrayList<Restaurant> fromJSONArray(JSONArray jsonArray) {
         ArrayList listRestaurants = new ArrayList();
+        int num_places_processed = 0;
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
+                num_places_processed++;
+                if (num_places_processed > TheFoodApplication.MAX_NUM_PLACES) {
+                    // only interested in NUM_PLACES
+                    break;
+                }
                 JSONObject restaurantJSON = jsonArray.getJSONObject(i);
                 listRestaurants.add(fromJSON(restaurantJSON));
             }
@@ -183,5 +192,10 @@ public class Restaurant {
         }
         return listRestaurants;
     }
+
+    public Boolean isInMyRange() {
+        return FoodAppUtils.isInRange(PickRestaurantActivity.getCurrentLocation(), this.getLocation());
+    }
+
 
 }

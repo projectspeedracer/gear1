@@ -13,6 +13,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listFragmentHolder"
-        android:layout_below="@+id/mapFragment"/>
+        android:layout_below="@+id/mapFragment"
+        android:layout_above="@+id/btnEnter" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pick_it"
+        android:id="@+id/btnEnter"
+        android:onClick="onPickRestaurant"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
