@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:background="@color/white"
-    tools:context="com.projectspeedracer.thefoodapp.activities.FeedsActivity">
+    android:focusableInTouchMode="true">
 
     <EditText
         android:layout_width="wrap_content"

@@ -18,7 +18,7 @@ public class Restaurant {
     private String address; // formatted_address
     private String places_id;
     private String photo_id;
-    private float rating;
+    private Double rating;
 
     private Marker marker; // to show a pin on map
 
@@ -72,15 +72,16 @@ public class Restaurant {
         this.marker = marker;
     }
 
-    public float getRating() { return rating; }
+    public Double getRating() { return rating; }
 
-    public void setRating(float rating) { this.rating = rating; }
+    public void setRating(float Double) { this.rating = rating; }
 
     public static void updateFromJSON(JSONObject jsonObject, Restaurant restaurant) {
         try {
             if (jsonObject.getString("status").equals("OK")) {
                 if (restaurant.places_id.equals(jsonObject.getJSONObject("result").getString("place_id"))) {
                     restaurant.address = jsonObject.getJSONObject("result").getString("formatted_address");
+                    restaurant.rating = jsonObject.getJSONObject("result").getDouble("rating");
 
                     // Save location
                     JSONObject jsonLocation = jsonObject.getJSONObject("result").getJSONObject("geometry").getJSONObject("location");
@@ -122,6 +123,53 @@ public class Restaurant {
         }
         return restaurant;
     }
+
+    public static Restaurant fromJSONLocal(JSONObject jsonObject) {
+        Restaurant restaurant = new Restaurant();
+        try {
+
+
+            JSONObject resultJson = jsonObject.getJSONObject("result");
+            restaurant.address = resultJson.getString("formatted_address");
+
+            if (resultJson.has("rating")) {
+                restaurant.rating = resultJson.getDouble("rating");
+            }
+
+            restaurant.places_id = resultJson.getString("place_id");
+            restaurant.name = resultJson.getString("name");
+
+
+            // Save location
+            JSONObject jsonLocation = resultJson.getJSONObject("geometry").getJSONObject("location");
+            Double lat = jsonLocation.getDouble("lat");
+            Double lng = jsonLocation.getDouble("lng");
+            restaurant.location = new Location("");
+            restaurant.location.setLatitude(lat);
+            restaurant.location.setLongitude(lng);
+
+            // Choose a photo
+            //photos[x]->photo_reference
+            //photos[x]->height, width
+            JSONArray photos = resultJson.getJSONArray("photos");
+            for (int i = 0; i < photos.length(); i++) {
+                JSONObject photo = photos.getJSONObject(i);
+                restaurant.photo_id = photo.getString("photo_reference");
+                int height = new Integer(photo.getString("height").toString());
+                int width = new Integer(photo.getString("height").toString());
+                if (width > height) {
+                    // preferred image, done choose
+                    break;
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return restaurant;
+    }
+
 
     public static ArrayList<Restaurant> fromJSONArray(JSONArray jsonArray) {
         ArrayList listRestaurants = new ArrayList();

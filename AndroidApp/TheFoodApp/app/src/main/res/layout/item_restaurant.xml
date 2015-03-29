@@ -10,8 +10,7 @@
     android:id="@+id/userLayout"
     android:paddingBottom="10dp"
     android:paddingTop="10dp"
-   >
-
+    >
     <FrameLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -59,8 +58,8 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btRestaurantReview"
+    <TextView
+        android:id="@+id/tvRestaurantRating"
         android:textColor="@color/accent"
         android:layout_width="48dp"
         android:layout_height="match_parent"

@@ -335,7 +335,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         // Handler allows us to repeat a code block after a specified delay
         final android.os.Handler handler = new android.os.Handler();
 //        long start = SystemClock.uptimeMillis();
-        final long duration = 1500;
+        final long duration = 1000;
 
         // Use the bounce interpolator
         final android.view.animation.Interpolator interpolator =
@@ -369,6 +369,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
     }
 
 
+    // Listener for RestaurantListFragment
     @Override
     public void show_restaurant_on_map(Location location, Restaurant restaurant) {
 
@@ -388,6 +389,13 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
 
         previousMarker = currMarker;
+    }
+
+    // Listener for RestaurantListFragment
+    @Override
+    public void clear_result() {
+        // Clear the map for new search
+        previousMarker = null;
     }
 
     public void showHideMap(MenuItem mi) {
