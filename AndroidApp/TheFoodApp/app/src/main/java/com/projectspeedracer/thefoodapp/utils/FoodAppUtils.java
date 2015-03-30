@@ -124,7 +124,7 @@ public class FoodAppUtils {
 
         marker.setTitle(restaurant.getName());
 
-        if (FoodAppUtils.isInRange(PickRestaurantActivity.getCurrentLocation(), restaurant.getLocation())) {
+        if (restaurant.isInMyRange()) {
             marker.setIcon(inRangeMarkerIcon);
         }
         else {

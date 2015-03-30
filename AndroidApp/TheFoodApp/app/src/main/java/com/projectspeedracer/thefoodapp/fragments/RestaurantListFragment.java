@@ -47,6 +47,8 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 
 
+
+
     RestarantPickListener listener;
 
     public interface RestarantPickListener {
@@ -72,7 +74,8 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Restaurant restaurant = (Restaurant) aRestaurants.getItem(position);
-                Toast.makeText(getActivity(), "Picked - "+restaurant.getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Picked - "+restaurant.getName(), Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Selected - "+restaurant.getName());
                 listener.show_restaurant_on_map(restaurant.getLocation(), restaurant);
             }
         });
@@ -188,7 +191,6 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
     private ArrayList<Restaurant> getPlaceDetails() {
         ArrayList listRestaurants = new ArrayList();
         String detailsQ = "https://maps.googleapis.com/maps/api/place/details/json?key="+TheFoodApplication.getGoogleApiKey()+"&placeid=";
-
         for (int i = 0; i < aRestaurants.getCount(); i++) {
             counter++;
             Restaurant restaurant = (Restaurant) aRestaurants.getItem(i);
