@@ -1,5 +1,9 @@
 package com.projectspeedracer.thefoodapp.utils;
 
+import android.location.Location;
+
+import com.parse.ParseGeoPoint;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class Helpers {
@@ -23,5 +27,12 @@ public class Helpers {
 
 			throw new IllegalArgumentException(errorText);
 		}
+	}
+
+	public static Location ToLocation(ParseGeoPoint pgp) {
+		final Location location = new Location("");
+		location.setLatitude(pgp.getLatitude());
+		location.setLongitude(pgp.getLongitude());
+		return location;
 	}
 }

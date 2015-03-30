@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -13,6 +15,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.parse.ParseGeoPoint;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
@@ -30,9 +33,9 @@ public class FoodAppUtils {
     public static String getShortDistance (Float distance) {
         Double distanceMi = distance * MILES_PER_METER; // converting to float
         distanceMi = Math.round(distanceMi * 100.0) / 100.0;
-        String distranceStr = Double.toString(distanceMi);
+        String distanceStr = Double.toString(distanceMi);
         String distanceShort;
-        String [] splitDistance = distranceStr.split("\\.");
+        String [] splitDistance = distanceStr.split("\\.");
         String integerPart = splitDistance[0];
         String fractionalPart = splitDistance[1];
         if (integerPart.length() > 1) {
@@ -47,7 +50,7 @@ public class FoodAppUtils {
             // sets 2.71 --> 2.7
         }
         else {
-            distanceShort = distranceStr; // keeps 0.06 --> 0.06
+            distanceShort = distanceStr; // keeps 0.06 --> 0.06
         }
 
         return distanceShort;
@@ -56,15 +59,12 @@ public class FoodAppUtils {
     public static Boolean isInRange(Location myLocation, Location placeLocation) {
         float distance = myLocation.distanceTo(placeLocation); // in meters
         float radius = TheFoodApplication.getSearchDistance();
-        if((radius * METERS_PER_FEET) >= distance) {
-            return true;
-        }
-        return false;
+	    return (radius * METERS_PER_FEET) >= distance;
     }
 
-    public static boolean isGooglePlayServicesAvailable(Context c, int RESULT_CODE, Activity a) {
+    public static boolean isGooglePlayServicesAvailable(FragmentActivity activity, int RESULT_CODE, Activity a) {
         // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(c);
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity.getApplicationContext());
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
             // In debug mode, log the status
@@ -80,7 +80,7 @@ public class FoodAppUtils {
                 // Create a new DialogFragment for the error dialog
                 ErrorDialogFragment errorFragment = new ErrorDialogFragment();
                 errorFragment.setDialog(errorDialog);
-                errorFragment.show(PickRestaurantActivity.getSupportFragmentManagerForHelper(), "Location Updates");
+                errorFragment.show(activity.getSupportFragmentManager(), "Location Updates");
             }
 
             return false;
@@ -106,7 +106,7 @@ public class FoodAppUtils {
 
         // Return a Dialog to the DialogFragment.
         @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
+        public Dialog onCreateDialog(@NonNull Bundle savedInstanceState) {
             return mDialog;
         }
     }
@@ -119,19 +119,16 @@ public class FoodAppUtils {
     }
 
     public static void emphasisMarker(Marker marker, Restaurant restaurant) {
-        BitmapDescriptor inRangeMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-        BitmapDescriptor outofRangeMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-
-        marker.setTitle(restaurant.getName());
-
-        if (restaurant.isInMyRange()) {
-            marker.setIcon(inRangeMarkerIcon);
-        }
-        else {
-            marker.setIcon(outofRangeMarkerIcon);
-        }
-
+	    marker.setTitle(restaurant.getName());
         marker.showInfoWindow();
         marker.setAlpha(1);
+
+	    final Location location = Helpers.ToLocation(restaurant.getLocation());
+	    final boolean inRange = isInRange(PickRestaurantActivity.getCurrentLocation(), location);
+	    final BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(inRange
+			    ? BitmapDescriptorFactory.HUE_GREEN
+			    : BitmapDescriptorFactory.HUE_RED);
+
+	    marker.setIcon(markerIcon);
     }
 }

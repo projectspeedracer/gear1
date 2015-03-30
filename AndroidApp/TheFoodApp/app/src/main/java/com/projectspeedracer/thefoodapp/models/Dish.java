@@ -3,12 +3,21 @@ package com.projectspeedracer.thefoodapp.models;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @ParseClassName("Dish")
 public class Dish extends ParseObject {
 	public static final String ENABLED  = "1";
 	public static final String DISABLED = "0";
+
+	private List<Rating> ratings = new ArrayList<>();
+
+	public void setRatings(Rating... ratings) {
+		Collections.addAll(this.ratings, ratings);
+	}
 
 	public String getId() {
 		return getString(Fields.ID);
@@ -25,6 +34,14 @@ public class Dish extends ParseObject {
 
 	public void setName(String name) {
 		put(Fields.NAME, name == null ? "???" : name);
+	}
+
+	public int getRestaurantId() {
+		return getInt(Fields.RESTAURANT_ID);
+	}
+
+	public void setRestaurantId(int restaurantId) {
+		put(Fields.RESTAURANT_ID, restaurantId);
 	}
 
 	public String getDescription() {
@@ -103,17 +120,18 @@ public class Dish extends ParseObject {
 	}
 
 	public static class Fields {
-		public static final String ID          = "id";
-		public static final String NAME        = "name";
-		public static final String DESCRIPTION = "description";
-		public static final String PRICE       = "price";
-		public static final String IMAGES      = "images";
-		public static final String CALORIES    = "calories";
-		public static final String GLUTEN_FREE = "gluten_free";
-		public static final String HALAL       = "halal";
-		public static final String VEGAN       = "vegan";
-		public static final String VEGETARIAN  = "vegetarian";
-		public static final String ENABLED     = "enabled";
+		public static final String ID            = "id";
+		public static final String NAME          = "name";
+		public static final String RESTAURANT_ID = "restaurant_id";
+		public static final String DESCRIPTION   = "description";
+		public static final String PRICE         = "price";
+		public static final String IMAGES        = "images";
+		public static final String CALORIES      = "calories";
+		public static final String GLUTEN_FREE   = "gluten_free";
+		public static final String HALAL         = "halal";
+		public static final String VEGAN         = "vegan";
+		public static final String VEGETARIAN    = "vegetarian";
+		public static final String ENABLED       = "enabled";
 	}
 }
 

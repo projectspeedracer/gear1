@@ -22,12 +22,10 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
 	compile 'org.apache.commons:commons-lang3:3.3.2'
-    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.google.android.gms:play-services:6.5+'
     compile 'com.facebook.android:facebook-android-sdk:3.23.1'
     compile files('libs/Parse-1.8.4.jar')
     compile files('libs/ParseFacebookUtilsV3-1.8.4.jar')
-    // Android Async Http for sending async network requests
     compile 'com.loopj.android:android-async-http:1.4.6'
-    // Picasso for remote image loading
     compile 'com.squareup.picasso:picasso:2.5.0'
 }

@@ -8,15 +8,12 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.animation.BounceInterpolator;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,6 +26,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -39,31 +38,26 @@ import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.fragments.RestaurantListFragment;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
+import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
+import com.projectspeedracer.thefoodapp.utils.Helpers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PickRestaurantActivity extends ActionBarActivity implements
         GoogleApiClient.ConnectionCallbacks,
         LocationListener,
         GoogleApiClient.OnConnectionFailedListener,
-        RestaurantListFragment.RestarantPickListener {
+		RestaurantListFragment.RestaurantPickListener {
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
-    private LocationRequest mLocationRequest;
     public static GoogleApiClient mGoogleApiClient;
-    private Fragment listRestaurantFragment;
+	private HashMap<String, Marker> markerPlacesIdMap = new HashMap<>();
 
-    private final String TAG = "PickRestaurant";
-
-    ArrayList<Marker> markers;
-
-    // Slow updates
-    private long UPDATE_INTERVAL = 60000 * 5;  /* 60 secs */
-    private long FASTEST_INTERVAL = 5000 * 5; /* 5 secs */
-
-    private Marker previousMarker;
+	public static final String TAG = Constants.TAG;
 
     // Represents the circle around a map
     private Circle mapCircle;
@@ -106,14 +100,12 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the container with the new fragment
-        listRestaurantFragment = new RestaurantListFragment();
+	    Fragment listRestaurantFragment = new RestaurantListFragment();
         ft.replace(R.id.listFragmentHolder, listRestaurantFragment);
         ft.hide(mapFragment);
         ft.commit();
 
         radius = TheFoodApplication.getSearchDistance();
-
-        markers = new ArrayList();
     }
 
     /*
@@ -196,11 +188,10 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
+        final int id = item.getItemId();
 
         // Handle presses on the action bar items
-        switch (item.getItemId()) {
+        switch (id) {
             case R.id.miShowHide:
                 showHideMap(item);
                 return true;
@@ -243,10 +234,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
-    public static FragmentManager getSupportFragmentManagerForHelper() {
-        return getSupportFragmentManagerForHelper();
-    }
-
     /*
 	 * Called by Location Services when the request to connect the client
 	 * finishes successfully. At this point, you can request the current
@@ -270,12 +257,11 @@ public class PickRestaurantActivity extends ActionBarActivity implements
     }
 
     protected void startLocationUpdates() {
-        mLocationRequest = new LocationRequest();
+	    LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                mLocationRequest, this);
+        mLocationRequest.setInterval(Constants.UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(Constants.FASTEST_INTERVAL);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     /*
@@ -320,18 +306,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
     }
 
-    private Marker showMarkerAtPoint(LatLng point, Restaurant restaurant) {
-        // Creates and adds marker to the map
-        Marker marker = map.addMarker(new MarkerOptions()
-                .position(point));
-
-        FoodAppUtils.emphasisMarker(marker, restaurant);
-
-        // Animate marker using drop effect
-        dropPinEffect(marker);
-
-        return marker;
-    }
 
     private void dropPinEffect(final Marker marker) {
         // Handler allows us to repeat a code block after a specified delay
@@ -370,139 +344,132 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         });
     }
 
+	private Marker animateActiveRestaurant(Location location, String title) {
+		final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+		final MarkerOptions position = new MarkerOptions().position(latLng);
+		final Marker marker = map.addMarker(position);
 
-    // Listener for RestaurantListFragment
-    @Override
-    public void show_restaurant_on_map(Location location, Restaurant restaurant) {
+		marker.setTitle(title);
+		marker.showInfoWindow();
+		marker.setAlpha(1f);
 
-        // User selected a restaurant from the list
+		final boolean inRange = FoodAppUtils.isInRange(getCurrentLocation(), location);
 
-        Button btnEnter;
+		final BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(inRange
+				? BitmapDescriptorFactory.HUE_GREEN
+				: BitmapDescriptorFactory.HUE_RED);
 
-        if (previousMarker != null) {
-            // lower the emphasis on other markers
-            FoodAppUtils.lowerEmphasis(previousMarker);
-        }
+		marker.setIcon(markerIcon);
 
-        Marker currMarker = restaurant.getMarker();
-        if (currMarker == null) {
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            currMarker = showMarkerAtPoint(latLng, restaurant);
-            restaurant.setMarker(currMarker);
-        }
-        else {
-            FoodAppUtils.emphasisMarker(currMarker, restaurant);
-        }
+		dropPinEffect(marker);
+		return marker;
+	}
 
-        // Show button according to radius
-        btnEnter = (Button) findViewById(R.id.btnEnter);
-        if (restaurant.isInMyRange()) {
-            btnEnter.setText(getString(R.string.enter_into)+" "+restaurant.getName());
-        }
-        else {
-            btnEnter.setText(restaurant.getName()+" "+getString(R.string.get_closer));
-        }
 
-        previousMarker = currMarker;
+	// region RestaurantListFragment Listener
 
-        // Save this as currentRestaurant, we will validate it later
-        // when user clicks 'Enter here' button
-        TheFoodApplication.storeCurrentRestaurant(restaurant);
-    }
+	@Override public void showRestaurantOnMap(Restaurant restaurant) {
+		final String placesId = restaurant.getPlacesId();
+		final Location location = Helpers.ToLocation(restaurant.getLocation());
 
-    // Listener for RestaurantListFragment
-    @Override
-    public void clear_result() {
-        // Clear the map for new search
-        previousMarker = null;
-    }
+		if (!markerPlacesIdMap.containsKey(placesId)) {
+			final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+			final MarkerOptions position = new MarkerOptions().position(latLng);
+			final Marker marker = map.addMarker(position);
+			markerPlacesIdMap.put(restaurant.getPlacesId(), marker);
+		}
 
-    public void showHideMap(MenuItem mi) {
+		for (Map.Entry<String, Marker> entry : markerPlacesIdMap.entrySet()) {
+			final boolean active = entry.getKey().equals(placesId);
+			final Marker marker = entry.getValue();
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			if (active) {
+				animateActiveRestaurant(location, restaurant.getName());
+			} else {
+				marker.setAlpha(0.5f);
+				marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+			}
+		}
+	}
+
+	@Override
+	public void clearAllMarkers() {
+		for (Map.Entry<String, Marker> entry : markerPlacesIdMap.entrySet()) {
+			entry.getValue().remove();
+		}
+
+		markerPlacesIdMap.clear();
+	}
+
+	// endregion
+
+	public void showHideMap(MenuItem mi) {
+
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.setCustomAnimations(android.R.anim.fade_in, R.animator.top_to_bottom_fragment);
 //            ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
-        ft.setCustomAnimations(R.animator.top_to_bottom_fragment, R.animator.bottom_to_top_fragment);
+		ft.setCustomAnimations(R.animator.top_to_bottom_fragment, R.animator.bottom_to_top_fragment);
 
-        if (mapFragment.isHidden()) {
-            // Request is to show the map
-            ft.show(mapFragment);
-            mi.setTitle(R.string.hide_map);
-        } else {
-            // Request is to hide the map
-            ft.hide(mapFragment);
-            mi.setTitle(R.string.show_map);
-        }
+		if (mapFragment.isHidden()) {
+			// Request is to show the map
+			ft.show(mapFragment);
+			mi.setTitle(R.string.hide_map);
+		} else {
+			// Request is to hide the map
+			ft.hide(mapFragment);
+			mi.setTitle(R.string.show_map);
+		}
 
-        ft.commit();
-    }
+		ft.commit();
+	}
 
-    @Override
-    public void onLocationChanged(Location location) {
-        // Report to the UI that the location was updated
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+	@Override
+	public void onLocationChanged(Location location) {
+		// Report to the UI that the location was updated
+		String msg = "Updated Location: " +
+		             Double.toString(location.getLatitude()) + "," +
+		             Double.toString(location.getLongitude());
 //        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        Log.v(TAG, msg);
+		Log.v(TAG, msg);
 
-        if (lastLocation != null
-                && geoPointFromLocation(location)
-                .distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.01) {
-            // If the location hasn't changed by more than 10 meters, ignore it.
-            Log.v(TAG, "Ignoring minute location update");
-            return;
-        }
-        lastLocation = location;
+		if (lastLocation != null
+		    && geoPointFromLocation(location)
+				       .distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.01) {
+			// If the location hasn't changed by more than 10 meters, ignore it.
+			Log.v(TAG, "Ignoring minute location update");
+			return;
+		}
+		lastLocation = location;
 
-        LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        // Update map radius indicator
-        updateCircle(myLatLng);
-    }
+		LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+		// Update map radius indicator
+		updateCircle(myLatLng);
+	}
 
-    /*
-     * Helper method to get the Parse GEO point representation of a location
-     */
-    private ParseGeoPoint geoPointFromLocation(Location loc) {
-        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
-    }
+	/*
+	 * Helper method to get the Parse GEO point representation of a location
+	 */
+	private ParseGeoPoint geoPointFromLocation(Location loc) {
+		return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+	}
 
-   /*
-    * Displays a circle on the map representing the search radius
-    */
-    private void updateCircle(LatLng myLatLng) {
-        radius = TheFoodApplication.getSearchDistance();
-        if (mapCircle == null) {
-            mapCircle =
-                    mapFragment.getMap().addCircle(
-                            new CircleOptions().center(myLatLng).radius(radius * METERS_PER_FEET));
-            int baseColor = Color.DKGRAY;
-            mapCircle.setStrokeColor(baseColor);
-            mapCircle.setStrokeWidth(2);
-            mapCircle.setFillColor(Color.argb(50, Color.red(baseColor), Color.green(baseColor),
-                    Color.blue(baseColor)));
-        }
-        mapCircle.setCenter(myLatLng);
-        mapCircle.setRadius(radius * METERS_PER_FEET); // Convert radius in feet to meters.
-    }
-
-    // onClick for Enter in restaurant button (btnEnter)
-    public void onPickRestaurant(View v) {
-        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
-
-        if (restaurant == null) {
-            Toast.makeText(this, "Please select a restaurant.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // validate that this restaurant is in Range
-        if(restaurant.isInMyRange()){
-            // Restaurant is in Range, user wants to select this one.
-            // Finalize this and show next
-            startActivity(new Intent(this, FeedsActivity.class));
-        }
-        else {
-            Toast.makeText(this, restaurant.getName()+" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
-        }
-    }
+	/*
+		* Displays a circle on the map representing the search radius
+		*/
+	private void updateCircle(LatLng myLatLng) {
+		radius = TheFoodApplication.getSearchDistance();
+		if (mapCircle == null) {
+			mapCircle =
+					mapFragment.getMap().addCircle(
+							new CircleOptions().center(myLatLng).radius(radius * METERS_PER_FEET));
+			int baseColor = Color.DKGRAY;
+			mapCircle.setStrokeColor(baseColor);
+			mapCircle.setStrokeWidth(2);
+			mapCircle.setFillColor(Color.argb(50, Color.red(baseColor), Color.green(baseColor),
+					Color.blue(baseColor)));
+		}
+		mapCircle.setCenter(myLatLng);
+		mapCircle.setRadius(radius * METERS_PER_FEET); // Convert radius in feet to meters.
+	}
 
 }
