@@ -21,10 +21,9 @@ import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.adapters.RestaurantsArrayAdapter;
+import com.projectspeedracer.thefoodapp.models.GPlacesResponse;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
-import com.projectspeedracer.thefoodapp.models.GPlacesResponse;
-import com.projectspeedracer.thefoodapp.utils.Helpers;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -46,7 +45,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 	RestaurantPickListener listener;
 
 	public interface RestaurantPickListener {
-		public void showRestaurantOnMap(Restaurant restaurant);
+		public void resturantSelected(Restaurant restaurant);
 
 		public void clearAllMarkers();
 	}
@@ -69,10 +68,9 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Restaurant restaurant = (Restaurant) aRestaurants.getItem(position);
-				Toast.makeText(getActivity(), "Picked - " + restaurant.getName(), Toast.LENGTH_SHORT).show();
-
-				final Location location = Helpers.ToLocation(restaurant.getLocation());
-				listener.showRestaurantOnMap(restaurant);
+//				Toast.makeText(getActivity(), "Picked - " + restaurant.getName(), Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Selected - "+restaurant.getName());
+				listener.resturantSelected(restaurant);
 			}
 		});
 
@@ -84,7 +82,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 		return view;
 	}
 
-	public void onSearchClick(View v) {
+	public void loadRestaurantList() {
 		String searchQ = etSearch.getText().toString();
 		if (searchQ.isEmpty()) {
 			searchQ = "restaurants";
@@ -94,16 +92,14 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 		String currLongitude = Double.toString(location.getLongitude());
 		String currLatitue = Double.toString(location.getLatitude());
 		String locationQ = currLatitue + "," + currLongitude;
-		Toast.makeText(getActivity(), "Searching " + searchQ + " near: " + locationQ, Toast.LENGTH_SHORT).show();
+//		Toast.makeText(getActivity(), "Searching " + searchQ + " near: " + locationQ, Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "Searching " + searchQ + " near: " + locationQ);
 
-//          String places_search_q="https://maps.googleapis.com/maps/api/place/search/json?location="+locationQ+"&sensor=true&key="+GOOGLE_API_KEY+
-//                "&keyword="+searchQ+"&types=food&rankby=distance"; // WORKS
-//
 		final String places_search_q = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + locationQ +
 		                         "&key=" + TheFoodApplication.getGoogleApiKey() +
 		                         "&keyword=" + searchQ + "&rankby=distance"; // WORKS
 
-		Log.e(Constants.TAG_GAPI, "Getting restaurant details - " + places_search_q);
+		Log.v(Constants.TAG_GAPI, "Getting restaurant details - " + places_search_q);
 
 		listener.clearAllMarkers();
 
@@ -151,6 +147,12 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 			final JSONArray placeIds = response.getJSONArray("results");
 
 			for (int index = 0; index < placeIds.length(); ++index) {
+
+                if (index >= TheFoodApplication.MAX_NUM_PLACES) {
+                    // only interested in NUM_PLACES
+                    break;
+                }
+
 				final JSONObject place = placeIds.getJSONObject(index);
 				final String name = place.getString("name");
 				final String placeId = place.getString("place_id");
@@ -205,6 +207,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 					final JSONObject result = response.getJSONObject(GPlacesResponse.Fields.RESULT);
 					final GPlacesResponse gpr = new GPlacesResponse(result);
 					restaurant.update(gpr);
+                    aRestaurants.notifyDataSetChanged();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -224,10 +227,10 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 		String jsonData4 = "{\"html_attributions\":[],\"status\":\"OK\",\"result\":{\"place_id\":\"ChIJxTtMZDXJj4ARCgnf_1hmV6I\",\"icon\":\"http:\\/\\/maps.gstatic.com\\/mapfiles\\/place_api\\/icons\\/restaurant-71.png\",\"reviews\":[{\"author_name\":\"Kishore Telidevara\",\"aspects\":[{\"type\":\"overall\",\"rating\":0}],\"time\":1426908794,\"text\":\"They used to serve good food earlier, now the quality is bad. over cooked food, maybe stale food cooked again, or frozen food reheated\",\"rating\":1,\"language\":\"en\",\"author_url\":\"https:\\/\\/plus.google.com\\/103564136276289816778\"},{\"author_name\":\"Shyam Bansal\",\"aspects\":[{\"type\":\"food\",\"rating\":3},{\"type\":\"decor\",\"rating\":1},{\"type\":\"service\",\"rating\":1}],\"time\":1393303442,\"text\":\"Lately the North Indian thali quality has deteriorated so will think twice about going to this place.  Ask for more sambar, dal etc as needed complimentarily, since the quantity in the thali is limited. \",\"rating\":4,\"language\":\"en\",\"author_url\":\"https:\\/\\/plus.google.com\\/118268451358807750636\"},{\"author_name\":\"Rangaprabhu Parthasarathy\",\"aspects\":[{\"type\":\"overall\",\"rating\":1}],\"time\":1376414231,\"text\":\"After a shopping stint at the Great Mall in Milpitas, our family and that of a friend of ours wanted to get an Indian dinner. My friend suggested Tirupathi Bhimas- a place I have never been to but one that my wife had visited and had a decent opinion about. I agreed to give the place a shot- if not anything, atleast to get a review in (such if the power of writing my own blog :) )\\n\\nWe arrived pretty late on a Saturday night. The place was reasonably crowded but not really full. The waiter having deciphered that we all shared a common language, decided to pitch in with recommendations so forceful it was almost as if he knew wanted us to eat. It was almost comical seeing him push what he thought we should be eating.\\n\\nWe had two tired and hungry kids. So we decided to order a simple curd rice for one of them while the other was going to share his mother’s South Indian thali. For the rest of the group, we ordered an adai avial (adai resembles a dosa but is much thicker because of the lentil batter it uses), szechuan fried rice and another plate of curd rice. The curd rice arrived quickly and we realised almost immediately that it was spicy. Yes, you are allowed to ask- how and why in the world is curd rice spicy. Beats me. The pattern was starting to show. My wife who ordered the thali complained that everything was a tad on the spicy side. She had to use the kesari in her thali to give my son his meal from hers. My szechuan fried rice was spicy beyond expectations. To be fair, I was warned that it was a spicy dish. Just that I did not anticipate the level of spice it carried. The kitchen was closing soon. I had to order a cup of the rava kesari just to quench the spice in my mouth. All in all, the spice was a tad too much for all of us to handle.\",\"rating\":3,\"language\":\"en\",\"author_url\":\"https:\\/\\/plus.google.com\\/113224422168461556238\"},{\"author_name\":\"Anand Kumar\",\"aspects\":[{\"type\":\"food\",\"rating\":1},{\"type\":\"decor\",\"rating\":1},{\"type\":\"service\",\"rating\":1}],\"time\":1368929704,\"text\":\"I go to this place whenever I crave for simple south Indian food. The food is not greasy at all and the sauces that go with dosa and chutney are good as of late. Dosa is a dish that has to be always cooked to order and so could never wrong when you order this dish. \",\"rating\":3,\"language\":\"en\",\"author_url\":\"https:\\/\\/plus.google.com\\/114774806354613814502\"},{\"author_name\":\"ash b\",\"aspects\":[{\"type\":\"food\",\"rating\":0},{\"type\":\"decor\",\"rating\":0},{\"type\":\"service\",\"rating\":0}],\"time\":1355700597,\"text\":\"I'm not going to this place again. I ordered mini tiffin which consisted of one small idli (was surprised by the size of it, it was really mini ), one vada ( medium size ,which was good with sambar), one uncooked paper thin dosa with a tablespoon of potato masala inside it, pongal had too much hing in it so i couldn't eat , tomato chutney was basically ketchup and the  sweet ponga,I'm pretty sure had gone bad.  \\nThis place is pricier than saravan bhanavan and  it lacks both in quality and quantity of food served.\",\"rating\":2,\"language\":\"en\",\"author_url\":\"https:\\/\\/plus.google.com\\/113445692627746698447\"}],\"scope\":\"GOOGLE\",\"website\":\"http:\\/\\/www.tirupathibhimas.us\\/contact-us.html\",\"user_ratings_total\":40,\"international_phone_number\":\"+1 408-945-1010\",\"adr_address\":\"<span class=\\\"street-address\\\">1208 South Abel Street<\\/span>, <span class=\\\"locality\\\">Milpitas<\\/span>, <span class=\\\"region\\\">CA<\\/span> <span class=\\\"postal-code\\\">95035<\\/span>, <span class=\\\"country-name\\\">United States<\\/span>\",\"url\":\"https:\\/\\/plus.google.com\\/111562485236971638551\\/about?hl=en-US\",\"reference\":\"CnRkAAAANRN2CqKGNnilqGc3GXDVslFCfGMPC6RD8b8Ya0dszcYR2TQpoNRkQmNgBn9ahhUcJEyyg89hqwyk-rSW_5xT5Avq_lkABWrUh4o70-4KB6h0KIYuCuVdmSBqOQlU9I8sU1pOKy7ztQaxvibb4DWlDxIQhzqyDl9aRj_nlLiFheamHRoU54ShPCg-5NvntLIxSj_GK8vQoyQ\",\"opening_hours\":{\"periods\":[{\"open\":{\"time\":\"1130\",\"day\":0},\"close\":{\"time\":\"1430\",\"day\":0}},{\"open\":{\"time\":\"1800\",\"day\":0},\"close\":{\"time\":\"2130\",\"day\":0}},{\"open\":{\"time\":\"1130\",\"day\":2},\"close\":{\"time\":\"1400\",\"day\":2}},{\"open\":{\"time\":\"1800\",\"day\":2},\"close\":{\"time\":\"2130\",\"day\":2}},{\"open\":{\"time\":\"1130\",\"day\":3},\"close\":{\"time\":\"1400\",\"day\":3}},{\"open\":{\"time\":\"1800\",\"day\":3},\"close\":{\"time\":\"2130\",\"day\":3}},{\"open\":{\"time\":\"1130\",\"day\":4},\"close\":{\"time\":\"1400\",\"day\":4}},{\"open\":{\"time\":\"1800\",\"day\":4},\"close\":{\"time\":\"2130\",\"day\":4}},{\"open\":{\"time\":\"1130\",\"day\":5},\"close\":{\"time\":\"1430\",\"day\":5}},{\"open\":{\"time\":\"1800\",\"day\":5},\"close\":{\"time\":\"2200\",\"day\":5}},{\"open\":{\"time\":\"1130\",\"day\":6},\"close\":{\"time\":\"1430\",\"day\":6}},{\"open\":{\"time\":\"1800\",\"day\":6},\"close\":{\"time\":\"2200\",\"day\":6}}],\"open_now\":false,\"weekday_text\":[\"Monday: Closed\",\"Tuesday: 11:30 am – 2:00 pm, 6:00 – 9:30 pm\",\"Wednesday: 11:30 am – 2:00 pm, 6:00 – 9:30 pm\",\"Thursday: 11:30 am – 2:00 pm, 6:00 – 9:30 pm\",\"Friday: 11:30 am – 2:30 pm, 6:00 – 10:00 pm\",\"Saturday: 11:30 am – 2:30 pm, 6:00 – 10:00 pm\",\"Sunday: 11:30 am – 2:30 pm, 6:00 – 9:30 pm\"]},\"geometry\":{\"location\":{\"lng\":-121.90338,\"lat\":37.412874}},\"utc_offset\":-420,\"price_level\":1,\"photos\":[{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAAw4CfeoNsjLcl3iuXkkHjYJYAT8JhLxDf_rnsP9KrycfRfZ-kOJGYOUQI9ITKhzDefQn7tnlF5Y9aZn7Y3Caoina8aYjck4vpLEK-r6-IxT_o3Bo2InC5UWDoPwmhnsPq1txonZbVI0rfL_5sdoM4sRIQuVaXx8T96TJqhvag3RFXPBoUCGETCWmuiy9aAE5obfGNZgR3y2Y\",\"width\":1280,\"height\":853},{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAAZGEZp_amubVLErwFqr8vMEbKSv9YfDFbnS6Cq2IZiYtBfMFNlpqthfAxPorD8RQjsIh_EMhXVq47TvXaKFqcUptBwK075m5fJYxLy2TRIIc5K5eTZ-15siLmyx4ZoXm_ctztcjyCykBlwh8D7cwZkBIQ5Q0JOfeQQ5U7GthGHeEtdhoUjJlOQzdAcURvneGI_o_6QprHslA\",\"width\":1280,\"height\":853},{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAAw7zApJ2M3ziFlgJtJo1UEzHqkhkVigX8iIAkxoNCMjR3w9bVQblqkOpSnt-yNoIMr-CuY-mKsSA1qUdkxlOB2TVauV8dcmybZdckelSqGOJFp9-u-WKtHC4V93zcJX3jXugHV4RCyoecxjsuhtAAxxIQR8IChaHeByKJrFFJHeI1kBoU4WyPp91gBn8Hl8pqEm5BrXtfPhk\",\"width\":1280,\"height\":853},{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAA8U1D-c6K5_HegDit0p6N_wdbPph3ee6PPsfbZkh_1aCDVh-XAHGYE9R9uqeWOzICjP3jy5yLN0rmCFDuffJmj2xQpoEXLHJqhQB2gzGkFgA00tR6tLXroJ1naVPVe-JZXTraWnjqW9OU7-5zngkruRIQULozgIIGgorOOd_drN6ZdRoU2v_FCze_XTmQYAVJIMR1znMRNGs\",\"width\":1280,\"height\":853},{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAAvIGqcyfKKgnOqMb_FZS-GufRy-kVmLqZPjqBeMrAagbqA5umz5bzYmn_Y8cyoBIcJPuInBW-j57GjpT3xiFbjujq3XTbcTyi4OprDJ3OghYkN-UvamU4PevWvrLaGA0uzf80wmSf3nGP8GlsiznrWhIQoAb8JVokyS7O7ZJ43_lK1RoUHxb0grSO_Fhmwm9HJUKX-pt7j5o\",\"width\":1280,\"height\":853},{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAAGTBov9a9eg7vRYe2rpJ2baU7F98C75xK0zDqpdTK-K1yy7o8_rT3cBRIMd59ilJydOESH1D-baFyi3jhY8AH9fcfoHTNNDRbTNq36raVe2lXKqBVPKAmyRF23qpOwXEoOpqoGqWT3mvm1PvZqRzw3RIQAsciVzpHU72UO41KsXEv0xoUDwywFPPMtPBmYOiumK5X7sCjXOI\",\"width\":853,\"height\":1280},{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAAu07RiNh_i9YcOU-LWNBwEPRlFydycz0xFKB9SU8G1h0O7NZt4bN71l457L48OJkS23wFDIkHEiYh0UdHjTUFtM1nBxYMmIhNT7r_bIBTx7e_LFO684dGYfUeOQlgnT91SkUdSVqtqOybJrxZbS24QBIQQj4PbTzbVWczhuW53Z6d_hoUkN4cZW1NpynhvfU7PdgqwBt9Uuo\",\"width\":853,\"height\":1280},{\"html_attributions\":[],\"photo_reference\":\"CnRnAAAA85AHoh6p37Ee6ExGRU-yGCvAAAtFIYHnjdPU4IqMdIYgZeN4FkaTjiScou0gGZTRJQGcBGZqdYjFWfQEO2Ph5M6a2elX20-kBfLTAR2SCFsxOAg_wGe0nw2LKOult-TqjNP6BSE9WsUIhvsnHB5lCRIQcJ0ih1zgitXSfk7rXRWMwxoUbMWzNuZmg-5LP5SLXJrZo2OeynA\",\"width\":1280,\"height\":853},{\"html_attributions\":[\"<a href=\\\"https:\\/\\/plus.google.com\\/111502100155913804168\\\">ManojE Pandalam<\\/a>\"],\"photo_reference\":\"CoQBfAAAADnnFWW0ohNKkbd9XPKXtokpD0Eo6usinPMZ-0gjZ2b-am-VgwNmHAmmA8v1HvhNQScbIklMIw_1MJrkEZdmEjUtxxP-PLzkVGxiwHC2tkliQ6Pf6FehrOLvBUsQbEnR3GvLL_e6uFH3PVubM1Bd6mzSe5fU0O9ZogLn06n_Rrs4EhA0qXY3m7AWqx7H4Sx-FdDvGhTYivc9fGPhHGd1KRVT4wk7GCiw5Q\",\"width\":484,\"height\":578},{\"html_attributions\":[\"<a href=\\\"https:\\/\\/plus.google.com\\/111502100155913804168\\\">ManojE Pandalam<\\/a>\"],\"photo_reference\":\"CoQBcgAAANyJQdBFSmbPFap3UOxFki1HEIG5PbfERQgv1UKUDUWPDQf93yn2qF_NkbOWophIcHkIU0DtsL4ks6PMZqwHe4PPvxg2rFmhZ7gKnEDD8QvqhcHw5XLOV6m4uwGLLuZcSg5THixNFiq93Ndhd0PpAyWCA48T3kIV-BLLeuf4mO3pEhARavMxGBNutOGMRY6cClIoGhQ9fipMGuQSZSI6DgsonMGYiCbc4g\",\"width\":645,\"height\":411}],\"id\":\"6c39505bfcc96814a1406be727f56c6869c150c2\",\"vicinity\":\"1208 South Abel Street, Milpitas\",\"address_components\":[{\"types\":[\"street_number\"],\"short_name\":\"1208\",\"long_name\":\"1208\"},{\"types\":[\"route\"],\"short_name\":\"S Abel St\",\"long_name\":\"South Abel Street\"},{\"types\":[\"locality\",\"political\"],\"short_name\":\"Milpitas\",\"long_name\":\"Milpitas\"},{\"types\":[\"administrative_area_level_1\",\"political\"],\"short_name\":\"CA\",\"long_name\":\"California\"},{\"types\":[\"country\",\"political\"],\"short_name\":\"US\",\"long_name\":\"United States\"},{\"types\":[\"postal_code\"],\"short_name\":\"95035\",\"long_name\":\"95035\"}],\"name\":\"Tirupathi Bhimas\",\"formatted_address\":\"1208 South Abel Street, Milpitas, CA 95035, United States\",\"formatted_phone_number\":\"(408) 945-1010\",\"rating\":3.1,\"types\":[\"restaurant\",\"food\",\"establishment\"]}}";
 
 		ArrayList<String> listRestaurants = new ArrayList<>();
-		listRestaurants.add(jsonData1);
-		listRestaurants.add(jsonData2);
-		listRestaurants.add(jsonData3);
 		listRestaurants.add(jsonData4);
+		listRestaurants.add(jsonData3);
+		listRestaurants.add(jsonData2);
+		listRestaurants.add(jsonData1);
 
 		aRestaurants.clear();
 
@@ -254,7 +257,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnSearch:
-				onSearchClick(v);
+				loadRestaurantList();
 				break;
 		}
 	}

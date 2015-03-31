@@ -30,6 +30,9 @@ public class Helpers {
 	}
 
 	public static Location ToLocation(ParseGeoPoint pgp) {
+        if (pgp == null) {
+            return null;
+        }
 		final Location location = new Location("");
 		location.setLatitude(pgp.getLatitude());
 		location.setLongitude(pgp.getLongitude());

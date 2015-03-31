@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.parse.ParseGeoPoint;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
@@ -53,7 +52,7 @@ public class RestaurantsArrayAdapter extends ArrayAdapter<Restaurant> {
 		tvName.setText(restaurant.getName());
 
 		tvAddress = (TextView) convertView.findViewById(R.id.tvAddress);
-		tvAddress.setText(restaurant.getAddress().toString());
+		tvAddress.setText(restaurant.getAddress());
 
 		tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
 

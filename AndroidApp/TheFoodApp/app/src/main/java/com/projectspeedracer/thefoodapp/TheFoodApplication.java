@@ -5,6 +5,7 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParseTwitterUtils;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
@@ -17,7 +18,7 @@ public class TheFoodApplication extends Application {
 
     private static final float DEFAULT_SEARCH_DISTANCE = 500.0f; // in feet
 
-    public static final Boolean isLocal = false; // true for testing
+    public static final Boolean isLocal = true; // true for testing
 
     public static final int MAX_NUM_PLACES = 4;
 
@@ -35,7 +36,7 @@ public class TheFoodApplication extends Application {
         super.onCreate();
         //todo create data models
 //        ParseObject.registerSubclass(DishPost.class);
-//        ParseObject.registerSubclass(Restaurant.class);
+        ParseObject.registerSubclass(Restaurant.class);
 
         // Context, app id, client id
         Parse.initialize(this, getString(R.string.parse_application_id),

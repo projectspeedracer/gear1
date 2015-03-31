@@ -2,7 +2,6 @@ package com.projectspeedracer.thefoodapp.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,9 +14,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
-import com.parse.ParseGeoPoint;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
-import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
 /**
@@ -119,16 +116,16 @@ public class FoodAppUtils {
     }
 
     public static void emphasisMarker(Marker marker, Restaurant restaurant) {
-	    marker.setTitle(restaurant.getName());
-        marker.showInfoWindow();
-        marker.setAlpha(1);
 
-	    final Location location = Helpers.ToLocation(restaurant.getLocation());
-	    final boolean inRange = isInRange(PickRestaurantActivity.getCurrentLocation(), location);
+	    final boolean inRange = restaurant.isInMyRange();
 	    final BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(inRange
 			    ? BitmapDescriptorFactory.HUE_GREEN
 			    : BitmapDescriptorFactory.HUE_RED);
 
 	    marker.setIcon(markerIcon);
+
+        marker.setTitle(restaurant.getName());
+        marker.showInfoWindow();
+        marker.setAlpha(1);
     }
 }

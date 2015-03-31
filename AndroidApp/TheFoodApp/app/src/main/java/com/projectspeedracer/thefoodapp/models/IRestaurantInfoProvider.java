@@ -7,6 +7,7 @@ import java.util.List;
 public interface IRestaurantInfoProvider {
 	public String getPlacesId();
 	public String getName();
+    public String getAddress();
 	public List<String> getPhotoIds();
 	public Location getLocation();
 	public String getPhone();

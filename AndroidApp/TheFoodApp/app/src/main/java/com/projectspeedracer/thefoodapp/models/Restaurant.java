@@ -5,6 +5,8 @@ import android.location.Location;
 import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class Restaurant extends ParseObject {
 
 		setPlacesId(provider.getPlacesId());
 		setName(provider.getName());
+        setAddress(provider.getAddress());
 		setLocation(provider.getLocation());
 		setIconUrl(provider.getIconUrl());
 		setWebsiteUrl(provider.getWebsiteUrl());
@@ -49,15 +52,23 @@ public class Restaurant extends ParseObject {
 		put(Fields.PLACES_ID, placesId);
 	}
 
-	public String getName() {
-		return getString(Fields.NAME);
-	}
+    public String getName() {
+        return getString(Fields.NAME);
+    }
 
-	public void setName(String restaurant_name) {
-		put(Fields.NAME, restaurant_name);
-	}
+    public void setName(String restaurant_name) {
+        put(Fields.NAME, restaurant_name);
+    }
 
-	public String getEmail() {
+    public String getAddress() {
+        return getString(Fields.ADDRESS);
+    }
+
+    public void setAddress(String restaurant_name) {
+        put(Fields.ADDRESS, restaurant_name);
+    }
+
+    public String getEmail() {
 		return getString(Fields.EMAIL);
 	}
 
@@ -74,13 +85,13 @@ public class Restaurant extends ParseObject {
 		put(Fields.CONTACT_PERSON, contactPerson == null ? "" : contactPerson);
 	}
 
-	public Address getAddress() {
+	/*public Address getAddress() {
 		return (Address) getParseObject(Fields.ADDRESS);
 	}
 
 	public void setAddress(Address address) {
 		put(Fields.ADDRESS, address);
-	}
+	}*/
 
 	public ParseGeoPoint getLocation() {
 		return getParseGeoPoint(Fields.LOCATION_ID);
@@ -171,4 +182,8 @@ public class Restaurant extends ParseObject {
 	}
 
 	// endregion
+
+    public Boolean isInMyRange() {
+        return FoodAppUtils.isInRange(PickRestaurantActivity.getCurrentLocation(), Helpers.ToLocation(this.getLocation()));
+    }
 }

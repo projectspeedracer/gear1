@@ -4,7 +4,6 @@ import android.location.Location;
 import android.util.Log;
 
 import com.android.internal.util.Predicate;
-import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
 import org.json.JSONArray;
@@ -17,6 +16,7 @@ import java.util.List;
 public class GPlacesResponse implements IRestaurantInfoProvider {
 	private String placesId;
 	private String name;
+    private String address; // formatted_address
 	private String phone;
 	private String iconUrl;
 	private String websiteUrl;
@@ -29,13 +29,16 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 
 		this.placesId   = ExtractPlaceId(result);
 		this.name       = ExtractRestaurantName(result);
+        this.address    = ExtractRestaurantAddress(result);
 		this.location   = ExtractLocation(result);
 		this.phone      = ExtractPhoneNumber(result);
 		this.iconUrl    = ExtractIconUrl(result);
 		this.websiteUrl = ExtractWebsiteUrl(result);
 
 		final List<String> pidList = ExtractRestaurantImages(result, null);
-		photoIds.addAll(pidList);
+        if (pidList != null) {
+            photoIds.addAll(pidList);
+        }
 	}
 
 	public static String ExtractWebsiteUrl(JSONObject result) throws JSONException {
@@ -49,6 +52,10 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 	public static String ExtractRestaurantName(JSONObject result) throws JSONException {
 		return result.getString(Fields.NAME);
 	}
+
+    public static String ExtractRestaurantAddress(JSONObject result) throws JSONException {
+        return result.getString(Fields.ADDRESS);
+    }
 
 	public static String ExtractPlaceId(JSONObject result) throws JSONException {
 		return result.getString(Fields.ID);
@@ -80,7 +87,10 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 	}
 
 	public static List<String> ExtractRestaurantImages(JSONObject json, Predicate<JSONObject> predicate) throws JSONException {
-		final JSONArray photos = json.getJSONArray(Fields.PHOTOS);
+        if (!json.has(Fields.PHOTOS)) {
+            return null;
+        }
+        final JSONArray photos = json.getJSONArray(Fields.PHOTOS);
 		final int numPhotos = photos.length();
 
 		if (numPhotos == 0) {
@@ -146,7 +156,11 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 		return websiteUrl;
 	}
 
-	// endregion
+    public String getAddress() {
+        return address;
+    }
+
+    // endregion
 
 	public static class Fields {
 		public static final String RESULT          = "result";
@@ -154,7 +168,7 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 		//public static final String PLACE_ID        = "place_id";
 		public static final String PHOTOS          = "photos";
 		public static       String PHONE           = "international_phone_number";
-		public static final String NAME            = "NAME";
+		public static final String NAME            = "name";
 		public static final String ICON            = "icon";
 		public static final String WEBSITE         = "website";
 		final static        String HEIGHT          = "height";
@@ -164,5 +178,6 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 		final static        String LOCATION        = "location";
 		final static        String LATITUDE        = "lat";
 		final static        String LONGITUDE       = "lng";
+        final static        String ADDRESS         = "formatted_address";
 	}
 }

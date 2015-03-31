@@ -62,14 +62,14 @@
 
     </LinearLayout>
 
-    <TextView
+    <!-- NOT Required TextView
         android:id="@+id/tvRestaurantRating"
         android:textColor="@color/accent"
         android:layout_width="48dp"
         android:layout_height="match_parent"
         android:text="4.5"
         android:background="@color/white"
-        />
+        /-->
 
 </LinearLayout>
 </RelativeLayout>
