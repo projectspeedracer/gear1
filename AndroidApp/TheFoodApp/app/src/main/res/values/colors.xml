@@ -2,11 +2,13 @@
 <resources>
 
     <item name="primary" type="color">#FF9800</item>
-    <item name="secondary" type="color">#EF6C00</item>
+    <item name="secondary" type="color">#F57C00</item>
     <item name="accent" type="color">#FF9800</item>
     <item name="facebook" type="color">#3b579d</item>
     <item name="twitter" type="color">#5ea9dd</item>
     <item name="white" type="color">#ffffff</item>
+    <item name="button" type="color">#F57C00</item>
+
 
     <integer-array name="androidcolors">
         <item>@color/primary</item>
@@ -15,6 +17,7 @@
         <item>@color/facebook</item>
         <item>@color/twitter</item>
         <item>@color/white</item>
+        <item>@color/button</item>
     </integer-array>
 
 </resources>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:gravity="center_vertical"
+        android:id="@+id/userLayout"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        >
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:id="@+id/FramePhoto">
+            <ImageView
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/ivBanner"
+                android:background="@drawable/food"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/stencil"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:paddingRight="8dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="The Trou Normand"
+                android:id="@+id/tvName"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:maxWidth="250dp"
+                android:layout_height="wrap_content"
+                android:text="New American Restaurant"
+                android:id="@+id/tvCuisine"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Go-to eatery and lounge with marble bar serving New American bites, cocktails and namesake brandys"
+                android:id="@+id/tvDescription" />
+
+        </LinearLayout>
+
+        <!-- NOT Required TextView
+            android:id="@+id/tvRestaurantRating"
+            android:textColor="@color/accent"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:text="4.5"
+            android:background="@color/white"
+            /-->
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_below="@id/userLayout">
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_review_btn"
+        android:text="Make a Review"
+        android:textColor="@color/white"
+        android:background="@color/button"
+        android:layout_marginBottom="20dp"
+       />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_menu_btn"
+        android:text="See the Menu"
+        android:textColor="@color/white"
+        android:background="@color/button"
+        android:layout_below="@id/restaurant_review_btn"/>
+    </RelativeLayout>
+</RelativeLayout>

@@ -13,14 +13,13 @@
     <string name="twitter_consumer_key">UnJ0Tp9DOxEXcck4vt1HKTT50</string>
     <string name="twitter_consumer_secret">QQ132HjiyqRyZb1kofJC2lQhDCkk0uYlNCJxtOfKy0r03v0OjZ</string>
     <string name="google_api_key">AIzaSyCbaHP608AvuxQathqbZSmiLQnhuWnzB9Q</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="title_activity_pick_restaurant">PickRestaurantActivity</string>
-
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_pick_restaurant">Select a Restaurant</string>
     <string name="show_map">Show Map</string>
     <string name="hide_map">Hide Map</string>
-
     <string name="enter_into">Enter in</string>
     <string name="get_closer">is too far. Get closer!</string>
     <string name="pick_it">Pick a restaurant</string>
+    <string name="title_activity_restaurant">Restaurant</string>
 
 </resources>
