@@ -77,15 +77,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_below="@id/userLayout">
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/restaurant_review_btn"
-        android:text="Make a Review"
-        android:textColor="@color/white"
-        android:background="@color/button"
-        android:layout_marginBottom="20dp"
-       />
 
     <Button
         android:layout_width="match_parent"
@@ -93,7 +84,6 @@
         android:id="@+id/restaurant_menu_btn"
         android:text="See the Menu"
         android:textColor="@color/white"
-        android:background="@color/button"
-        android:layout_below="@id/restaurant_review_btn"/>
+        android:background="@color/button"/>
     </RelativeLayout>
 </RelativeLayout>

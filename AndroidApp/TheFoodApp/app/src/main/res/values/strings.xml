@@ -21,5 +21,6 @@
     <string name="get_closer">is too far. Get closer!</string>
     <string name="pick_it">Pick a restaurant</string>
     <string name="title_activity_restaurant">Restaurant</string>
+    <string name="title_activity_menu">MenuActivity</string>
 
 </resources>
