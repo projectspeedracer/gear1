@@ -6,22 +6,25 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.models.Restaurant;
 
-public class RestaurantActivity extends ActionBarActivity {
+public class MenuActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant);
+        setContentView(R.layout.activity_menu);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_restaurant, menu);
+        getMenuInflater().inflate(R.menu.menu_menu, menu);
         return true;
     }
 
@@ -40,8 +43,4 @@ public class RestaurantActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onOpenMenu(View v) {
-        Intent i = new Intent(RestaurantActivity.this, MenuActivity.class);
-        startActivity(i);
-    }
 }

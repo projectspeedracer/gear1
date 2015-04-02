@@ -115,6 +115,10 @@
             android:name=".activities.RestaurantActivity"
             android:label="@string/title_activity_restaurant" >
         </activity>
+        <activity
+            android:name=".activities.MenuActivity"
+            android:label="@string/title_activity_menu" >
+        </activity>
     </application>
 
 </manifest>

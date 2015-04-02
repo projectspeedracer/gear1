@@ -22,5 +22,6 @@
     <string name="pick_it">Pick a restaurant</string>
     <string name="title_activity_restaurant">Restaurant</string>
     <string name="image_missing">image_missing</string>
+    <string name="title_activity_menu">MenuActivity</string>
 
 </resources>

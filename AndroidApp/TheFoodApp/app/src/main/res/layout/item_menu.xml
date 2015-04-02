@@ -2,29 +2,29 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@color/white"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1"
         android:gravity="center_vertical"
-        android:id="@+id/userLayout"
+        android:id="@+id/menuLayout"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
         >
         <FrameLayout
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:id="@+id/FramePhoto">
             <ImageView
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/ivBanner"
+                android:id="@+id/ivMenuItem"
                 android:background="@drawable/food"/>
             <ImageView
                 android:layout_width="match_parent"
@@ -44,47 +44,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="The Trou Normand"
-                android:id="@+id/tvName"
+                android:text="Guacamole"
+                android:id="@+id/tvMenuItemName"
                 android:textSize="16sp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:maxWidth="250dp"
                 android:layout_height="wrap_content"
-                android:text="New American Restaurant"
-                android:id="@+id/tvCuisine"/>
+                android:text="Avocado Mexican Dipping Sauce"
+                android:id="@+id/tvMenuItemDescription"/>
             <TextView
                 android:layout_width="match_parent"
+                android:maxWidth="250dp"
                 android:layout_height="wrap_content"
-                android:text="Go-to eatery and lounge with marble bar serving New American bites, cocktails and namesake brandys"
-                android:id="@+id/tvDescription" />
+                android:text="5.5"
+                android:id="@+id/tvDishRating"/>
 
         </LinearLayout>
 
-        <!-- NOT Required TextView
-            android:id="@+id/tvRestaurantRating"
-            android:textColor="@color/accent"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:text="4.5"
-            android:background="@color/white"
-            /-->
-
     </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_below="@id/userLayout">
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/restaurant_menu_btn"
-        android:text="See the Menu"
-        android:textColor="@color/white"
-        android:background="@color/button"
-        android:onClick="onOpenMenu"/>
-    </RelativeLayout>
 </RelativeLayout>
