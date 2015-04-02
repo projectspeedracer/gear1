@@ -1,5 +1,10 @@
 package com.projectspeedracer.thefoodapp.utils;
 
+import android.location.Location;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.models.GPlacesResponse;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
@@ -11,6 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlacesUtils {
+
+	public static Location GetCurrentLocation(GoogleApiClient client) {
+		assert client != null : "Expected non-null GoogleApiClient instance";
+		return LocationServices.FusedLocationApi.getLastLocation(client);
+	}
+
+	public static boolean IsRestaurantInRange(Restaurant restaurant, GoogleApiClient client) {
+		return FoodAppUtils.isInRange(GetCurrentLocation(client), Helpers.ToLocation(restaurant.getLocation()));
+	}
+
 	public static ArrayList<Restaurant> ToRestaurants(JSONArray results) {
 		ArrayList<Restaurant> restaurants = new ArrayList<>();
 		try {
@@ -40,7 +55,7 @@ public class PlacesUtils {
 			restaurant.setName(gpr.getName());
 			restaurant.setLocation(gpr.getLocation());
 			restaurant.setIconUrl(gpr.getIconUrl());
-			restaurant.setWebsiteUrl(gpr.getWebsiteUrl());
+			//restaurant.setWebsiteUrl(gpr.getWebsiteUrl());
 
 			final List<String> photoIds = gpr.getPhotoIds();
 			if (photoIds.size() > 0) {

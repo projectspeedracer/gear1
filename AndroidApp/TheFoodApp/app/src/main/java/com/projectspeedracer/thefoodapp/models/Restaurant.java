@@ -33,7 +33,7 @@ public class Restaurant extends ParseObject {
         setAddress(provider.getAddress());
 		setLocation(provider.getLocation());
 		setIconUrl(provider.getIconUrl());
-		setWebsiteUrl(provider.getWebsiteUrl());
+		//setWebsiteUrl(provider.getWebsiteUrl());
 
 		final List<String> photoIds = provider.getPhotoIds();
 		if (photoIds.size() > 0) {
@@ -109,13 +109,13 @@ public class Restaurant extends ParseObject {
 		put(Fields.LOCATION_ID, new ParseGeoPoint(latitude, longitude));
 	}
 
-	public String getWebsiteUrl() {
+	/*public String getWebsiteUrl() {
 		return getString(Fields.URL);
 	}
 
 	public void setWebsiteUrl(String url) {
 		put(Fields.URL, url);
-	}
+	}*/
 
 	public String getPhone() {
 		return getString(Fields.PHONE);
@@ -182,8 +182,4 @@ public class Restaurant extends ParseObject {
 	}
 
 	// endregion
-
-    public Boolean isInMyRange() {
-        return FoodAppUtils.isInRange(PickRestaurantActivity.getCurrentLocation(), Helpers.ToLocation(this.getLocation()));
-    }
 }

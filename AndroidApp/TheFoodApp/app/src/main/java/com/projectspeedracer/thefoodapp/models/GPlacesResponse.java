@@ -33,7 +33,7 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 		this.location   = ExtractLocation(result);
 		this.phone      = ExtractPhoneNumber(result);
 		this.iconUrl    = ExtractIconUrl(result);
-		this.websiteUrl = ExtractWebsiteUrl(result);
+		//this.websiteUrl = ExtractWebsiteUrl(result);
 
 		final List<String> pidList = ExtractRestaurantImages(result, null);
         if (pidList != null) {

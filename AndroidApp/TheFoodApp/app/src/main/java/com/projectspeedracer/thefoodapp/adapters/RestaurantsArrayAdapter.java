@@ -15,6 +15,7 @@ import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.projectspeedracer.thefoodapp.utils.PlacesUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public class RestaurantsArrayAdapter extends ArrayAdapter<Restaurant> {
 		final Location location = Helpers.ToLocation(restaurant.getLocation());
 
 		if (location != null) {
-			Float distance = PickRestaurantActivity.getCurrentLocation().distanceTo(location);
+			Float distance = PlacesUtils.GetCurrentLocation(PickRestaurantActivity.mGoogleApiClient).distanceTo(location);
 			String distanceShort = FoodAppUtils.getShortDistance(distance);
 			tvDistance.setText(distanceShort + " mi");
 		}

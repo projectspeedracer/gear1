@@ -6,6 +6,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.models.Rating;
+import com.projectspeedracer.thefoodapp.models.Restaurant;
+
+import java.util.List;
 
 public class RestaurantActivity extends ActionBarActivity {
 
@@ -37,4 +42,16 @@ public class RestaurantActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+	private List<Dish> queryDishes(Restaurant restaurant, String category) {
+		return null;
+	}
+
+	private List<Rating> queryRatings(Restaurant restaurant) {
+		return null;
+	}
+
+	private List<Rating> queryRatings(Dish dish) {
+		return null;
+	}
 }

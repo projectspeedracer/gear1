@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@ParseClassName("Dish")
+@ParseClassName("Dishes")
 public class Dish extends ParseObject {
 	public static final String ENABLED  = "1";
 	public static final String DISABLED = "0";
@@ -52,14 +52,22 @@ public class Dish extends ParseObject {
 		put(Fields.DESCRIPTION, description == null ? "" : description);
 	}
 
-	public String[] getImages() {
+	public String getImage() {
+		return getString(Fields.IMAGE_URL);
+	}
+
+	public void setImage(String imageUrl) {
+		put(Fields.IMAGE_URL, imageUrl);
+	}
+
+	/*public String[] getImages() {
 		final List<String> images = getList(Fields.IMAGES);
 		return images.toArray(new String[images.size()]);
 	}
 
 	public void setImages(String[] images) {
 		put(Fields.IMAGES, images == null ? new String[0] : images);
-	}
+	}*/
 
 	public double getPrice() {
 		return getDouble(Fields.PRICE);
@@ -111,6 +119,14 @@ public class Dish extends ParseObject {
 		put(Fields.VEGETARIAN, vegetarian);
 	}
 
+	public String getCategory() {
+		return getString(Fields.CATEGORIES);
+	}
+
+	public void setCategory(String category) {
+		put(Fields.CATEGORIES, category);
+	}
+
 	public boolean isEnabled() {
 		return getBoolean(Fields.ENABLED);
 	}
@@ -122,40 +138,17 @@ public class Dish extends ParseObject {
 	public static class Fields {
 		public static final String ID            = "id";
 		public static final String NAME          = "name";
-		public static final String RESTAURANT_ID = "restaurant_id";
+		public static final String RESTAURANT_ID = "restaurantId";
 		public static final String DESCRIPTION   = "description";
 		public static final String PRICE         = "price";
 		public static final String IMAGES        = "images";
+		public static final String CATEGORIES    = "category";
 		public static final String CALORIES      = "calories";
 		public static final String GLUTEN_FREE   = "gluten_free";
 		public static final String HALAL         = "halal";
 		public static final String VEGAN         = "vegan";
 		public static final String VEGETARIAN    = "vegetarian";
 		public static final String ENABLED       = "enabled";
+		public static final String IMAGE_URL     = "imageUrl";
 	}
 }
-
-/*"menu_item_description": "Our calamari is lightly fried and tossed with a sweet and spicy Asian mango sauce.",
-"menu_item_heat_index": "2",
-"menu_item_images": [],
-"menu_item_name": "Calamari",
-"menu_item_options": [],
-"menu_item_price": null,
-"menu_item_sizes": [
-	{
-		"menu_item_size_calories": null,
-		"menu_item_size_description": "",
-		"menu_item_size_name": "small",
-		"menu_item_size_price": "6.95"
-	},
-	{
-		"menu_item_size_calories": null,
-		"menu_item_size_description": "",
-		"menu_item_size_name": "large",
-		"menu_item_size_price": "8.95"
-	}
-],
-"menu_item_tags": [],
-"special": "1",
-"vegan": null,
-"vegetarian": null*/

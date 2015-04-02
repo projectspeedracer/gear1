@@ -40,6 +40,7 @@ import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.projectspeedracer.thefoodapp.utils.PlacesUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +51,10 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         GoogleApiClient.OnConnectionFailedListener,
 		RestaurantListFragment.RestaurantPickListener {
 
-    private SupportMapFragment mapFragment;
-    private GoogleMap map;
-    public static GoogleApiClient mGoogleApiClient;
+	public static GoogleApiClient mGoogleApiClient;
+
+	private SupportMapFragment mapFragment;
+	private GoogleMap map;
 	private HashMap<String, Marker> markerPlacesIdMap = new HashMap<>();
 
     RestaurantListFragment listRestaurantFragment;
@@ -229,11 +231,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
     }
 
-    // Static API to return current Location.
-    public static Location getCurrentLocation() {
-        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-    }
-
     /*
 	 * Called by Location Services when the request to connect the client
 	 * finishes successfully. At this point, you can request the current
@@ -347,7 +344,8 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         });
     }
 
-	private Marker addNewMarker(Location location, Restaurant restaurant) {
+	private Marker addNewMarker(Restaurant restaurant) {
+		final Location location = Helpers.ToLocation(restaurant.getLocation());
 		final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 		final MarkerOptions position = new MarkerOptions().position(latLng);
 		final Marker marker = map.addMarker(position);
@@ -362,50 +360,18 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	// region RestaurantListFragment Listener
 
 	@Override
-    public void resturantSelected(Restaurant restaurant) {
-
-        // Show it on Map using marker
+    public void restaurantSelected(Restaurant restaurant) {
         showRestaurantOnMap(restaurant);
 
-        Button btnEnter;
-        // Show button according to radius
-        btnEnter = (Button) findViewById(R.id.btnEnter);
-        if (restaurant.isInMyRange()) {
-            btnEnter.setText(getString(R.string.enter_into)+" "+restaurant.getName());
-        }
-        else {
-            btnEnter.setText(restaurant.getName()+" "+getString(R.string.get_closer));
-        }
+		final boolean inRange = PlacesUtils.IsRestaurantInRange(restaurant, mGoogleApiClient);
 
-        // Save this as currentRestaurant, we will validate it later
-        // when user clicks 'Enter here' button
+		final Button btnEnter = (Button) findViewById(R.id.btnEnter);
+		btnEnter.setText(inRange
+				? getString(R.string.enter_into) + " " + restaurant.getName()
+				: restaurant.getName()+" "+getString(R.string.get_closer));
+
         TheFoodApplication.storeCurrentRestaurant(restaurant);
     }
-
-    public void showRestaurantOnMap(Restaurant restaurant) {
-		final String placesId = restaurant.getPlacesId();
-		final Location location = Helpers.ToLocation(restaurant.getLocation());
-        Boolean newMarkerAdded = false;
-
-		if (!markerPlacesIdMap.containsKey(placesId)) {
-            Marker marker = addNewMarker(location, restaurant);
-			markerPlacesIdMap.put(restaurant.getPlacesId(), marker);
-            newMarkerAdded = true;
-		}
-
-		for (Map.Entry<String, Marker> entry : markerPlacesIdMap.entrySet()) {
-			final boolean current = entry.getKey().equals(placesId);
-			final Marker marker = entry.getValue();
-
-			if (current) {
-                if (!newMarkerAdded) {
-                    FoodAppUtils.emphasisMarker(marker, restaurant);
-                }
-			} else {
-				FoodAppUtils.lowerEmphasis(marker);
-			}
-		}
-	}
 
 	@Override
 	public void clearAllMarkers() {
@@ -417,6 +383,30 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	}
 
 	// endregion
+
+	public void showRestaurantOnMap(Restaurant restaurant) {
+		final String placesId = restaurant.getPlacesId();
+		Boolean newMarkerAdded = false;
+
+		if (!markerPlacesIdMap.containsKey(placesId)) {
+			Marker marker = addNewMarker(restaurant);
+			markerPlacesIdMap.put(restaurant.getPlacesId(), marker);
+			newMarkerAdded = true;
+		}
+
+		for (Map.Entry<String, Marker> entry : markerPlacesIdMap.entrySet()) {
+			final boolean current = entry.getKey().equals(placesId);
+			final Marker marker = entry.getValue();
+
+			if (current) {
+				if (!newMarkerAdded) {
+					FoodAppUtils.emphasisMarker(marker, restaurant);
+				}
+			} else {
+				FoodAppUtils.lowerEmphasis(marker);
+			}
+		}
+	}
 
 	public void showHideMap(MenuItem mi) {
 
@@ -440,23 +430,25 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 
 	@Override
 	public void onLocationChanged(Location location) {
-		// Report to the UI that the location was updated
-		String msg = "Updated Location: " +
-		             Double.toString(location.getLatitude()) + "," +
-		             Double.toString(location.getLongitude());
+		final String msg = "Updated Location: "
+		             + Double.toString(location.getLatitude())
+		             + ","
+		             + Double.toString(location.getLongitude());
+
 //        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 		Log.v(TAG, msg);
 
 		if (lastLocation != null
-		    && geoPointFromLocation(location)
-				       .distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.01) {
+		    && geoPointFromLocation(location).distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.01) {
 			// If the location hasn't changed by more than 10 meters, ignore it.
 			Log.v(TAG, "Ignoring minute location update");
 			return;
 		}
+
 		lastLocation = location;
 
 		LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+
 		// Update map radius indicator
 		updateCircle(myLatLng);
 	}
@@ -468,9 +460,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 		return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
 	}
 
-	/*
-		* Displays a circle on the map representing the search radius
-		*/
 	private void updateCircle(LatLng myLatLng) {
 		radius = TheFoodApplication.getSearchDistance();
 		if (mapCircle == null) {
@@ -495,17 +484,11 @@ public class PickRestaurantActivity extends ActionBarActivity implements
             Toast.makeText(this, "Please select a restaurant.", Toast.LENGTH_SHORT).show();
             return;
         }
-        // validate that this restaurant is in Range
-        if(restaurant.isInMyRange()){
-            // Restaurant is in Range, user wants to select this one.
-            // Finalize this and show next
-            startActivity(new Intent(this, RestaurantActivity.class));
-        }
-        else {
-            Toast.makeText(this, restaurant.getName()+" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
+
+        if (!PlacesUtils.IsRestaurantInRange(restaurant, mGoogleApiClient)) {
+	        Toast.makeText(this, restaurant.getName() +" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
         }
 
+	    startActivity(new Intent(this, FeedsActivity.class));
     }
-
-
 }
