@@ -119,6 +119,10 @@
             android:name=".activities.MenuActivity"
             android:label="@string/title_activity_menu" >
         </activity>
+        <activity
+            android:name=".activities.DishActivity"
+            android:label="@string/title_activity_dish" >
+        </activity>
     </application>
 
 </manifest>

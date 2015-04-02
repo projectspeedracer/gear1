@@ -28,9 +28,9 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int i) {
         if (i == 1) {
-            return "Entree";
+            return "Main";
         } else {
-            return "Main Dish";
+            return "Entree";
         }
     }
 }

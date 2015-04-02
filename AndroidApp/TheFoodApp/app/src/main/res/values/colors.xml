@@ -8,6 +8,7 @@
     <item name="twitter" type="color">#5ea9dd</item>
     <item name="white" type="color">#ffffff</item>
     <item name="button" type="color">#F57C00</item>
+    <item name="transparent" type="color">#00cc0000</item>
 
 
     <integer-array name="androidcolors">

@@ -16,7 +16,6 @@ import com.parse.ParseQuery;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.adapters.DishesAdapter;
-import com.projectspeedracer.thefoodapp.adapters.MenuArrayAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 
