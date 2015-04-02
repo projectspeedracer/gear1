@@ -24,7 +24,7 @@ import java.util.List;
 public class MenuArrayAdapter extends ArrayAdapter<Dish> {
 
     public MenuArrayAdapter(Context context, List<Dish> objects) {
-        super(context, R.layout.item_menu, objects);
+        super(context, R.layout.item_dish, objects);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class MenuArrayAdapter extends ArrayAdapter<Dish> {
         ImageView ivMenuItem;
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_menu, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_dish, parent, false);
         }
         Dish dish = (Dish) getItem(position);
 

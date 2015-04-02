@@ -489,6 +489,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	        Toast.makeText(this, restaurant.getName() +" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
         }
 
-	    startActivity(new Intent(this, FeedsActivity.class));
+	    startActivity(new Intent(this, RestaurantActivity.class));
     }
 }
