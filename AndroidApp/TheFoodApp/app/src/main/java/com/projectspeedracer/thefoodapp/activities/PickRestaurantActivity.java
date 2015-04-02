@@ -51,30 +51,17 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         GoogleApiClient.OnConnectionFailedListener,
 		RestaurantListFragment.RestaurantPickListener {
 
-	public static GoogleApiClient mGoogleApiClient;
-
-	private SupportMapFragment mapFragment;
-	private GoogleMap map;
-	private HashMap<String, Marker> markerPlacesIdMap = new HashMap<>();
-
-    RestaurantListFragment listRestaurantFragment;
-
 	public static final String TAG = Constants.TAG;
 
-    // Represents the circle around a map
-    private Circle mapCircle;
+	public static GoogleApiClient mGoogleApiClient;
 
-    Location lastLocation;
+	private HashMap<String, Marker> markerPlacesIdMap = new HashMap<>();
+	private RestaurantListFragment listRestaurantFragment;
+	private SupportMapFragment mapFragment;
+	private Circle mapCircle;
+	private GoogleMap map;
 
-    // Fields for the map radius in feet
-    private float radius;
-
-    // Conversion from feet to meters
-    private static final float METERS_PER_FEET = 0.3048f;
-
-    // Conversion from kilometers to meters
-    private static final int METERS_PER_KILOMETER = 1000;
-
+    private Location lastLocation;
 
     /*
 	 * Define a request code to send to Google Play services This code is
@@ -106,8 +93,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         ft.replace(R.id.listFragmentHolder, listRestaurantFragment);
         ft.hide(mapFragment);
         ft.commit();
-
-        radius = TheFoodApplication.getSearchDistance();
     }
 
     /*
@@ -138,10 +123,8 @@ public class PickRestaurantActivity extends ActionBarActivity implements
     protected void onResume() {
         super.onResume();
 
-
-        // Get the latest search distance preference
-        radius = TheFoodApplication.getSearchDistance();
-        // Checks the last saved location to show cached data if it's available. todo: use lastLocation
+        // Checks the last saved location to show cached data if it's available.
+        // TODO: use lastLocation
 
         // Checks the last saved location to show cached data if it's available
         if (lastLocation != null) {
@@ -430,16 +413,15 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 
 	@Override
 	public void onLocationChanged(Location location) {
-		final String msg = "Updated Location: "
-		             + Double.toString(location.getLatitude())
-		             + ","
-		             + Double.toString(location.getLongitude());
 
-//        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-		Log.v(TAG, msg);
+		Log.v(TAG, String.format("Updated Location: %f, %f", location.getLatitude(), location.getLongitude()));
 
-		if (lastLocation != null
-		    && geoPointFromLocation(location).distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.01) {
+		final ParseGeoPoint currentPoint = Helpers.ToParseGeoPoint(location);
+		final double distance = lastLocation == null
+				? 0
+				: currentPoint.distanceInKilometersTo(Helpers.ToParseGeoPoint(lastLocation));
+
+		if (distance < 0.01) {
 			// If the location hasn't changed by more than 10 meters, ignore it.
 			Log.v(TAG, "Ignoring minute location update");
 			return;
@@ -447,38 +429,31 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 
 		lastLocation = location;
 
-		LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-		// Update map radius indicator
-		updateCircle(myLatLng);
-	}
-
-	/*
-	 * Helper method to get the Parse GEO point representation of a location
-	 */
-	private ParseGeoPoint geoPointFromLocation(Location loc) {
-		return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+		updateCircle(new LatLng(location.getLatitude(), location.getLongitude()));
 	}
 
 	private void updateCircle(LatLng myLatLng) {
-		radius = TheFoodApplication.getSearchDistance();
+		final double radius = TheFoodApplication.getSearchDistance();
+
 		if (mapCircle == null) {
-			mapCircle =
-					mapFragment.getMap().addCircle(
-							new CircleOptions().center(myLatLng).radius(radius * METERS_PER_FEET));
-			int baseColor = Color.DKGRAY;
-			mapCircle.setStrokeColor(baseColor);
+			final int fillColor = Color.argb(50,
+					Color.red(Color.DKGRAY),
+					Color.green(Color.DKGRAY),
+					Color.blue(Color.DKGRAY));
+
+			final CircleOptions circleOptions = new CircleOptions().center(myLatLng).radius(radius * Constants.METERS_PER_FEET);
+			mapCircle = mapFragment.getMap().addCircle(circleOptions);
+			mapCircle.setStrokeColor(Color.DKGRAY);
 			mapCircle.setStrokeWidth(2);
-			mapCircle.setFillColor(Color.argb(50, Color.red(baseColor), Color.green(baseColor),
-					Color.blue(baseColor)));
+			mapCircle.setFillColor(fillColor);
 		}
+
 		mapCircle.setCenter(myLatLng);
-		mapCircle.setRadius(radius * METERS_PER_FEET); // Convert radius in feet to meters.
+		mapCircle.setRadius(radius * Constants.METERS_PER_FEET); // Convert radius in feet to meters.
 	}
 
-    // onClick for Enter in restaurant button (btnEnter)
     public void onPickRestaurant(View v) {
-        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
+        final Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
 
         if (restaurant == null) {
             Toast.makeText(this, "Please select a restaurant.", Toast.LENGTH_SHORT).show();

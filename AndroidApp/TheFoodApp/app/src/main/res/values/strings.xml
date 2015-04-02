@@ -23,5 +23,6 @@
     <string name="title_activity_restaurant">Restaurant</string>
     <string name="image_missing">image_missing</string>
     <string name="title_activity_menu">MenuActivity</string>
+    <string name="sample_address">1600 Amphitheatre Pkwy, Mountain View, CA</string>
 
 </resources>

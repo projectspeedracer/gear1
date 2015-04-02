@@ -33,9 +33,14 @@ public class Helpers {
         if (pgp == null) {
             return null;
         }
+
 		final Location location = new Location("");
 		location.setLatitude(pgp.getLatitude());
 		location.setLongitude(pgp.getLongitude());
 		return location;
+	}
+
+	public static ParseGeoPoint ToParseGeoPoint(Location location) {
+		return new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 	}
 }

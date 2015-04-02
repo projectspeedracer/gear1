@@ -23,7 +23,7 @@ public class TheFoodApplication extends Application {
 
 	public static final String GOOGLE_API_KEY = "AIzaSyD6UJCC4Ey_VdaWqVB-AVEdur7_yu-cAyM"; // server key - works
 
-	private static final float DEFAULT_SEARCH_DISTANCE = 500.0f * 1000; // in feet
+	public static final float DEFAULT_SEARCH_DISTANCE = 500.0f * 100000; // in feet
 
 	public static final Boolean isLocal = true; // true for testing
 
