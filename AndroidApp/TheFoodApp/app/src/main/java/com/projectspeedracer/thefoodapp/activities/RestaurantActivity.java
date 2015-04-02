@@ -1,9 +1,11 @@
 package com.projectspeedracer.thefoodapp.activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.projectspeedracer.thefoodapp.R;
 
@@ -36,5 +38,13 @@ public class RestaurantActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onOpenMenu(View v) {
+
+        Intent i = new Intent(RestaurantActivity.this, MenuActivity.class);
+        startActivity(i);
+
+
     }
 }
