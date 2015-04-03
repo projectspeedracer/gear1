@@ -23,7 +23,7 @@ public class TheFoodApplication extends Application {
 
 	public static final String GOOGLE_API_KEY = "AIzaSyD6UJCC4Ey_VdaWqVB-AVEdur7_yu-cAyM"; // server key - works
 
-	public static final float DEFAULT_SEARCH_DISTANCE = 500.0f * 100000; // in feet
+	public static final float DEFAULT_SEARCH_DISTANCE = 500.0f; // in feet
 
 	public static final Boolean isLocal = true; // true for testing
 
@@ -77,6 +77,8 @@ public class TheFoodApplication extends Application {
 	public static void storeCurrentRestaurant(final Restaurant restaurant) {
 		final Restaurant local = restaurant;
 
+        //save unconditionally !!!
+        currentRestaurant = restaurant;
 		// TODO: Start progress overlay !!!
 
 		final ParseQuery<Restaurant> query = ParseQuery.getQuery(Restaurant.class);
@@ -98,7 +100,6 @@ public class TheFoodApplication extends Application {
 				Log.i(Constants.TAG, msg);
 
 				if (restaurantExists) {
-					currentRestaurant = local;
 					return;
 				}
 
@@ -107,7 +108,6 @@ public class TheFoodApplication extends Application {
 					public void done(ParseException e) {
 						Log.i(Constants.TAG, "Restaurant save callback: " + (e != null ? "FAILED!" : "SUCCESS"));
 						// TODO: Remove progress overlay !!!
-						currentRestaurant = e == null ? local : null;
 					}
 				});
 			}

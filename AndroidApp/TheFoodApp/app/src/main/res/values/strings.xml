@@ -25,5 +25,6 @@
     <string name="title_activity_menu">Restaurant Menu</string>
     <string name="sample_address">1600 Amphitheatre Pkwy, Mountain View, CA</string>
     <string name="title_activity_dish">DishActivity</string>
+    <string name="search_hint">e.g. Panera bread, tacos</string>
 
 </resources>

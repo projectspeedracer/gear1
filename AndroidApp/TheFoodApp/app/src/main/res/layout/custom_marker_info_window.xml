@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/tv_info_window_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ff669900"
+        android:text="Marker"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:layout_marginRight="10dp"
+        android:textSize="18dp" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="30dp"
+        android:id="@+id/ivEnter"
+        android:src="@drawable/ic_enter_door" />
+
+
+</LinearLayout>
