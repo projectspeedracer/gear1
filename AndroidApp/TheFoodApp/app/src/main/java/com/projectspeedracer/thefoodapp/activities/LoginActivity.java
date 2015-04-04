@@ -22,7 +22,9 @@ import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.utils.Constants;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -262,6 +264,11 @@ public class LoginActivity extends ActionBarActivity {
 
     private void saveAppUserName(String userName) {
         ParseUser.getCurrentUser().put("appUserName", userName);
-        ParseUser.getCurrentUser().saveInBackground();
+        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.i(Constants.TAG, e==null?"Login Success":e.getMessage());
+            }
+        });
     }
 }

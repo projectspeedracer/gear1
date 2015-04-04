@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.adapters.ViewPagerAdapter;
@@ -77,6 +79,10 @@ public class MenuActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onRatingClick(View view) {
+        Toast.makeText(this, "Touched Rating..", Toast.LENGTH_SHORT).show();
     }
 
 }

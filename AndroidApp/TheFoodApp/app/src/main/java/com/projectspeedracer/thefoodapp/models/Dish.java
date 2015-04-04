@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 @ParseClassName("Dishes")
-public class Dish extends ParseObject {
+public class Dish extends ParseObject  {
 	public static final String ENABLED  = "1";
 	public static final String DISABLED = "0";
 

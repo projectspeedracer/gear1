@@ -1,7 +1,9 @@
 package com.projectspeedracer.thefoodapp.models;
 
 import com.parse.ParseClassName;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
 @ParseClassName("Ratings")
@@ -17,6 +19,40 @@ public class Rating extends ParseObject {
 	public void setId(int rid) {
 		put(Fields.ID, rid);
 	}
+
+    public Dish getDish() {
+        // expects 'include("dish")' to be done in initial query
+        return (Dish) getParseObject(Fields.DISH);
+    }
+
+    public void setDish(Dish dish) {
+        put(Fields.DISH, dish);
+    }
+
+    public Restaurant getRestaurant() {
+        // expects 'include("restaurants")' to be done in initial query
+        return (Restaurant) getParseObject(Fields.RESTAURANT);
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        put(Fields.RESTAURANT, restaurant);
+    }
+
+    public ParseUser getUser() {
+        return getParseUser(Fields.USER);
+    }
+
+    public void setUser(ParseUser user) {
+        put(Fields.USER, user);
+    }
+
+    public ParseGeoPoint getLocation() {
+        return getParseGeoPoint(Fields.LOCATION);
+    }
+
+    public void setLocation(ParseGeoPoint location) {
+        put(Fields.LOCATION, location);
+    }
 
 	public int getHostId() {
 		return getInt(Fields.HOST_ID);
@@ -48,8 +84,8 @@ public class Rating extends ParseObject {
 	}
 
 	public void setStars(int stars) {
-		if (stars < -1) { stars = -1; }
-		if (stars > 1) { stars = 1; }
+//		if (stars < -1) { stars = -1; }
+//		if (stars > 1) { stars = 1; }
 
 		put(Fields.STARS, stars);
 	}
@@ -91,5 +127,9 @@ public class Rating extends ParseObject {
 		public static final String COMMENTS  = "COMMENTS";
 		public static final String HOST_ID   = "restaurant_id";
 		public static final String HOST_TYPE = "host_type";
+        public static final String DISH       = "dish";
+        public static final String RESTAURANT = "restaurant";
+        public static final String USER       = "user";
+        public static final String LOCATION   = "location";
 	}
 }

@@ -55,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:text="Avocado Mexican Dipping Sauce"
                 android:id="@+id/tvMenuItemDescription"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:maxWidth="250dp"
@@ -63,15 +64,5 @@
                 android:id="@+id/tvDishRating"/>
 
         </LinearLayout>
-=======
-        android:id="@+id/tvName"
-        android:text="@string/sample_address"
-        android:textStyle="bold"
-        android:layout_toRightOf="@+id/ivDish"
-        android:layout_alignTop="@+id/ivDish"
-        android:paddingLeft="3dp"
-        android:paddingRight="1dp" />
->>>>>>> origin/master
-
     </LinearLayout>
 </RelativeLayout>

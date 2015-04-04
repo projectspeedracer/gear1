@@ -11,9 +11,12 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.parse.GetCallback;
+import com.parse.ParseQuery;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.fragments.AppDialogFragment;
+import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
 /**
@@ -92,5 +95,10 @@ public class FoodAppUtils {
         marker.setTitle(restaurant.getName());
         marker.showInfoWindow();
         marker.setAlpha(1);
+    }
+
+    public static void getDishFromObjectID(String dishObjectId, GetCallback callback) {
+        ParseQuery query = new ParseQuery(Dish.class);
+        query.getInBackground(dishObjectId, callback);
     }
 }
