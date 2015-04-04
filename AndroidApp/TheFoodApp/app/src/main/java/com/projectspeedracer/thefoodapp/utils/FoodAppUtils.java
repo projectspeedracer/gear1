@@ -21,13 +21,8 @@ import com.projectspeedracer.thefoodapp.models.Restaurant;
  */
 public class FoodAppUtils {
 
-    // Conversion from meters to mi
-    private static final double MILES_PER_METER = 0.000621371192;
-    // Conversion from feet to meters
-    private static final float METERS_PER_FEET = 0.3048f;
-
     public static String getShortDistance (Float distance) {
-        Double distanceMi = distance * MILES_PER_METER; // converting to float
+        Double distanceMi = distance * Constants.MILES_PER_METER; // converting to float
         distanceMi = Math.round(distanceMi * 100.0) / 100.0;
         String distanceStr = Double.toString(distanceMi);
         String distanceShort;
@@ -50,15 +45,6 @@ public class FoodAppUtils {
         }
 
         return distanceShort;
-    }
-
-    public static Boolean isInRange(Location myLocation, Location placeLocation) {
-        if (myLocation == null || placeLocation == null) {
-            return false;
-        }
-        float distance = myLocation.distanceTo(placeLocation); // in meters
-        float radius = TheFoodApplication.getSearchDistance();
-	    return (radius * METERS_PER_FEET) >= distance;
     }
 
     public static boolean isGooglePlayServicesAvailable(FragmentActivity activity, int RESULT_CODE, Activity a) {

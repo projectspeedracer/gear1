@@ -1,9 +1,22 @@
 package com.projectspeedracer.thefoodapp.utils;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.location.Location;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
+import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
+import com.projectspeedracer.thefoodapp.fragments.AppDialogFragment;
 import com.projectspeedracer.thefoodapp.models.GPlacesResponse;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
@@ -16,22 +29,56 @@ import java.util.List;
 
 public class PlacesUtils {
 
+	public static boolean IsRestaurantInRange(Restaurant restaurant, GoogleApiClient client) {
+		return IsInRange(GetCurrentLocation(client), Helpers.ToLocation(restaurant.getLocation()));
+	}
+
 	public static Location GetCurrentLocation(GoogleApiClient client) {
 		assert client != null : "Expected non-null GoogleApiClient instance";
-        Location location = LocationServices.FusedLocationApi.getLastLocation(client);
-        if (location == null) {
-//            Toast.makeText(this, "Current location was not available, please enable location services.", Toast.LENGTH_SHORT).show();
-            return null;
-        }
-
-        return location;
+		return LocationServices.FusedLocationApi.getLastLocation(client);
 	}
 
-	public static boolean IsRestaurantInRange(Restaurant restaurant, GoogleApiClient client) {
-		return FoodAppUtils.isInRange(GetCurrentLocation(client), Helpers.ToLocation(restaurant.getLocation()));
+	public static boolean IsInRange(Location myLocation, Location destination) {
+		if (myLocation == null || destination == null) { return false; }
+
+		final float distance = myLocation.distanceTo(destination); // in meters
+		final float radius = TheFoodApplication.getSearchDistance();
+		return (radius * Constants.METERS_PER_FEET) >= distance;
 	}
 
-	public static ArrayList<Restaurant> ToRestaurants(JSONArray results) {
+	public static void SetMarkerStyle(Marker marker, String title, float colorHue) {
+		final BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(colorHue);
+		SetMarkerStyle(marker, title, markerIcon, 1);
+	}
+
+	public static void SetMarkerStyle(Marker marker, String title, float colorHue, float alpha) {
+		final BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(colorHue);
+		SetMarkerStyle(marker, title, markerIcon, alpha);
+	}
+
+	public static void SetMarkerStyle(Marker marker, String title, BitmapDescriptor markerIcon, float alpha) {
+		assert marker != null : "Expected non-null Marker object";
+
+		marker.setIcon(markerIcon);
+		marker.setAlpha(alpha);
+
+		if (title != null) {
+			marker.setTitle(title);
+			marker.showInfoWindow();
+		}
+	}
+
+	public static void HighlightRestaurantMarker(Marker marker, Restaurant restaurant) {
+		final boolean inRange = PlacesUtils.IsRestaurantInRange(restaurant, PickRestaurantActivity.mGoogleApiClient);
+		final float colorHue = inRange ? BitmapDescriptorFactory.HUE_GREEN : BitmapDescriptorFactory.HUE_RED;
+		SetMarkerStyle(marker, restaurant.getName(), colorHue);
+	}
+
+	public static void LowlightRestaurantMarker(Marker marker) {
+		SetMarkerStyle(marker, null, BitmapDescriptorFactory.HUE_BLUE, 0.5f);
+	}
+
+	/*public static ArrayList<Restaurant> ToRestaurants(JSONArray results) {
 		ArrayList<Restaurant> restaurants = new ArrayList<>();
 		try {
 			for (int i = 0; i < results.length(); i++) {
@@ -71,5 +118,5 @@ public class PlacesUtils {
 		}
 
 		return restaurant;
-	}
+	}*/
 }

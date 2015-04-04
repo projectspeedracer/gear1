@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
@@ -60,9 +61,15 @@ public class RestaurantsArrayAdapter extends ArrayAdapter<Restaurant> {
 		final Location location = Helpers.ToLocation(restaurant.getLocation());
 
 		if (location != null) {
-			Float distance = PlacesUtils.GetCurrentLocation(PickRestaurantActivity.mGoogleApiClient).distanceTo(location);
-			String distanceShort = FoodAppUtils.getShortDistance(distance);
-			tvDistance.setText(distanceShort + " mi");
+			final Location currentLocation = PlacesUtils.GetCurrentLocation(PickRestaurantActivity.mGoogleApiClient);
+
+			if (currentLocation == null) {
+				Toast.makeText(getContext(), "Current location was not available, please enable location services.", Toast.LENGTH_SHORT).show();
+			} else {
+				Float distance = currentLocation.distanceTo(location);
+				String distanceShort = FoodAppUtils.getShortDistance(distance);
+				tvDistance.setText(distanceShort + " mi");
+			}
 		}
 
         /*tvRestaurantRating = (TextView) convertView.findViewById(R.id.tvRestaurantRating);
