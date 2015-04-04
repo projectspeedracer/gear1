@@ -10,7 +10,7 @@
     <item name="hint" type="color">#888888</item>
     <item name="button" type="color">#F57C00</item>
     <item name="transparent" type="color">#00cc0000</item>
-
+    <color name="tabs_scroll_color">#ffffffff</color>
 
     <integer-array name="androidcolors">
         <item>@color/primary</item>
