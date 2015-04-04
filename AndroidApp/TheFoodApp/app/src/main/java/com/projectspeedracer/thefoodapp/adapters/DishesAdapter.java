@@ -32,6 +32,18 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 		final TextView tvName = (TextView) convertView.findViewById(R.id.tvMenuItemName);
 		tvName.setText(dish.getName());
 
+        /*final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
+        ratingBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Log.i("Rating", "Rating bar touched");
+                }
+                return true;
+            }
+        });
+
+*/
 		final String image = dish.getImage();
 
 		if (image != null) {
