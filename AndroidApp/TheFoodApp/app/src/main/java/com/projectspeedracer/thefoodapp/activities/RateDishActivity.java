@@ -1,40 +1,25 @@
 package com.projectspeedracer.thefoodapp.activities;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.projectspeedracer.thefoodapp.R;
-import com.projectspeedracer.thefoodapp.TheFoodApplication;
-import com.projectspeedracer.thefoodapp.models.Restaurant;
 
-public class RestaurantActivity extends ActionBarActivity {
+public class RateDishActivity extends ActionBarActivity {
 
-    Restaurant restaurant;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant);
-
+        setContentView(R.layout.activity_rate_dish);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        restaurant = TheFoodApplication.getCurrentRestaurant();
-
-        TextView tvName = (TextView) findViewById(R.id.tvName);
-        tvName.setText(restaurant.getName());
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_restaurant, menu);
+        getMenuInflater().inflate(R.menu.menu_rate_dish, menu);
         return true;
     }
 
@@ -51,10 +36,5 @@ public class RestaurantActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onOpenMenu(View v) {
-        Intent i = new Intent(RestaurantActivity.this, MenuActivity.class);
-        startActivity(i);
     }
 }

@@ -4,7 +4,6 @@ import android.location.Location;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.models.GPlacesResponse;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
@@ -19,7 +18,13 @@ public class PlacesUtils {
 
 	public static Location GetCurrentLocation(GoogleApiClient client) {
 		assert client != null : "Expected non-null GoogleApiClient instance";
-		return LocationServices.FusedLocationApi.getLastLocation(client);
+        Location location = LocationServices.FusedLocationApi.getLastLocation(client);
+        if (location == null) {
+//            Toast.makeText(this, "Current location was not available, please enable location services.", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        return location;
 	}
 
 	public static boolean IsRestaurantInRange(Restaurant restaurant, GoogleApiClient client) {

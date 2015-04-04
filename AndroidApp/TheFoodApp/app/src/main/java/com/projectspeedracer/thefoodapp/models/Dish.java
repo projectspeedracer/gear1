@@ -13,7 +13,11 @@ public class Dish extends ParseObject {
 	public static final String ENABLED  = "1";
 	public static final String DISABLED = "0";
 
-	private List<Rating> ratings = new ArrayList<>();
+    // public default. do not modify fields here
+    public Dish() {
+    }
+
+    private List<Rating> ratings = new ArrayList<>();
 
 	public void setRatings(Rating... ratings) {
 		Collections.addAll(this.ratings, ratings);

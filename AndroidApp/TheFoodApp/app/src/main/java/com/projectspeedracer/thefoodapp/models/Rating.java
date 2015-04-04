@@ -7,7 +7,10 @@ import com.projectspeedracer.thefoodapp.utils.Helpers;
 @ParseClassName("Ratings")
 public class Rating extends ParseObject {
 
-	public int getId() {
+    public Rating() {
+    }
+
+    public int getId() {
 		return getInt(Fields.ID);
 	}
 

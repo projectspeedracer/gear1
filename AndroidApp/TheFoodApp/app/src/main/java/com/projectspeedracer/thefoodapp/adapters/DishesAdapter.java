@@ -29,13 +29,13 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 
 		final Dish dish = getItem(position);
 
-		final TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
+		final TextView tvName = (TextView) convertView.findViewById(R.id.tvMenuItemName);
 		tvName.setText(dish.getName());
 
 		final String image = dish.getImage();
 
 		if (image != null) {
-			final ImageView ivDish = (ImageView) convertView.findViewById(R.id.ivDish);
+			final ImageView ivDish = (ImageView) convertView.findViewById(R.id.ivMenuItem);
 
 			ivDish.setImageResource(0);
 

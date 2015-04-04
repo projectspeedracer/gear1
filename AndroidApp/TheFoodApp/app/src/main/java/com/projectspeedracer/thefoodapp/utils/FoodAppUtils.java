@@ -3,14 +3,10 @@ package com.projectspeedracer.thefoodapp.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.location.Location;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -57,6 +53,9 @@ public class FoodAppUtils {
     }
 
     public static Boolean isInRange(Location myLocation, Location placeLocation) {
+        if (myLocation == null || placeLocation == null) {
+            return false;
+        }
         float distance = myLocation.distanceTo(placeLocation); // in meters
         float radius = TheFoodApplication.getSearchDistance();
 	    return (radius * METERS_PER_FEET) >= distance;

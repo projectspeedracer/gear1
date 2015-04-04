@@ -1,6 +1,5 @@
 package com.projectspeedracer.thefoodapp.fragments;
 
-import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,10 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -40,7 +36,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 	private static final String TAG = Constants.TAG;
 
-	private EditText                etSearch;
+
 	private RestaurantsArrayAdapter aRestaurants;
 	private RestaurantPickListener listener;
 
@@ -49,12 +45,11 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 		final View view = inflater.inflate(R.layout.fragment_list_restaurant, container, false);
 
-		etSearch = (EditText) view.findViewById(R.id.etSearch);
 		ListView lvResults = (ListView) view.findViewById(R.id.lvResults);
 
 		listener = (RestaurantPickListener) getActivity();
 
-		ArrayList<Restaurant> listRestaurants = new ArrayList<>();
+		final ArrayList<Restaurant> listRestaurants = new ArrayList<>();
 		aRestaurants = new RestaurantsArrayAdapter(getActivity(), listRestaurants);
 		lvResults.setAdapter(aRestaurants);
 		lvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -63,23 +58,28 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 				final Restaurant restaurant = aRestaurants.getItem(position);
 				//Toast.makeText(getActivity(), "Picked - " + restaurant.getName(), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Selected - "+restaurant.getName());
-				listener.restaurantSelected(restaurant);
+//				listener.restaurantSelected(restaurant);
+                listener.onPickRestaurant(restaurant);
 			}
 		});
 
-		Button b = (Button) view.findViewById(R.id.btnSearch);
-		b.setOnClickListener(this);
 
 		//radius = TheFoodApplication.getSearchDistance();
 
 		return view;
 	}
 
-	public void loadRestaurantList() {
-		final String searchText = etSearch.getText().toString();
+	public void loadRestaurantList(String searchText) {
 		final String searchQ = searchText.isEmpty() ? "restaurants" : searchText;
 
+
 		Location location = PlacesUtils.GetCurrentLocation(PickRestaurantActivity.mGoogleApiClient);
+        if (location == null) {
+            Toast.makeText(getActivity(),
+                           "Current location was not available, please enable location services.",
+                           Toast.LENGTH_SHORT).show();
+            return;
+        }
 		String currLongitude = Double.toString(location.getLongitude());
 		String currLatitude = Double.toString(location.getLatitude());
 		String locationQ = currLatitude + "," + currLongitude;
@@ -94,9 +94,6 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 		Log.v(Constants.TAG, "Getting restaurant details - " + places_search_q);
 
 		listener.clearAllMarkers();
-
-		InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 
 		if (TheFoodApplication.isLocal) {
 			// For testing
@@ -153,7 +150,9 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 				restaurant.setPlacesId(placeId);
 
 				aRestaurants.add(restaurant);
+
 			}
+
 
 			fetchUpdatePlaceDetails();
 		} catch (JSONException e) {
@@ -175,9 +174,8 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 		for (int i = 0; i < aRestaurants.getCount(); i++) {
 			final Restaurant restaurant = aRestaurants.getItem(i);
 			fetchUpdatePlace(restaurant);
-		}
 
-		aRestaurants.notifyDataSetChanged();
+		}
 
 		Log.i(TAG, "fetchUpdatePlaceDetails: " + aRestaurants.getCount() + "restaurants (counter=)" + counter);
 	}
@@ -198,6 +196,12 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 					final JSONObject result = response.getJSONObject(GPlacesResponse.Fields.RESULT);
 					final GPlacesResponse gpr = new GPlacesResponse(result);
 					restaurant.update(gpr);
+                    // show immediately on map
+                    listener.restaurantSelected(restaurant);
+                    if (aRestaurants.getItem(0) != null) {
+                        // Keep 1st one selected
+                        listener.restaurantSelected(aRestaurants.getItem(0));
+                    }
                     aRestaurants.notifyDataSetChanged();
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -234,27 +238,29 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 				final GPlacesResponse gpr = new GPlacesResponse(result);
 				final Restaurant restaurant = new Restaurant(gpr);
 				aRestaurants.add(restaurant);
+                listener.restaurantSelected(restaurant);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 
 			aRestaurants.notifyDataSetChanged();
 		}
+        if (aRestaurants.getItem(0) != null) {
+            // Keep 1st one selected
+            listener.restaurantSelected(aRestaurants.getItem(0));
+        }
 
 		Log.i(TAG, "loadDummy: " + listRestaurants.size() + "restaurants (counter=)" + counter);
 	}
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.btnSearch:
-				loadRestaurantList();
-				break;
-		}
+
 	}
 
 	public interface RestaurantPickListener {
 		public void restaurantSelected(Restaurant restaurant);
 		public void clearAllMarkers();
+        public void onPickRestaurant(Restaurant restaurant);
 	}
 }

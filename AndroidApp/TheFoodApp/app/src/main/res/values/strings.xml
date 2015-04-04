@@ -22,7 +22,10 @@
     <string name="pick_it">Pick a restaurant</string>
     <string name="title_activity_restaurant">Restaurant</string>
     <string name="image_missing">image_missing</string>
-    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_menu">Restaurant Menu</string>
     <string name="sample_address">1600 Amphitheatre Pkwy, Mountain View, CA</string>
+    <string name="title_activity_dish">DishActivity</string>
+    <string name="search_hint">e.g. Panera bread, tacos</string>
+    <string name="title_activity_rate_dish">RateDishActivity</string>
 
 </resources>

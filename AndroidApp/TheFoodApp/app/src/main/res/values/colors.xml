@@ -7,8 +7,10 @@
     <item name="facebook" type="color">#3b579d</item>
     <item name="twitter" type="color">#5ea9dd</item>
     <item name="white" type="color">#ffffff</item>
+    <item name="hint" type="color">#888888</item>
     <item name="button" type="color">#F57C00</item>
-
+    <item name="transparent" type="color">#00cc0000</item>
+    <color name="tabs_scroll_color">#ffffffff</color>
 
     <integer-array name="androidcolors">
         <item>@color/primary</item>

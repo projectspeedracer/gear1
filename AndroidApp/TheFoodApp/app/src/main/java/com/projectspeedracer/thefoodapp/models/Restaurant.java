@@ -5,8 +5,6 @@ import android.location.Location;
 import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
-import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
-import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
 import java.util.ArrayList;
@@ -17,6 +15,7 @@ public class Restaurant extends ParseObject {
 
 	private List<Rating> ratings = new ArrayList<>();
 
+    // public default. do not modify fields here
 	public Restaurant() {
 	}
 
