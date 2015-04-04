@@ -13,6 +13,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseTwitterUtils;
 import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 
@@ -43,6 +44,7 @@ public class TheFoodApplication extends Application {
 		super.onCreate();
 
 		ParseObject.registerSubclass(Dish.class);
+        ParseObject.registerSubclass(Rating.class);
 		ParseObject.registerSubclass(Restaurant.class);
 
 		initializeParse();
@@ -83,11 +85,19 @@ public class TheFoodApplication extends Application {
 
 		final ParseQuery<Restaurant> query = ParseQuery.getQuery(Restaurant.class);
 		query.whereEqualTo(Restaurant.Fields.PLACES_ID, restaurant.getPlacesId());
+        Log.i(Constants.TAG, "Sending out query for Restaurant "+ restaurant.getName()
+                + "Field: " + Restaurant.Fields.PLACES_ID
+                                + " Value: "+restaurant.getPlacesId());
 
 		query.getFirstInBackground(new GetCallback<Restaurant>() {
 			@Override
 			public void done(Restaurant r, ParseException e) {
-				final boolean restaurantExists = r != null && e == null;
+				final boolean restaurantExists = (r != null);
+
+                if (r != null && e != null){
+                    // some interesting error
+                    e.printStackTrace();
+                }
 
 				final String name = restaurantExists ? r.getName() : local.getName();
 				final String id = restaurantExists ? r.getPlacesId() : local.getPlacesId();
@@ -106,7 +116,9 @@ public class TheFoodApplication extends Application {
 				local.saveInBackground(new SaveCallback() {
 					@Override
 					public void done(ParseException e) {
-						Log.i(Constants.TAG, "Restaurant save callback: " + (e != null ? "FAILED!" : "SUCCESS"));
+						Log.i(Constants.TAG, "Restaurant save callback: "
+                                + (e != null ? "FAILED!" : "SUCCESS")
+                                + " . Name: " + local.getName() + " Id: " + local.getPlacesId());
 						// TODO: Remove progress overlay !!!
 					}
 				});
