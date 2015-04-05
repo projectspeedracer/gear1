@@ -283,7 +283,6 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 				Log.i(TAG, String.format("[loadOfflineRestaurantsData] Loaded data for restaurant: %s", restaurant.getName()));
 
-				listRestaurants.add(restaurant);
 				restaurantsAdapter.add(restaurant);
 				listener.restaurantSelected(restaurant, false);
 			} catch (JSONException e) {

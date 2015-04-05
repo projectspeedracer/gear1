@@ -19,6 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 public class Helpers {
+
+	public static void EnsureTruth(boolean condition, String message) {
+		if (!condition) {
+			throw new IllegalStateException(message);
+		}
+	}
+
 	public static <T> void EnsureNotNull(T obj, String message) {
 		if (obj == null) {
 			throw new NullPointerException(message);

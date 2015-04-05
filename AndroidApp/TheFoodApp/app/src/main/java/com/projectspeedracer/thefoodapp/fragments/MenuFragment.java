@@ -38,15 +38,18 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	protected ArrayList<Dish> dishes = new ArrayList<>();
 	protected DishesAdapter dishesAdapter;
+	protected final String category;
 
 	public MenuFragment() {
 		super();
+		this.category = Constants.DEFAULT_DISH_CATEGORY;
 	}
 
-	public MenuFragment(List<Dish> dishes) {
+	public MenuFragment(List<Dish> dishes, String category) {
 		super();
 		this.dishes.clear();
 		this.dishes.addAll(dishes);
+		this.category = category;
 	}
 
 	@Override
