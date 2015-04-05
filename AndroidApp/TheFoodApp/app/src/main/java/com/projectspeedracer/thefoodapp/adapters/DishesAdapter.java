@@ -1,9 +1,7 @@
 package com.projectspeedracer.thefoodapp.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -38,10 +36,10 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 		tvName.setText(dish.getName());
 
         final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
-        tvDishRating.setText(String.valueOf(dish.getStarAverage()));
+        tvDishRating.setText(String.valueOf(dish.getAverageRating()));
 
         final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
-        ratingBar.setRating(dish.getStarAverage());
+        ratingBar.setRating(dish.getAverageRating());
         /*ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

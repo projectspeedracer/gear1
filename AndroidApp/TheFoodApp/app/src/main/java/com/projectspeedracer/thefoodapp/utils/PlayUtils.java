@@ -23,8 +23,16 @@ public class PlayUtils {
 		this.apiKey = apiKey;
 	}
 
-	public String getPlacesPhotoUriBase() {
-		return PHOTOS_URL_BASE + apiKey + "&photoreference=";
+	public String getPlacesPhotoUri(String imageName) {
+		return PHOTOS_URL_BASE + apiKey + "&photoreference=" + imageName;
+	}
+
+	public String getSearchAreaUri(String location, String searchTerm) {
+		return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
+		       + location
+		       + "&key=" + TheFoodApplication.getGoogleApiKey()
+		       + "&keyword=" + searchTerm
+		       + "&rankby=distance";
 	}
 
 	public static int isGooglePlayServicesAvailable(FragmentActivity activity) {

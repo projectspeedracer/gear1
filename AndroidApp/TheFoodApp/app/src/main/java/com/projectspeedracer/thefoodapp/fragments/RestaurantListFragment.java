@@ -36,7 +36,6 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 	private static final String TAG = Constants.TAG;
 
-
 	private RestaurantsArrayAdapter aRestaurants;
 	private RestaurantPickListener listener;
 
@@ -45,26 +44,21 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 		final View view = inflater.inflate(R.layout.fragment_list_restaurant, container, false);
 
-		ListView lvResults = (ListView) view.findViewById(R.id.lvResults);
-
 		listener = (RestaurantPickListener) getActivity();
 
 		final ArrayList<Restaurant> listRestaurants = new ArrayList<>();
 		aRestaurants = new RestaurantsArrayAdapter(getActivity(), listRestaurants);
+
+		final ListView lvResults = (ListView) view.findViewById(R.id.lvResults);
 		lvResults.setAdapter(aRestaurants);
 		lvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				final Restaurant restaurant = aRestaurants.getItem(position);
-				//Toast.makeText(getActivity(), "Picked - " + restaurant.getName(), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Selected - "+restaurant.getName());
-//				listener.restaurantSelected(restaurant);
                 listener.onPickRestaurant(restaurant);
 			}
 		});
-
-
-		//radius = TheFoodApplication.getSearchDistance();
 
 		return view;
 	}
@@ -72,14 +66,22 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 	public void loadRestaurantList(String searchText) {
 		final String searchQ = searchText.isEmpty() ? "restaurants" : searchText;
 
+		final Location location = PlacesUtils.GetCurrentLocation(PickRestaurantActivity.mGoogleApiClient);
 
-		Location location = PlacesUtils.GetCurrentLocation(PickRestaurantActivity.mGoogleApiClient);
         if (location == null) {
             Toast.makeText(getActivity(),
-                           "Current location was not available, please enable location services.",
-                           Toast.LENGTH_SHORT).show();
+		            "Current location was not available, please enable location services.",
+		            Toast.LENGTH_SHORT).show();
             return;
         }
+
+		listener.clearAllMarkers();
+
+		if (TheFoodApplication.isLocal) {
+			loadDummy();
+			return;
+		}
+
 		String currLongitude = Double.toString(location.getLongitude());
 		String currLatitude = Double.toString(location.getLatitude());
 		String locationQ = currLatitude + "," + currLongitude;
@@ -93,15 +95,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 		Log.v(Constants.TAG, "Getting restaurant details - " + places_search_q);
 
-		listener.clearAllMarkers();
-
-		if (TheFoodApplication.isLocal) {
-			// For testing
-			loadDummy();
-		} else {
-			// Actual search
-			doSearch(places_search_q);
-		}
+		doSearch(places_search_q);
 	}
 
 	private void doSearch(String places_search_q) {

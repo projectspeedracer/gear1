@@ -8,6 +8,7 @@ import com.projectspeedracer.thefoodapp.fragments.MenuFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.projectspeedracer.thefoodapp.utils.Transformer;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +31,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 	}
 
 	public void reloadPageTitles(List<Dish> dishes) {
-		final Map<String, List<Dish>> categoryGroup = Helpers.GroupBy(dishes, new Helpers.Transformer<Dish, String>() {
+		final Map<String, List<Dish>> categoryGroup = Helpers.GroupBy(dishes, new Transformer<Dish, String>() {
 			@Override
 			public String transform(Dish item) {
 				final String category = item.getCategory();

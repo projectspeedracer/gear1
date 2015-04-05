@@ -1,44 +1,117 @@
 package com.projectspeedracer.thefoodapp.models;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.parse.ParseACL;
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
-import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.projectspeedracer.thefoodapp.utils.ParseRelationNames;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 @ParseClassName("Dishes")
-public class Dish extends DeserializableParseObject  {
+public class Dish extends DeserializableParseObject {
 	public static final String ENABLED  = "1";
 	public static final String DISABLED = "0";
 
 	@JsonIgnore
 	private List<Rating> ratings = new ArrayList<>();
 
-    private float starAverage;
+	@JsonIgnore
+	private float averageRating;
 
-    // public default. do not modify fields here
-    public Dish() {
-    }
+	public Dish() {
+	}
 
 	public List<Rating> getRatings() {
 		return ratings;
 	}
 
-    public float getStarAverage() {
-        return starAverage;
-    }
+	public void setRatings(Collection<Rating> ratings) {
+		if (ratings == null || ratings.size() == 0) { return; }
 
-    public void setStarAverage(float starAverage) {
-        this.starAverage = starAverage;
-    }
+		this.ratings.clear();
 
-    public void setRatings(Rating... ratings) {
-		Collections.addAll(this.ratings, ratings);
+		for (Rating r : ratings) {
+			if (r == null) { continue; }
+			this.ratings.add(r);
+		}
+
+		updateAverageRating();
 	}
+
+	public void addRatings(Rating... ratings) {
+		if (ratings == null || ratings.length == 0) { return; }
+
+		for (Rating r : ratings) {
+			if (r == null) { continue; }
+			this.ratings.add(r);
+		}
+
+		updateAverageRating();
+	}
+
+	public float calculateAverageRating() {
+		if (ratings.size() == 0) {
+			return 0;
+		}
+
+		int totalStars = 0;
+
+		for (Rating r : ratings) {
+			totalStars += r.getStars();
+		}
+
+		final float average = (float) totalStars / (float) ratings.size();
+		final boolean fishy = average < 1 && average > 3;
+		final float safeAverage = fishy ? 2 : average;
+		Log.i(Constants.TAG, String.format("Ratings Average: %s (%s)", safeAverage, fishy ? "FISHY AVERAGE" : "√"));
+
+		final String msg = String.format("[%s] Total Stars: %s. Num: %s. Average: %s",
+				getName(),
+				totalStars,
+				ratings.size(),
+				safeAverage);
+
+		Log.i(Constants.TAG, msg);
+
+		return safeAverage;
+	}
+
+	private void updateAverageRating() {
+		this.averageRating = calculateAverageRating();
+	}
+
+	public void fetchRatings(FindCallback<Rating> callback) {
+
+		final ParseRelation<Rating> relationDish = this.getRelation(ParseRelationNames.DishToPosts);
+		final ParseQuery<Rating> query = relationDish.getQuery();
+
+		query.include(Rating.Fields.USER);
+		query.include(Rating.Fields.DISH);
+		query.orderByDescending(Fields.CREATED_AT);
+
+		// TODO: add 7 days constraint !!!
+		query.findInBackground(callback);
+	}
+
+	@JsonIgnore
+	public float getAverageRating() {
+		return averageRating;
+	}
+
+	private void setAverageRating(float averageRating) {
+		this.averageRating = averageRating;
+	}
+
+	// region Serializable Getters and Setters
 
 	public String getName() {
 		return getString(Fields.NAME);
@@ -138,23 +211,7 @@ public class Dish extends DeserializableParseObject  {
 		put(Fields.ENABLED, enabled);
 	}
 
-	/*public String getId() {
-		return getString(Fields.ID);
-	}
-
-	public void setId(String id) {
-		Helpers.EnsureNotBlank(id, "Null or empty dish id");
-		put(Fields.ID, id);
-	}*/
-
-	/*public String[] getImages() {
-		final List<String> images = getList(Fields.IMAGES);
-		return images.toArray(new String[images.size()]);
-	}
-
-	public void setImages(String[] images) {
-		put(Fields.IMAGES, images == null ? new String[0] : images);
-	}*/
+	// endregion
 
 	public static class Fields {
 		public static final String ID            = "id";
@@ -171,5 +228,6 @@ public class Dish extends DeserializableParseObject  {
 		public static final String VEGETARIAN    = "vegetarian";
 		public static final String ENABLED       = "enabled";
 		public static final String IMAGE_URL     = "imageUrl";
+		public static final String CREATED_AT    = "createdAt";
 	}
 }

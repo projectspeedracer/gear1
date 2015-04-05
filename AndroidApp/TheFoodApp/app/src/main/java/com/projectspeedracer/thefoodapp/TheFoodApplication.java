@@ -77,30 +77,32 @@ public class TheFoodApplication extends Application {
 	}
 
 	public static void storeCurrentRestaurant(final Restaurant restaurant) {
-		final Restaurant local = restaurant;
 
-        //save unconditionally !!!
         currentRestaurant = restaurant;
+
 		// TODO: Start progress overlay !!!
 
 		final ParseQuery<Restaurant> query = ParseQuery.getQuery(Restaurant.class);
 		query.whereEqualTo(Restaurant.Fields.PLACES_ID, restaurant.getPlacesId());
-        Log.i(Constants.TAG, "Sending out query for Restaurant "+ restaurant.getName()
-                + "Field: " + Restaurant.Fields.PLACES_ID
-                                + " Value: "+restaurant.getPlacesId());
+
+		final String msg = String.format("Sending out query for Restaurant %s Field: %s. Value: %s",
+				restaurant.getName(),
+				Restaurant.Fields.PLACES_ID,
+				restaurant.getPlacesId());
+
+		Log.i(Constants.TAG, msg);
 
 		query.getFirstInBackground(new GetCallback<Restaurant>() {
 			@Override
 			public void done(Restaurant r, ParseException e) {
 				final boolean restaurantExists = (r != null);
 
-                if (r != null && e != null){
-                    // some interesting error
+                if (r != null && e != null) {
                     e.printStackTrace();
                 }
 
-				final String name = restaurantExists ? r.getName() : local.getName();
-				final String id = restaurantExists ? r.getPlacesId() : local.getPlacesId();
+				final String name = restaurantExists ? r.getName() : restaurant.getName();
+				final String id = restaurantExists ? r.getPlacesId() : restaurant.getPlacesId();
 
 				final String msg = String.format("Restaurant %s (%s) %s",
 						name,
@@ -113,12 +115,16 @@ public class TheFoodApplication extends Application {
 					return;
 				}
 
-				local.saveInBackground(new SaveCallback() {
+				restaurant.saveInBackground(new SaveCallback() {
 					@Override
 					public void done(ParseException e) {
-						Log.i(Constants.TAG, "Restaurant save callback: "
-                                + (e != null ? "FAILED!" : "SUCCESS")
-                                + " . Name: " + local.getName() + " Id: " + local.getPlacesId());
+						final String msg = String.format("Restaurant save callback: %s. Name: %s. Id: %s",
+								e != null ? "FAILED!" : "SUCCESS",
+								restaurant.getName(),
+								restaurant.getPlacesId());
+
+						Log.i(Constants.TAG, msg);
+
 						// TODO: Remove progress overlay !!!
 					}
 				});

@@ -94,8 +94,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == R.id.etSearch ||
-                    actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (actionId == R.id.etSearch || actionId == EditorInfo.IME_ACTION_SEARCH) {
                     doSearch();
                     return true;
                 }
@@ -115,27 +114,23 @@ public class PickRestaurantActivity extends ActionBarActivity implements
             Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
         }
 
-        // Begin the transaction
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the container with the new fragment
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 	    listRestaurantFragment = new RestaurantListFragment();
         ft.replace(R.id.listFragmentHolder, listRestaurantFragment);
         ft.hide(mapFragment);
         ft.commit();
     }
 
-    /*
-     * Called when the Activity becomes visible.
-     */
     @Override
     protected void onStart() {
         super.onStart();
-        connectClient();
+	    // Connect the client.
+	    if ( (FoodAppUtils.isGooglePlayServicesAvailable(this, CONNECTION_FAILURE_RESOLUTION_REQUEST, this))
+	            && (mGoogleApiClient != null) ) {
+	        mGoogleApiClient.connect();
+	    }
     }
 
-    /*
-	 * Called when the Activity is no longer visible.
-	 */
     @Override
     protected void onStop() {
         // Disconnecting the client invalidates it.
@@ -145,9 +140,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         super.onStop();
     }
 
-    /*
-     * Called when the Activity is resumed. Updates the view.
-     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -168,86 +160,66 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
     }
 
-
-    /*
-     * Handle results returned to the FragmentActivity by Google Play services
-    */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Decide what to do based on the original request code
-        switch (requestCode) {
-
-            case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-			/*
-			 * If the result code is Activity.RESULT_OK, try to connect again
-			 */
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        mGoogleApiClient.connect();
-                        break;
-                }
-
-        }
+	    if (requestCode == CONNECTION_FAILURE_RESOLUTION_REQUEST) {
+		    if (resultCode == Activity.RESULT_OK) {
+			    mGoogleApiClient.connect();
+		    }
+	    }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_pick_restaurant, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         final int id = item.getItemId();
 
-        // Handle presses on the action bar items
         switch (id) {
             case R.id.miShowHide:
                 showHideMap(item);
                 return true;
+
             case R.id.action_settings:
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    protected void loadMap(GoogleMap googleMap) {
+    private void loadMap(GoogleMap googleMap) {
         map = googleMap;
-        if (map != null) {
-            // Map is ready
-            Log.v(TAG, "Map Fragment was loaded properly!");
-            map.setMyLocationEnabled(true);
 
-            map.setOnMarkerClickListener(this);
-            map.setOnInfoWindowClickListener(this);
-            map.setInfoWindowAdapter(new CustomMarkerWindowAdapter(getLayoutInflater()));
-
-            // Now that map has loaded, let's get our location!
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this).build();
-
-            connectClient();
-        } else {
-            Toast.makeText(this, "Error - Map was null!!", Toast.LENGTH_SHORT).show();
+        if (map == null) {
+            Toast.makeText(this, "ERROR! Got a null Map object reference.", Toast.LENGTH_SHORT).show();
+	        return;
         }
+
+	    Log.v(TAG, "Map Fragment was loaded properly!");
+
+	    map.setMyLocationEnabled(true);
+	    map.setOnMarkerClickListener(this);
+	    map.setOnInfoWindowClickListener(this);
+	    map.setInfoWindowAdapter(new CustomMarkerWindowAdapter(getLayoutInflater()));
+
+	    mGoogleApiClient = new GoogleApiClient.Builder(this)
+			    .addApi(LocationServices.API)
+			    .addConnectionCallbacks(this)
+			    .addOnConnectionFailedListener(this).build();
+
+	    if (mGoogleApiClient != null
+	        && FoodAppUtils.isGooglePlayServicesAvailable(this, CONNECTION_FAILURE_RESOLUTION_REQUEST, this)) {
+		    mGoogleApiClient.connect();
+	    }
     }
 
-    protected void connectClient() {
-        // Connect the client.
-        if ( (FoodAppUtils.isGooglePlayServicesAvailable(this, CONNECTION_FAILURE_RESOLUTION_REQUEST, this))
-                && (mGoogleApiClient != null) ) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    /*
+	/*
 	 * Called by Location Services when the request to connect the client
 	 * finishes successfully. At this point, you can request the current
 	 * location or start periodic updates
@@ -256,20 +228,21 @@ public class PickRestaurantActivity extends ActionBarActivity implements
     public void onConnected(Bundle bundle) {
         // Display the connection status
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location != null) {
-//            Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
-            Log.v(TAG, "GPS location was found!");
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            map.animateCamera(cameraUpdate);
-            startLocationUpdates();
-            onLocationChanged(location);
-
-            // load list of restaurants
-            listRestaurantFragment.loadRestaurantList("");
-        } else {
-            Toast.makeText(this, "Current location was not available, please enable location services.", Toast.LENGTH_SHORT).show();
+        if (location == null) {
+	        Toast.makeText(this, "Current location was not available, please enable location services.", Toast.LENGTH_SHORT).show();
+	        return;
         }
+
+	    //Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
+	    Log.v(TAG, "GPS location was found!");
+
+	    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+	    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+	    map.animateCamera(cameraUpdate);
+	    startLocationUpdates();
+	    onLocationChanged(location);
+
+	    listRestaurantFragment.loadRestaurantList("");
     }
 
     protected void startLocationUpdates() {
