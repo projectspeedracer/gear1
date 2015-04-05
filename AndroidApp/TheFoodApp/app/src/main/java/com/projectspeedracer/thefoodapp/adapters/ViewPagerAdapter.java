@@ -2,55 +2,66 @@ package com.projectspeedracer.thefoodapp.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.projectspeedracer.thefoodapp.fragments.MenuFragment;
+import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.utils.Constants;
+import com.projectspeedracer.thefoodapp.utils.Helpers;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
-    int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+	private List<Dish> dishes;
+	private String[] pagerTitles;
 
 
-    // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
-        super(fm);
+	public ViewPagerAdapter(FragmentManager fm, List<Dish> dishes) {
+		super(fm);
+		this.dishes = dishes == null ? new ArrayList<Dish>() : dishes;
+		// TODO: If dishes empty, use a default list of page titles !!!
+		reloadPageTitles(this.dishes);
+	}
 
-        this.Titles = mTitles;
-        this.NumbOfTabs = mNumbOfTabsumb;
+	public void reloadPageTitles(List<Dish> dishes) {
+		final Map<String, List<Dish>> categoryGroup = Helpers.GroupBy(dishes, new Helpers.Transformer<Dish, String>() {
+			@Override
+			public String transform(Dish item) {
+				final String category = item.getCategory();
+				return StringUtils.isBlank(category) ? Constants.DEFAULT_DISH_CATEGORY : category;
+			}
+		});
 
+		final Set<String> categories = categoryGroup.keySet();
+		this.pagerTitles = categories.toArray(new String[categories.size()]);
+	}
+
+	@Override
+	public Fragment getItem(int position) {
+
+		switch (position) {
+			case 0:
+				return new MenuFragment(this.dishes);
+
+			default:
+				return new MenuFragment(this.dishes);
+		}
     }
 
-    //This method return the fragment for the every position in the View Pager
-    @Override
-    public Fragment getItem(int position) {
-
-        if(position == 0) // if the position is 0 we are returning the First tab
-        {
-            MenuFragment menuFragment = new MenuFragment();
-            return menuFragment;
-        }
-        else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
-        {
-            MenuFragment menuFragment = new MenuFragment();
-            return menuFragment;
-        }
-
-
-    }
-
-    // This method return the titles for the Tabs in the Tab Strip
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return Titles[position];
+        return this.pagerTitles[position];
     }
-
-    // This method return the Number of tabs for the tabs Strip
 
     @Override
     public int getCount() {
-        return NumbOfTabs;
+        return this.pagerTitles.length;
     }
 }

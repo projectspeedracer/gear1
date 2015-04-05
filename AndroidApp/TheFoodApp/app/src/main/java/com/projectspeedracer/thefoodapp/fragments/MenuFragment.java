@@ -19,31 +19,46 @@ import com.parse.ParseQuery;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.activities.DishActivity;
+import com.projectspeedracer.thefoodapp.activities.DishActivity;
 import com.projectspeedracer.thefoodapp.activities.RateDishActivity;
 import com.projectspeedracer.thefoodapp.adapters.DishesAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.utils.Constants;
+import com.projectspeedracer.thefoodapp.utils.Helpers;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
+import com.projectspeedracer.thefoodapp.utils.Helpers;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
-    protected ArrayList<Dish> dishes = new ArrayList<>();
-    protected DishesAdapter dishesAdapter;
-    protected ListView lvMenuCategory;
-    private static final String TAG = Constants.TAG;
+	private static final String TAG = Constants.TAG;
 
+	protected ArrayList<Dish> dishes = new ArrayList<>();
+	protected DishesAdapter dishesAdapter;
 
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+	public MenuFragment() {
+		super();
+	}
 
+	public MenuFragment(List<Dish> dishes) {
+		super();
+		dishes.addAll(dishes);
+	}
 
-        // Defines the xml file for the fragment
-        View view = inflater.inflate(R.layout.fragment_menu_category, container, false);
+	@Override
+    public View onCreateView(LayoutInflater inflater,
+	                         @Nullable ViewGroup container,
+	                         @Nullable Bundle savedInstanceState){
 
-        assert TheFoodApplication.getCurrentRestaurant() != null : "Expected non-null restaurant object";
+		assert TheFoodApplication.getCurrentRestaurant() != null : "Expected non-null restaurant object";
+
+		final View view = inflater.inflate(R.layout.fragment_menu_category, container, false);
 
         // TODO: Show progress overlay !!!
 
@@ -57,12 +72,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 final Dish dish = dishesAdapter.getItem(position);
                 //Toast.makeText(getActivity(), "Picked - " + restaurant.getName(), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Selected - "+dish.getName());
-//				listener.restaurantSelected(restaurant);
+				// listener.restaurantSelected(restaurant);
                 onRateDish(dish);
             }
         });
-
-
 
         final ParseQuery<Dish> query = ParseQuery.getQuery(Dish.class);
         query.whereEqualTo(Dish.Fields.RESTAURANT_ID, TheFoodApplication.getCurrentRestaurant().getPlacesId());
@@ -82,6 +95,15 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
                 Log.i(Constants.TAG, String.format("Found %s dishes", dishes.size()));
                 dishesAdapter.addAll(dishes);
+
+	            final Map<String, List<Dish>> categoryGroup = Helpers.GroupBy(dishes, new Helpers.Transformer<Dish, String>() {
+		            @Override
+		            public String transform(Dish item) {
+			            final String category = item.getCategory();
+			            return StringUtils.isBlank(category) ? Constants.DEFAULT_DISH_CATEGORY : category;
+		            }
+	            });
+
                 for (final Dish dish: dishes) {
                     FoodAppUtils.getAllPostsForDish(dish, new FindCallback<Rating>() {
 
@@ -116,11 +138,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        // xxxx 1. Get this restaurant row from Parse
-        // 2. Get dishes for this restaurant from Parse (based on restaurantId)
-        // 3. Get ratings for dishes and restaurant from Parse (based on restaurantId and dishId)
-
-
         return view;
     }
 
@@ -130,20 +147,28 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     }
 
     void onRateDish(Dish dish) {
-//        Intent i = new Intent(getActivity(), RateDishActivity.class);
-        Intent i = new Intent(getActivity(), DishActivity.class);
-        Log.v(TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
-        i.putExtra("current_dish_id", dish.getObjectId());
-//        i.putExtra("current_dish", dish);
-        getActivity().startActivity(i);
+	    Log.v(TAG, String.format("Rating Dish: %s (ID: %s)",  dish.getName(), dish.getObjectId()));
+
+	    final Intent intent = new Intent(getActivity(), RateDishActivity.class);
+	    intent.putExtra("current_dish_id", dish.getObjectId());
+
+	    try {
+		    final String json = Helpers.AsJson(dish);
+		    intent.putExtra("dish", json);
+	    } catch (Exception ex) {
+		    final String message = "MAYDAY! " + ex.getMessage();
+		    Log.e(TAG, message);
+		    Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+	    }
+        getActivity().startActivity(intent);
     }
 
-    void onShowDishDetails(Dish dish) {
-        //        Intent i = new Intent(getActivity(), RateDishActivity.class);
-        Intent i = new Intent(getActivity(), DishActivity.class);
-        Log.v(TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
-        i.putExtra("current_dish_id", dish.getObjectId());
+	void onShowDishDetails(Dish dish) {
+		//        Intent i = new Intent(getActivity(), RateDishActivity.class);
+		Intent i = new Intent(getActivity(), DishActivity.class);
+		Log.v(TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
+		i.putExtra("current_dish_id", dish.getObjectId());
 //        i.putExtra("current_dish", dish);
-        getActivity().startActivity(i);
-    }
+		getActivity().startActivity(i);
+	}
 }

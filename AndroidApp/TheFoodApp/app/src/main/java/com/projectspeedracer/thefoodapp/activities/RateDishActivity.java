@@ -1,5 +1,6 @@
 package com.projectspeedracer.thefoodapp.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -24,16 +27,27 @@ import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
-import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
+import com.projectspeedracer.thefoodapp.utils.Helpers;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 public class RateDishActivity extends ActionBarActivity {
 
-    Dish dishToRate;
-    Restaurant restaurant;
-    EditText etMessage;
+	private static final String TAG = RateDishActivity.class.getSimpleName();
+
+	private Dish dishToRate;
+	private Restaurant restaurant;
+	private EditText etMessage;
 
 
     @Override
@@ -41,10 +55,18 @@ public class RateDishActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate_dish);
 
-//        Dish dish = (Dish) getIntent().getSerializableExtra("current_dish");
         final String dishObjectId = getIntent().getStringExtra("current_dish_id");
-        Log.i("RateDish", "Will Rate Dish -"+ dishObjectId);
-        Toast.makeText(this, "Got dish - "+ dishObjectId, Toast.LENGTH_SHORT).show();
+
+	    final String json = getIntent().getStringExtra("dish");
+	    final Dish dish = Helpers.FromJsonSafe(json, Dish.class);
+
+	    if (dish == null) {
+		    final String msg = "FAILED launching RatingDishActivity. Could not obtain the dish object.";
+		    LogToast(this, msg);
+		    finish();
+	    }
+
+        Log.i(TAG, "Rating Dish (" + dishObjectId + ") ...");
 
         restaurant = TheFoodApplication.getCurrentRestaurant();
 
@@ -52,15 +74,14 @@ public class RateDishActivity extends ActionBarActivity {
         etMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == R.id.etSearch ||
-                        actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == R.id.etSearch || actionId == EditorInfo.IME_ACTION_DONE) {
                     postRating();
                     return true;
                 }
+
                 return false;
             }
         });
-
 
         // 1. Get Dish object
         FoodAppUtils.getDishFromObjectID(dishObjectId, new GetCallback<ParseObject>() {
@@ -70,7 +91,7 @@ public class RateDishActivity extends ActionBarActivity {
                 if (e != null) {
                     final String errorText = "Failed to query dish for ID - "+dishObjectId;
 
-                    Log.e(Constants.TAG, errorText + ". " + e.getMessage());
+                    Log.e(TAG, errorText + ". " + e.getMessage());
                     e.printStackTrace();
 
                     return;
@@ -78,43 +99,46 @@ public class RateDishActivity extends ActionBarActivity {
 
                 dishToRate = (Dish) dish;
 
-                Log.i(Constants.TAG, String.format("Found %s dish", dishToRate.getName()));
+                Log.i(TAG, String.format("Found %s dish", dishToRate.getName()));
             }
         });
 
     }
 
-    private  void postRating() {
-        // Safety checks
+	public static void LogToast(Context context, String message) {
+		Log.e(TAG, message);
+		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+	}
+
+	private  void postRating() {
         if (restaurant == null) {
             Toast.makeText(this, "Restaurant not selected!!!", Toast.LENGTH_SHORT).show();
             return;
         }
+
         if (dishToRate == null) {
             Toast.makeText(this, "Dish not selected!!!", Toast.LENGTH_SHORT).show();
             return;
         }
+
         if (ParseUser.getCurrentUser() == null) {
             Toast.makeText(this, "You are not signed in!!!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-
-
         // 2. Create Rating Post Obejct
 
-        final Rating rating = new Rating();
-
-        RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBarDish);
-        Float ratingNum = ratingBar.getRating();
+        final RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBarDish);
+	    Float ratingNum = ratingBar.getRating();
 
 
-        String rateMessage = etMessage.getText().toString();
+	    String rateMessage = etMessage.getText().toString();
 
 
-        Log.i("Rate", "Ready to post for "+dishToRate.getName() + " Stars = "+ratingNum);
+	    Log.i("Rate", "Ready to post for "+dishToRate.getName() + " Stars = "+ratingNum);
 
-        // 2.1 - Set rating
+	    // 2.1 - Set rating
+	    final Rating rating = new Rating();
 //        rating.setStars(new Integer(ratingNum.toString()));
         rating.setStars(Math.round(ratingNum));
         rating.setComments(rateMessage);
@@ -127,7 +151,7 @@ public class RateDishActivity extends ActionBarActivity {
         rating.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                Log.i(Constants.TAG, "Rating save callback: "
+                Log.i(TAG, "Rating save callback: "
                         + (e != null ? "FAILED!" : "SUCCESS")
                         + " . Starts: " + rating.getStars() + " Comments: " + rating.getComments());
                 if (e != null) {
@@ -191,7 +215,7 @@ public class RateDishActivity extends ActionBarActivity {
                     saved ? "SUCCESS." : "FAILED!",
                     Arrays.toString(args));
 
-            Log.i(Constants.TAG, message);
+            Log.i(TAG, message);
 
             if (!saved) {
                 e.printStackTrace();

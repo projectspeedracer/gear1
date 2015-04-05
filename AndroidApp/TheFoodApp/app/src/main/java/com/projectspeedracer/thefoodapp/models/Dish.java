@@ -1,19 +1,22 @@
 package com.projectspeedracer.thefoodapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.parse.ParseACL;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-//import javax.xml.bind.annotation.*;
 
 @ParseClassName("Dishes")
-public class Dish extends ParseObject {
+public class Dish extends DeserializableParseObject  {
 	public static final String ENABLED  = "1";
 	public static final String DISABLED = "0";
+
+	@JsonIgnore
+	private List<Rating> ratings = new ArrayList<>();
 
     private float starAverage;
 
@@ -21,7 +24,9 @@ public class Dish extends ParseObject {
     public Dish() {
     }
 
-    private List<Rating> ratings = new ArrayList<>();
+	public List<Rating> getRatings() {
+		return ratings;
+	}
 
     public float getStarAverage() {
         return starAverage;
@@ -33,15 +38,6 @@ public class Dish extends ParseObject {
 
     public void setRatings(Rating... ratings) {
 		Collections.addAll(this.ratings, ratings);
-	}
-
-	public String getId() {
-		return getString(Fields.ID);
-	}
-
-	public void setId(String id) {
-		Helpers.EnsureNotBlank(id, "Null or empty dish id");
-		put(Fields.ID, id);
 	}
 
 	public String getName() {
@@ -75,15 +71,6 @@ public class Dish extends ParseObject {
 	public void setImage(String imageUrl) {
 		put(Fields.IMAGE_URL, imageUrl);
 	}
-
-	/*public String[] getImages() {
-		final List<String> images = getList(Fields.IMAGES);
-		return images.toArray(new String[images.size()]);
-	}
-
-	public void setImages(String[] images) {
-		put(Fields.IMAGES, images == null ? new String[0] : images);
-	}*/
 
 	public double getPrice() {
 		return getDouble(Fields.PRICE);
@@ -150,6 +137,24 @@ public class Dish extends ParseObject {
 	public void setEnabled(boolean enabled) {
 		put(Fields.ENABLED, enabled);
 	}
+
+	/*public String getId() {
+		return getString(Fields.ID);
+	}
+
+	public void setId(String id) {
+		Helpers.EnsureNotBlank(id, "Null or empty dish id");
+		put(Fields.ID, id);
+	}*/
+
+	/*public String[] getImages() {
+		final List<String> images = getList(Fields.IMAGES);
+		return images.toArray(new String[images.size()]);
+	}
+
+	public void setImages(String[] images) {
+		put(Fields.IMAGES, images == null ? new String[0] : images);
+	}*/
 
 	public static class Fields {
 		public static final String ID            = "id";

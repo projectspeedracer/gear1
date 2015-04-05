@@ -126,18 +126,17 @@ public class FoodAppUtils {
     }
 
     // Get list of Rating posts for a particular dish - For "Dish Details"
-    public static void getAllPostsForDish(final Dish dish, FindCallback callback) {
+    public static void getAllPostsForDish(final Dish dish, FindCallback<Rating> callback) {
 
-        ParseRelation<Rating> relationDish = dish.getRelation("DishToPosts");
-        ParseQuery query = relationDish.getQuery();
+        final ParseRelation<Rating> relationDish = dish.getRelation("DishToPosts");
+        final ParseQuery<Rating> query = relationDish.getQuery();
 
         // include respective User objects
         query.include(Rating.Fields.USER);
         query.include(Rating.Fields.DISH);
-        // Recent first
         query.orderByDescending("createdAt");
 
-        //todo: add 7 days constraint !!!
+        // TODO: add 7 days constraint !!!
         query.findInBackground(callback);
     }
 
