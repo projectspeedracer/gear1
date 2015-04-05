@@ -2,7 +2,6 @@ package com.projectspeedracer.thefoodapp.models;
 
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
