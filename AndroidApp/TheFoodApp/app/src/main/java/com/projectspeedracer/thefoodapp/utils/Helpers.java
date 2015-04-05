@@ -40,11 +40,7 @@ public class Helpers {
 			throw new IllegalArgumentException(errorText);
 		}
 	}
-
-	public interface Transformer<T, U> {
-		U transform(T item);
-	}
-
+	
 	public static <T, G> Map<G, List<T>> GroupBy(Collection<T> items, Transformer<T, G> transformer) {
 		final Map<G, List<T>> map = new HashMap<>();
 
