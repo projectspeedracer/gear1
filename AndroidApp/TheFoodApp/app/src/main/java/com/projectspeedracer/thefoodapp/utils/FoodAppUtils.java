@@ -2,7 +2,6 @@ package com.projectspeedracer.thefoodapp.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -11,13 +10,21 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.fragments.AppDialogFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
+
+import java.util.List;
 
 /**
  * Created by avkadam on 3/28/15.
@@ -97,8 +104,46 @@ public class FoodAppUtils {
         marker.setAlpha(1);
     }
 
+
     public static void getDishFromObjectID(String dishObjectId, GetCallback callback) {
         ParseQuery query = new ParseQuery(Dish.class);
         query.getInBackground(dishObjectId, callback);
     }
+
+    // Get list of all dishes from last 7 days
+    public static void getAllDishesForRestaurant() {
+        // orderby CreatedAt
+        // restrict to last 7 days
+        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
+        if (restaurant == null) {
+            Log.e(Constants.TAG, "getAllDishesForRestaurant: Restaurant not selected while getting Dish details");
+            return;
+        }
+        ParseRelation<ParseObject> relationRestaurant = restaurant.getRelation("RestaurantToPosts");
+        ParseQuery query = relationRestaurant.getQuery();
+        //todo: add 7 days constraint !!!
+
+    }
+
+    // Get list of Rating posts for a particular dish - For "Dish Details"
+    public static void getAllPostsForDish(final Dish dish, FindCallback callback) {
+
+        ParseRelation<Rating> relationDish = dish.getRelation("DishToPosts");
+        ParseQuery query = relationDish.getQuery();
+
+        // include respective User objects
+        query.include(Rating.Fields.USER);
+        // Recent first
+        query.orderByDescending("createdAt");
+
+        //todo: add 7 days constraint !!!
+        query.findInBackground(callback);
+    }
+
+    // Get list of Rating posts for current Restaurant - For "Restaurant Wall"
+    public static void getAllPostsForRestaurant() {
+        // orderby CreatedAt
+        // include repective User objects
+    }
+
 }

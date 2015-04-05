@@ -4,14 +4,18 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+//import javax.xml.bind.annotation.*;
 
 @ParseClassName("Dishes")
-public class Dish extends ParseObject  {
+public class Dish extends ParseObject {
 	public static final String ENABLED  = "1";
 	public static final String DISABLED = "0";
+
+    private float starAverage;
 
     // public default. do not modify fields here
     public Dish() {
@@ -19,7 +23,15 @@ public class Dish extends ParseObject  {
 
     private List<Rating> ratings = new ArrayList<>();
 
-	public void setRatings(Rating... ratings) {
+    public float getStarAverage() {
+        return starAverage;
+    }
+
+    public void setStarAverage(float starAverage) {
+        this.starAverage = starAverage;
+    }
+
+    public void setRatings(Rating... ratings) {
 		Collections.addAll(this.ratings, ratings);
 	}
 
