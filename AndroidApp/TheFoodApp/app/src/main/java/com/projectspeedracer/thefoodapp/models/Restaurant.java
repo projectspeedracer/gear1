@@ -11,7 +11,6 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.projectspeedracer.thefoodapp.activities.IDishesFetchedCallback;
-import com.projectspeedracer.thefoodapp.utils.Action;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 

@@ -46,14 +46,14 @@ public class RateDishActivity extends ActionBarActivity {
 
         final String dishObjectId = getIntent().getStringExtra("current_dish_id");
 
-	    final String json = getIntent().getStringExtra("dish");
+	    /*final String json = getIntent().getStringExtra("dish");
 	    final Dish dish = Helpers.FromJsonSafe(json, Dish.class);
 
 	    if (dish == null) {
 		    final String msg = "FAILED launching RatingDishActivity. Could not obtain the dish object.";
 		    LogToast(this, msg);
 		    // TODO: finish(); - When the serialization works ok !!!
-	    }
+	    }*/
 
         Log.i(TAG, "Rating Dish (" + dishObjectId + ") ...");
 

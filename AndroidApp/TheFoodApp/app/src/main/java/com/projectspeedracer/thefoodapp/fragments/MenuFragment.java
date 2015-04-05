@@ -148,9 +148,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     }
 
     void OnClickDish(Dish dish) {
-	    Log.v(TAG, String.format("Rating Dish: %s (ID: %s)",  dish.getName(), dish.getObjectId()));
+	    Log.v(TAG, String.format("Showing Dish: %s (ID: %s)",  dish.getName(), dish.getObjectId()));
 
-	    final Intent intent = new Intent(getActivity(), RateDishActivity.class);
+	    final Intent intent = new Intent(getActivity(), DishActivity.class);
 	    intent.putExtra("current_dish_id", dish.getObjectId());
 
 	    try {

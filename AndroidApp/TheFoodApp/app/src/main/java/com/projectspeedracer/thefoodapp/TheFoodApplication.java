@@ -76,11 +76,16 @@ public class TheFoodApplication extends Application {
 		return DEFAULT_SEARCH_DISTANCE;
 	}
 
-	public static void storeCurrentRestaurant(final Restaurant restaurant) {
+	public static void storeCurrentRestaurant(final Restaurant restaurant, boolean chosen) {
 
         currentRestaurant = restaurant;
 
 		// TODO: Start progress overlay !!!
+       if (!chosen) {
+           // Not saving in backend yet
+           return;
+       }
+
 
 		final ParseQuery<Restaurant> query = ParseQuery.getQuery(Restaurant.class);
 		query.whereEqualTo(Restaurant.Fields.PLACES_ID, restaurant.getPlacesId());
@@ -112,6 +117,7 @@ public class TheFoodApplication extends Application {
 				Log.i(Constants.TAG, msg);
 
 				if (restaurantExists) {
+                    currentRestaurant = r;
 					return;
 				}
 

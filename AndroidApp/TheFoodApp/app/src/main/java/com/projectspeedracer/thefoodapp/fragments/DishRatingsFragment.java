@@ -27,10 +27,10 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
         final Bundle args = new Bundle();
 	    args.putString(DISH_OBJECT_ID, dishObjectId);
 
-	    final DishRatingsFragment fragmentUserTimeline = new DishRatingsFragment();
-	    fragmentUserTimeline.setArguments(args);
+	    final DishRatingsFragment dishPostsFragment = new DishRatingsFragment();
+	    dishPostsFragment.setArguments(args);
 
-        return fragmentUserTimeline;
+        return dishPostsFragment;
     }
 
     @Override

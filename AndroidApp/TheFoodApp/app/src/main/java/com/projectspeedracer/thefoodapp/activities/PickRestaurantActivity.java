@@ -218,7 +218,12 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	    startLocationUpdates();
 	    onLocationChanged(location);
 
-	    listRestaurantFragment.loadRestaurantList("");
+        if (TheFoodApplication.isLocal) {
+            listRestaurantFragment.loadDummy();
+        }
+        else {
+            listRestaurantFragment.loadRestaurantList("");
+        }
     }
 
     /*
@@ -275,7 +280,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	// region RestaurantListFragment Listener
 
 	@Override
-    public void restaurantSelected(Restaurant restaurant) {
+    public void restaurantSelected(Restaurant restaurant, boolean chosen) {
         showRestaurantOnMap(restaurant);
 
 //		final boolean inRange = PlacesUtils.IsRestaurantInRange(restaurant, mGoogleApiClient);
@@ -285,7 +290,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 				? getString(R.string.enter_into) + " " + restaurant.getName()
 				: restaurant.getName()+" "+getString(R.string.get_closer));
 */
-        TheFoodApplication.storeCurrentRestaurant(restaurant);
+        TheFoodApplication.storeCurrentRestaurant(restaurant, chosen); // Choose, store at backend
     }
 
 	@Override
@@ -382,7 +387,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 			return;
 		}
 
-		restaurantSelected(restaurant);
+		restaurantSelected(restaurant, true);
 		startActivity(new Intent(this, RestaurantActivity.class));
 	}
 

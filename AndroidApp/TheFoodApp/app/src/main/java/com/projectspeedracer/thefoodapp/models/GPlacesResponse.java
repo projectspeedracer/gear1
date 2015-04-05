@@ -33,7 +33,7 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 		this.location   = ExtractLocation(result);
 		this.phone      = ExtractPhoneNumber(result);
 		this.iconUrl    = ExtractIconUrl(result);
-		//this.websiteUrl = ExtractWebsiteUrl(result);
+		this.websiteUrl = ExtractWebsiteUrl(result);
 
 		final List<String> pidList = ExtractRestaurantImages(result, null);
         if (pidList != null) {
@@ -42,11 +42,21 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 	}
 
 	public static String ExtractWebsiteUrl(JSONObject result) throws JSONException {
-		return result.getString(Fields.WEBSITE);
+        if (result.has(Fields.WEBSITE)) {
+            return result.getString(Fields.WEBSITE);
+        }
+        else {
+            return "";
+        }
 	}
 
 	public static String ExtractPhoneNumber(JSONObject result) throws JSONException {
-		return result.getString(Fields.PHONE);
+        if (result.has(Fields.PHONE)) {
+            return result.getString(Fields.PHONE);
+        }
+        else {
+            return "";
+        }
 	}
 
 	public static String ExtractRestaurantName(JSONObject result) throws JSONException {
@@ -54,11 +64,19 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 	}
 
     public static String ExtractRestaurantAddress(JSONObject result) throws JSONException {
-        return result.getString(Fields.ADDRESS);
+        if (result.has(Fields.ADDRESS)) {
+            return result.getString(Fields.ADDRESS);
+        }
+        else if (result.has(Fields.VICINITY)) {
+            return result.getString(Fields.VICINITY);
+        }
+        else {
+            return "";
+        }
     }
 
 	public static String ExtractPlaceId(JSONObject result) throws JSONException {
-		return result.getString(Fields.ID);
+		return result.getString(Fields.PLACE_ID);
 	}
 
 	public static String ExtractIconUrl(JSONObject result) throws JSONException {
@@ -164,8 +182,8 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 
 	public static class Fields {
 		public static final String RESULT          = "result";
-		public static       String ID              = "id";
-		//public static final String PLACE_ID        = "place_id";
+		//public static       String ID              = "id";
+		public static final String PLACE_ID        = "place_id";
 		public static final String PHOTOS          = "photos";
 		public static       String PHONE           = "international_phone_number";
 		public static final String NAME            = "name";
@@ -179,5 +197,6 @@ public class GPlacesResponse implements IRestaurantInfoProvider {
 		final static        String LATITUDE        = "lat";
 		final static        String LONGITUDE       = "lng";
         final static        String ADDRESS         = "formatted_address";
+        final static        String VICINITY        = "vicinity";
 	}
 }

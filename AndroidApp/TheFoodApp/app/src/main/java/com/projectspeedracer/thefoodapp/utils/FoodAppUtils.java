@@ -106,7 +106,8 @@ public class FoodAppUtils {
     }
 
     // Get list of all dishes from last 7 days
-    public static void getAllDishesForRestaurant() {
+    // Its really - getAllPostsForRestaurant
+    public static void getAllDishesForRestaurant(FindCallback callback) {
         // orderby CreatedAt
         // restrict to last 7 days
         Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
@@ -116,7 +117,39 @@ public class FoodAppUtils {
         }
         ParseRelation<ParseObject> relationRestaurant = restaurant.getRelation("RestaurantToPosts");
         ParseQuery query = relationRestaurant.getQuery();
+        // include respective User objects
+//        query.include(Rating.Fields.USER);
+        query.include(Rating.Fields.DISH);
         //todo: add 7 days constraint !!!
 
+        // Recent first
+        query.orderByDescending("createdAt");
+
+        query.findInBackground(callback);
     }
+
+    // Get list of Rating posts for a particular dish - For "Dish Details"
+    public static void getAllPostsForDish(final Dish dish, FindCallback callback) {
+
+        ParseRelation<Rating> relationDish = dish.getRelation("DishToPosts");
+        ParseQuery query = relationDish.getQuery();
+
+        // include respective User objects
+        query.include(Rating.Fields.USER);
+        query.include(Rating.Fields.DISH);
+        // Recent first
+        query.orderByDescending("createdAt");
+
+        //todo: add 7 days constraint !!!
+        query.findInBackground(callback);
+    }
+
+    // Get list of Rating posts for current Restaurant - For "Restaurant Wall"
+    public static void getAllPostsForRestaurant(FindCallback callback) {
+        // orderby CreatedAt
+        // include repective User objects
+        getAllDishesForRestaurant(callback);
+    }
+
+
 }
