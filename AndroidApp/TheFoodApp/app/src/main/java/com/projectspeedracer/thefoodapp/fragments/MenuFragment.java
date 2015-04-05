@@ -18,6 +18,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.activities.DishActivity;
 import com.projectspeedracer.thefoodapp.activities.RateDishActivity;
 import com.projectspeedracer.thefoodapp.adapters.DishesAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
@@ -129,7 +130,17 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     }
 
     void onRateDish(Dish dish) {
-        Intent i = new Intent(getActivity(), RateDishActivity.class);
+//        Intent i = new Intent(getActivity(), RateDishActivity.class);
+        Intent i = new Intent(getActivity(), DishActivity.class);
+        Log.v(TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
+        i.putExtra("current_dish_id", dish.getObjectId());
+//        i.putExtra("current_dish", dish);
+        getActivity().startActivity(i);
+    }
+
+    void onShowDishDetails(Dish dish) {
+        //        Intent i = new Intent(getActivity(), RateDishActivity.class);
+        Intent i = new Intent(getActivity(), DishActivity.class);
         Log.v(TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
         i.putExtra("current_dish_id", dish.getObjectId());
 //        i.putExtra("current_dish", dish);

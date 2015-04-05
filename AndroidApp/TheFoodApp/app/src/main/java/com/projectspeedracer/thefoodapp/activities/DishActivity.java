@@ -1,18 +1,51 @@
 package com.projectspeedracer.thefoodapp.activities;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.fragments.DishPostsFragment;
+import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.models.Restaurant;
 
 public class DishActivity extends ActionBarActivity {
+
+    Dish dishToRate;
+    Restaurant restaurant;
+    String dishObjectId;
+
+    DishPostsFragment dishPostsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dish);
+
+        dishObjectId = getIntent().getStringExtra("current_dish_id");
+        Log.i("RateDish", "Will Rate Dish -" + dishObjectId);
+        Toast.makeText(this, "Got dish - " + dishObjectId, Toast.LENGTH_SHORT).show();
+
+        restaurant = TheFoodApplication.getCurrentRestaurant();
+
+        showDishPosts();
+    }
+
+    private void showDishPosts() {
+        // get screen name
+
+        DishPostsFragment dishPostsFragment = DishPostsFragment.newInstance(dishObjectId);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.flDishPosts, dishPostsFragment);
+        ft.commit();
     }
 
 

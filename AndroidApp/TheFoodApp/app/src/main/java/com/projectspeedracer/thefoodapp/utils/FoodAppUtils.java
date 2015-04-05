@@ -133,6 +133,7 @@ public class FoodAppUtils {
 
         // include respective User objects
         query.include(Rating.Fields.USER);
+        query.include(Rating.Fields.DISH);
         // Recent first
         query.orderByDescending("createdAt");
 

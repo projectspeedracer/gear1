@@ -29,7 +29,8 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/stencil"/>
+                android:src="@drawable/stencil"
+                android:id="@+id/ivDishImage" />
         </FrameLayout>
 
         <LinearLayout
@@ -41,29 +42,29 @@
             android:orientation="vertical"
             >
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="The True Normand"
-                android:id="@+id/tvName"
+                android:id="@+id/tvUserName"
                 android:textSize="16sp"/>
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:maxWidth="250dp"
                 android:layout_height="wrap_content"
                 android:text="1600 Amphitheatre Pkwy, Mountain View, CA"
-                android:id="@+id/tvAddress"/>
+                android:id="@+id/tvComments"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Distance"
-                android:id="@+id/tvDistance" />
+                android:id="@+id/tvRating" />
 
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/tvRestaurantRating"
+            android:id="@+id/ivRatingImage"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_margin="10dp"

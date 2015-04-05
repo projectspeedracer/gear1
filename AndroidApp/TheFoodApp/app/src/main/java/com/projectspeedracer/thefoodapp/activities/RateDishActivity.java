@@ -120,9 +120,9 @@ public class RateDishActivity extends ActionBarActivity {
         rating.setComments(rateMessage);
 
         // 3. Put Restaurant, Dish, User and GeoPoint
-//        rating.setDish(dishToRate);
-//        rating.setRestaurant(restaurant);
-//        rating.setUser(ParseUser.getCurrentUser());
+        rating.setDish(dishToRate);
+        rating.setRestaurant(restaurant);
+        rating.setUser(ParseUser.getCurrentUser());
         rating.setLocation(restaurant.getLocation());
         rating.saveInBackground(new SaveCallback() {
             @Override
@@ -185,7 +185,7 @@ public class RateDishActivity extends ActionBarActivity {
 
         @Override
         public void done(ParseException e) {
-            final boolean saved = (e != null);
+            final boolean saved = (e == null) ? true:false;
             final String message = String.format("%s: %s %s",
                     prefix,
                     saved ? "SUCCESS." : "FAILED!",

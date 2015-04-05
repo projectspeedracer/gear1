@@ -1,9 +1,11 @@
 package com.projectspeedracer.thefoodapp.activities;
 
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.adapters.ViewPagerAdapter;
+import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.utils.SlidingTabLayout;
 
 public class MenuActivity extends ActionBarActivity {
@@ -84,5 +87,6 @@ public class MenuActivity extends ActionBarActivity {
     public void onRatingClick(View view) {
         Toast.makeText(this, "Touched Rating..", Toast.LENGTH_SHORT).show();
     }
+
 
 }
