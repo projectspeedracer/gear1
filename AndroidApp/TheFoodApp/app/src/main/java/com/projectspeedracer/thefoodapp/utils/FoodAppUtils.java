@@ -68,14 +68,9 @@ public class FoodAppUtils {
 
 	    final Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(resultCode, a, RESULT_CODE);
 
-	    // If Google Play services can provide an error dialog
 	    if (errorDialog == null) {
 		    return false;
 	    }
-
-	    /*ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-        errorFragment.setDialog(errorDialog);
-        errorFragment.show(activity.getSupportFragmentManager(), "Location Updates");*/
 
 	    final AppDialogFragment edFragment = new AppDialogFragment();
 	    edFragment.setDialog(errorDialog);
@@ -105,8 +100,8 @@ public class FoodAppUtils {
     }
 
 
-    public static void getDishFromObjectID(String dishObjectId, GetCallback callback) {
-        ParseQuery query = new ParseQuery(Dish.class);
+    public static void getDishFromObjectID(String dishObjectId, GetCallback<Dish> callback) {
+        final ParseQuery<Dish> query = ParseQuery.getQuery(Dish.class);
         query.getInBackground(dishObjectId, callback);
     }
 
@@ -124,26 +119,4 @@ public class FoodAppUtils {
         //todo: add 7 days constraint !!!
 
     }
-
-    // Get list of Rating posts for a particular dish - For "Dish Details"
-    public static void getAllPostsForDish(final Dish dish, FindCallback<Rating> callback) {
-
-        final ParseRelation<Rating> relationDish = dish.getRelation("DishToPosts");
-        final ParseQuery<Rating> query = relationDish.getQuery();
-
-        // include respective User objects
-        query.include(Rating.Fields.USER);
-        query.include(Rating.Fields.DISH);
-        query.orderByDescending("createdAt");
-
-        // TODO: add 7 days constraint !!!
-        query.findInBackground(callback);
-    }
-
-    // Get list of Rating posts for current Restaurant - For "Restaurant Wall"
-    public static void getAllPostsForRestaurant() {
-        // orderby CreatedAt
-        // include repective User objects
-    }
-
 }

@@ -49,6 +49,8 @@ import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 import com.projectspeedracer.thefoodapp.utils.PlacesUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -193,32 +195,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
     }
 
-    private void loadMap(GoogleMap googleMap) {
-        map = googleMap;
-
-        if (map == null) {
-            Toast.makeText(this, "ERROR! Got a null Map object reference.", Toast.LENGTH_SHORT).show();
-	        return;
-        }
-
-	    Log.v(TAG, "Map Fragment was loaded properly!");
-
-	    map.setMyLocationEnabled(true);
-	    map.setOnMarkerClickListener(this);
-	    map.setOnInfoWindowClickListener(this);
-	    map.setInfoWindowAdapter(new CustomMarkerWindowAdapter(getLayoutInflater()));
-
-	    mGoogleApiClient = new GoogleApiClient.Builder(this)
-			    .addApi(LocationServices.API)
-			    .addConnectionCallbacks(this)
-			    .addOnConnectionFailedListener(this).build();
-
-	    if (mGoogleApiClient != null
-	        && FoodAppUtils.isGooglePlayServicesAvailable(this, CONNECTION_FAILURE_RESOLUTION_REQUEST, this)) {
-		    mGoogleApiClient.connect();
-	    }
-    }
-
 	/*
 	 * Called by Location Services when the request to connect the client
 	 * finishes successfully. At this point, you can request the current
@@ -226,8 +202,8 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	 */
     @Override
     public void onConnected(Bundle bundle) {
-        // Display the connection status
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        final Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
 	        Toast.makeText(this, "Current location was not available, please enable location services.", Toast.LENGTH_SHORT).show();
 	        return;
@@ -243,14 +219,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	    onLocationChanged(location);
 
 	    listRestaurantFragment.loadRestaurantList("");
-    }
-
-    protected void startLocationUpdates() {
-	    LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        mLocationRequest.setInterval(Constants.UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(Constants.FASTEST_INTERVAL);
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     /*
@@ -276,62 +244,16 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 		 * has a resolution, try sending an Intent to start a Google Play
 		 * services activity that can resolve error.
 		 */
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this,
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
-				/*
-				 * Thrown if Google Play services canceled the original
-				 * PendingIntent
-				 */
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                e.printStackTrace();
-            }
-        } else {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry. Location services not available to you", Toast.LENGTH_LONG).show();
+        if (!connectionResult.hasResolution()) {
+	        Toast.makeText(getApplicationContext(), "Sorry. Location services not available to you", Toast.LENGTH_LONG).show();
+            return;
         }
-    }
 
-
-    private void dropPinEffect(final Marker marker) {
-        // Handler allows us to repeat a code block after a specified delay
-        final android.os.Handler handler = new android.os.Handler();
-//        long start = SystemClock.uptimeMillis();
-        final long duration = 1000;
-
-        // Use the bounce interpolator
-        final android.view.animation.Interpolator interpolator =
-                new BounceInterpolator();
-
-        // Animate marker with a bounce updating its position every 15ms
-        handler.post(new Runnable() {
-            long start = SystemClock.uptimeMillis();
-
-            @Override
-            public void run() {
-
-                long elapsed = SystemClock.uptimeMillis() - start;
-                // Calculate t for bounce based on elapsed time
-                float t = Math.max(
-                        1 - interpolator.getInterpolation((float) elapsed
-                                / duration), 0);
-                // Set the anchor
-                marker.setAnchor(0.5f, 1.0f + 14 * t);
-
-                if (t > 0.0) {
-                    // Post this event again 15ms from now.
-                    handler.postDelayed(this, 15);
-                } else { // done elapsing, show window
-                    marker.showInfoWindow();
-//                    start = SystemClock.uptimeMillis();
-//                    handler.postDelayed(this, 15);
-
-                }
-            }
-        });
+	    try {
+		    connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+	    } catch (IntentSender.SendIntentException e) {
+		    e.printStackTrace();
+	    }
     }
 
 	private Marker addNewMarker(Restaurant restaurant) {
@@ -349,7 +271,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 //		dropPinEffect(marker);
 		return marker;
 	}
-
 
 	// region RestaurantListFragment Listener
 
@@ -453,6 +374,76 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 		updateCircle(new LatLng(location.getLatitude(), location.getLongitude()));
 	}
 
+	@Override
+	public void onPickRestaurant(Restaurant restaurant) {
+
+		if (!PlacesUtils.IsRestaurantInRange(restaurant, mGoogleApiClient)) {
+			Toast.makeText(this, restaurant.getName() +" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		restaurantSelected(restaurant);
+		startActivity(new Intent(this, RestaurantActivity.class));
+	}
+
+
+	@Override
+	public boolean onMarkerClick(Marker marker) {
+
+		Restaurant restaurant = markerRestaurantMap.get(marker);
+		showRestaurantOnMap(restaurant);
+		return false;
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker marker) {
+		Restaurant restaurant = markerRestaurantMap.get(marker);
+		onPickRestaurant(restaurant);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.btnSearch:
+				doSearch();
+				break;
+		}
+	}
+
+	private void loadMap(GoogleMap googleMap) {
+		map = googleMap;
+
+		if (map == null) {
+			Toast.makeText(this, "ERROR! Got a null Map object reference.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		Log.v(TAG, "Map Fragment was loaded properly!");
+
+		map.setMyLocationEnabled(true);
+		map.setOnMarkerClickListener(this);
+		map.setOnInfoWindowClickListener(this);
+		map.setInfoWindowAdapter(new CustomMarkerWindowAdapter(getLayoutInflater()));
+
+		mGoogleApiClient = new GoogleApiClient.Builder(this)
+				.addApi(LocationServices.API)
+				.addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this).build();
+
+		if (mGoogleApiClient != null
+		    && FoodAppUtils.isGooglePlayServicesAvailable(this, CONNECTION_FAILURE_RESOLUTION_REQUEST, this)) {
+			mGoogleApiClient.connect();
+		}
+	}
+
+	protected void startLocationUpdates() {
+		LocationRequest mLocationRequest = new LocationRequest();
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+		mLocationRequest.setInterval(Constants.UPDATE_INTERVAL);
+		mLocationRequest.setFastestInterval(Constants.FASTEST_INTERVAL);
+		LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+	}
+
 	private void updateCircle(LatLng myLatLng) {
 		final double radius = TheFoodApplication.getSearchDistance();
 
@@ -489,46 +480,50 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	    startActivity(new Intent(this, RestaurantActivity.class));
     }
 
-    @Override
-    public void onPickRestaurant(Restaurant restaurant) {
-
-        if (!PlacesUtils.IsRestaurantInRange(restaurant, mGoogleApiClient)) {
-            Toast.makeText(this, restaurant.getName() +" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        restaurantSelected(restaurant);
-        startActivity(new Intent(this, RestaurantActivity.class));
-    }
-
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-
-        Restaurant restaurant = markerRestaurantMap.get(marker);
-        showRestaurantOnMap(restaurant);
-        return false;
-    }
-
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Restaurant restaurant = markerRestaurantMap.get(marker);
-        onPickRestaurant(restaurant);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnSearch:
-                doSearch();
-                break;
-        }
-    }
-
     private void doSearch() {
-        String searchQ = etSearch.getText().toString();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        final String searchTerm = etSearch.getText().toString();
+	    if (StringUtils.isBlank(searchTerm)) { return; }
+
+        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
-        listRestaurantFragment.loadRestaurantList(searchQ);
+        listRestaurantFragment.loadRestaurantList(searchTerm);
     }
 
+	private void dropPinEffect(final Marker marker) {
+		// Handler allows us to repeat a code block after a specified delay
+		final android.os.Handler handler = new android.os.Handler();
+//        long start = SystemClock.uptimeMillis();
+		final long duration = 1000;
+
+		// Use the bounce interpolator
+		final android.view.animation.Interpolator interpolator =
+				new BounceInterpolator();
+
+		// Animate marker with a bounce updating its position every 15ms
+		handler.post(new Runnable() {
+			long start = SystemClock.uptimeMillis();
+
+			@Override
+			public void run() {
+
+				long elapsed = SystemClock.uptimeMillis() - start;
+				// Calculate t for bounce based on elapsed time
+				float t = Math.max(
+						1 - interpolator.getInterpolation((float) elapsed
+						                                  / duration), 0);
+				// Set the anchor
+				marker.setAnchor(0.5f, 1.0f + 14 * t);
+
+				if (t > 0.0) {
+					// Post this event again 15ms from now.
+					handler.postDelayed(this, 15);
+				} else { // done elapsing, show window
+					marker.showInfoWindow();
+//                    start = SystemClock.uptimeMillis();
+//                    handler.postDelayed(this, 15);
+
+				}
+			}
+		});
+	}
 }

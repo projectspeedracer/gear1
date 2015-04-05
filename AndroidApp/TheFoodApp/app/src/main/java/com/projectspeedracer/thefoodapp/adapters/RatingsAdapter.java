@@ -17,14 +17,16 @@ import com.projectspeedracer.thefoodapp.models.Rating;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 /**
  * Created by avkadam on 4/4/15.
  */
-public class PostsAdapter extends ArrayAdapter<Rating> {
-    public PostsAdapter(Context context, List<Rating> objects) {
-        super(context, R.layout.item_dish_post, objects);
+public class RatingsAdapter extends ArrayAdapter<Rating> {
+    public RatingsAdapter(Context context, List<Rating> ratings) {
+        super(context, R.layout.item_dish_post, ratings);
     }
 
     @Override
@@ -74,13 +76,10 @@ public class PostsAdapter extends ArrayAdapter<Rating> {
             holder.ivRatingImage.setImageResource(R.drawable.bad);
         }
 
-        Dish dish = rating.getDish();
-
-        // TODO: see if we have Dish image that user posted
+        final Dish dish = rating.getDish();
         final String image = (dish != null) ? dish.getImage() : null;
-        if (image != null) {
 
-
+        if (StringUtils.isNotBlank(image)) {
             holder.ivDishImage.setImageResource(0);
 
             Picasso.with(getContext())

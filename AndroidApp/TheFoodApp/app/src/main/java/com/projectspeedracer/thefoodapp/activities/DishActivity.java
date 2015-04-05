@@ -11,40 +11,40 @@ import android.widget.Toast;
 
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
-import com.projectspeedracer.thefoodapp.fragments.DishPostsFragment;
+import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
 public class DishActivity extends ActionBarActivity {
 
-    Dish dishToRate;
-    Restaurant restaurant;
-    String dishObjectId;
+	Dish       dishToRate;
+	Restaurant restaurant;
+	String     dishObjectId;
 
-    DishPostsFragment dishPostsFragment;
+	DishRatingsFragment dishRatingsFragment;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dish);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_dish);
 
-        dishObjectId = getIntent().getStringExtra("current_dish_id");
-        Log.i("RateDish", "Will Rate Dish -" + dishObjectId);
-        Toast.makeText(this, "Got dish - " + dishObjectId, Toast.LENGTH_SHORT).show();
+		dishObjectId = getIntent().getStringExtra("current_dish_id");
+		Log.i("RateDish", "Will Rate Dish -" + dishObjectId);
+		Toast.makeText(this, "Got dish - " + dishObjectId, Toast.LENGTH_SHORT).show();
 
-        restaurant = TheFoodApplication.getCurrentRestaurant();
+		restaurant = TheFoodApplication.getCurrentRestaurant();
 
-        showDishPosts();
-    }
+		showDishPosts();
+	}
 
-    private void showDishPosts() {
-        // get screen name
+	private void showDishPosts() {
+		// get screen name
 
-        DishPostsFragment dishPostsFragment = DishPostsFragment.newInstance(dishObjectId);
+		DishRatingsFragment dishRatingsFragment = DishRatingsFragment.newInstance(dishObjectId);
 
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.flDishPosts, dishPostsFragment);
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.flDishPosts, dishRatingsFragment);
         ft.commit();
     }
 
