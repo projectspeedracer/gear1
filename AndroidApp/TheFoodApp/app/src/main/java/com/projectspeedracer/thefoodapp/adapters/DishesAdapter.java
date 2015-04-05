@@ -1,9 +1,7 @@
 package com.projectspeedracer.thefoodapp.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -15,11 +13,11 @@ import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 public class DishesAdapter extends ArrayAdapter<Dish> {
-
-
 
 	public DishesAdapter(Context context, List<Dish> dishes) {
 		super(context, R.layout.item_dish, dishes);
@@ -38,10 +36,11 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 		tvName.setText(dish.getName());
 
         final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
-        tvDishRating.setText(String.valueOf(dish.getStarAverage()));
+        tvDishRating.setText(String.valueOf(dish.getAverageRating()));
 
         final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
-        ratingBar.setRating(dish.getStarAverage());
+        ratingBar.setRating(dish.getAverageRating());
+
         /*ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -50,11 +49,11 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
                 }
                 return true;
             }
-        });
-*/
+        });*/
+
 		final String image = dish.getImage();
 
-		if (image != null) {
+		if (StringUtils.isNotBlank(image)) {
 			final ImageView ivDish = (ImageView) convertView.findViewById(R.id.ivMenuItem);
 
 			ivDish.setImageResource(0);

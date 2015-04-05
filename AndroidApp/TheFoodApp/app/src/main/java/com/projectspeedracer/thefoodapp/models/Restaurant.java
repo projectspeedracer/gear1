@@ -1,10 +1,18 @@
 package com.projectspeedracer.thefoodapp.models;
 
 import android.location.Location;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.projectspeedracer.thefoodapp.activities.IDishesFetchedCallback;
+import com.projectspeedracer.thefoodapp.utils.Action;
+import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
 import java.util.ArrayList;
@@ -13,9 +21,9 @@ import java.util.List;
 @ParseClassName("Restaurants")
 public class Restaurant extends ParseObject {
 
-	private List<Rating> ratings = new ArrayList<>();
+	private static final String       TAG     = Constants.TAG;
+	private              List<Rating> ratings = new ArrayList<>();
 
-    // public default. do not modify fields here
 	public Restaurant() {
 	}
 
@@ -29,7 +37,7 @@ public class Restaurant extends ParseObject {
 
 		setPlacesId(provider.getPlacesId());
 		setName(provider.getName());
-        setAddress(provider.getAddress());
+		setAddress(provider.getAddress());
 		setLocation(provider.getLocation());
 		setIconUrl(provider.getIconUrl());
 		//setWebsiteUrl(provider.getWebsiteUrl());
@@ -38,6 +46,36 @@ public class Restaurant extends ParseObject {
 		if (photoIds.size() > 0) {
 			setPhotoId(photoIds.get(0));
 		}
+	}
+
+	//public void fetchDishes(final Action<List<Dish>> callback) {
+	public void fetchDishes(final IDishesFetchedCallback callback) {
+
+		assert getPlacesId() != null : "Expected non-empty places id";
+
+		if (callback == null) {
+			Log.i(TAG, "fetchDishes call ignored. Callback not provided");
+			return;
+		}
+
+		final ParseQuery<Dish> query = ParseQuery.getQuery(Dish.class);
+		query.whereEqualTo(Dish.Fields.RESTAURANT_ID, getPlacesId());
+
+		query.findInBackground(new FindCallback<Dish>() {
+			@Override
+			public void done(List<Dish> dishes, ParseException e) {
+				if (e != null) {
+					final String message = String.format("FAILED to query dishes for %s. %s", getName(), e.getMessage());
+					Log.e(TAG, message);
+					e.printStackTrace();
+					return;
+				}
+
+				Log.i(TAG, String.format("Found %s dishes", dishes.size()));
+
+				callback.onDishesFetched(dishes);
+			}
+		});
 	}
 
 	// region Getters and Setters
