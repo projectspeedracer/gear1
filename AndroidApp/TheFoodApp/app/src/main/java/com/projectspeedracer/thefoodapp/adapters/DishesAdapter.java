@@ -13,11 +13,11 @@ import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 public class DishesAdapter extends ArrayAdapter<Dish> {
-
-
 
 	public DishesAdapter(Context context, List<Dish> dishes) {
 		super(context, R.layout.item_dish, dishes);
@@ -40,6 +40,7 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 
         final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
         ratingBar.setRating(dish.getAverageRating());
+
         /*ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -48,11 +49,11 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
                 }
                 return true;
             }
-        });
-*/
+        });*/
+
 		final String image = dish.getImage();
 
-		if (image != null) {
+		if (StringUtils.isNotBlank(image)) {
 			final ImageView ivDish = (ImageView) convertView.findViewById(R.id.ivMenuItem);
 
 			ivDish.setImageResource(0);

@@ -32,4 +32,9 @@ public class DeserializableParseObject extends ParseObject {
 	@Override public boolean isDataAvailable() {
 		return super.isDataAvailable();
 	}
+
+	@Override public String getString(String key) {
+		final String value = super.getString(key);
+		return value == null ? "" : value;
+	}
 }
