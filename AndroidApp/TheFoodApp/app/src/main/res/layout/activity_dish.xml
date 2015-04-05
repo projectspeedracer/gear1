@@ -1,69 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/white"
-        android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"
+            android:id="@+id/ivMenuItem"
+            android:background="@drawable/food"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guacamole"
+            android:id="@+id/tvMenuItemName"
+            android:paddingLeft="10dp"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"/>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:gravity="center_vertical"
-        android:id="@+id/menuLayout"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        >
-        <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:id="@+id/FramePhoto">
-            <ImageView
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/ivMenuItem"
-                android:background="@drawable/food"/>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/stencil"/>
-        </FrameLayout>
+        android:text="Avocado Mexican Dipping Sauce"
+        android:id="@+id/tvMenuItemDescription"
+        android:padding="8dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dishRatingBarAggrigated"
+                android:numStars="3"
+                android:isIndicator="true"
+                style="?android:attr/ratingBarStyleSmall"/>
+        </LinearLayout>
+
+        <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingRight="8dp"
-            android:orientation="vertical"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="Guacamole"
-                android:id="@+id/tvMenuItemName"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:maxWidth="250dp"
-                android:layout_height="wrap_content"
-                android:text="Avocado Mexican Dipping Sauce"
-                android:id="@+id/tvMenuItemDescription"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:maxWidth="250dp"
-                android:layout_height="wrap_content"
-                android:text="5.5"
-                android:id="@+id/tvDishRating"/>
-
-        </LinearLayout>
-
+            android:maxWidth="200dp"
+            android:text="5.5"
+            android:id="@+id/tvDishRating"
+            android:padding="8dp"/>
     </LinearLayout>
 
     <FrameLayout
@@ -75,5 +71,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/flDishPosts"></FrameLayout>
-</RelativeLayout>
+        android:id="@+id/flDishPosts">
+
+    </FrameLayout>
+
+
+</LinearLayout>

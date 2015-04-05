@@ -15,6 +15,7 @@
     android:id="@+id/card_view"
     card_view:cardCornerRadius="2dp"
     card_view:cardElevation="4dp">
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -56,21 +57,35 @@
                         android:padding="8dp"
                         />
 
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:maxWidth="200dp"
-                        android:layout_height="wrap_content"
-                        android:text="5.5"
-                        android:id="@+id/tvDishRating"
-                        android:padding="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
 
             <RatingBar
-                android:layout_width="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dishRatingBarAggrigated"
+                    android:numStars="3"
+                    android:isIndicator="true"
+                    style="?android:attr/ratingBarStyleSmall"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:id="@+id/dishRatingBarAggrigated"
-                android:numStars="3"
-                android:isIndicator="true"
-                />
+                android:maxWidth="200dp"
+                android:text="5.5"
+                android:id="@+id/tvDishRating"
+                android:padding="8dp"/>
+        </LinearLayout>
 
 
     </LinearLayout>

@@ -24,8 +24,8 @@
     <string name="image_missing">image_missing</string>
     <string name="title_activity_menu">Restaurant Menu</string>
     <string name="sample_address">1600 Amphitheatre Pkwy, Mountain View, CA</string>
-    <string name="title_activity_dish">DishActivity</string>
+    <string name="title_activity_dish">Dish Details</string>
     <string name="search_hint">e.g. Panera bread, tacos</string>
-    <string name="title_activity_rate_dish">RateDishActivity</string>
+    <string name="title_activity_rate_dish">Rate Dish</string>
 
 </resources>
