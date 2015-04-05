@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
         dishesAdapter = new DishesAdapter(getActivity(), dishes);
 
-        final ListView lvDishes = (ListView) view.findViewById(R.id.lvDishes);
+        final GridView lvDishes = (GridView) view.findViewById(R.id.lvDishes);
         lvDishes.setAdapter(dishesAdapter);
         lvDishes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

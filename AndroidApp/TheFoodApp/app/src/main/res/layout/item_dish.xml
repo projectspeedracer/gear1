@@ -1,68 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+>
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:id="@+id/card_view"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="4dp">
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:gravity="center_vertical"
-        android:id="@+id/menuLayout"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        >
-        <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:id="@+id/FramePhoto">
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
             <ImageView
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="150dp"
+                android:scaleType="centerCrop"
+                android:layout_centerInParent="true"
                 android:id="@+id/ivMenuItem"
-                android:background="@drawable/food"/>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/stencil"/>
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingRight="8dp"
-            android:orientation="vertical"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="Guacamole"
-                android:id="@+id/tvMenuItemName"
-                android:textSize="16sp"/>
+                android:background="@drawable/food"
+            />
 
             <TextView
-                android:layout_width="match_parent"
-                android:maxWidth="250dp"
-                android:layout_height="wrap_content"
-                android:text="Avocado Mexican Dipping Sauce"
-                android:id="@+id/tvMenuItemDescription"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:textColor="@android:color/white"
+                    android:text="Guacamole"
+                    android:id="@+id/tvMenuItemName"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp"
+                    android:background="@drawable/overlay"/>
+        </RelativeLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:maxWidth="250dp"
-                android:layout_height="wrap_content"
-                android:text="5.5"
-                android:id="@+id/tvDishRating"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:maxWidth="200dp"
+                        android:layout_height="wrap_content"
+                        android:text="Avocado Mexican Dipping Sauce"
+                        android:id="@+id/tvMenuItemDescription"
+                        android:padding="8dp"
+                        />
 
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:maxWidth="200dp"
+                        android:layout_height="wrap_content"
+                        android:text="5.5"
+                        android:id="@+id/tvDishRating"
+                        android:padding="8dp"/>
     </LinearLayout>
-</RelativeLayout>
+    </android.support.v7.widget.CardView>
+    </LinearLayout>
