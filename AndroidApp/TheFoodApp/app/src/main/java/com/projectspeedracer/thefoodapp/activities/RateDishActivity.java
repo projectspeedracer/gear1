@@ -35,6 +35,7 @@ public class RateDishActivity extends ActionBarActivity {
     Restaurant restaurant;
     EditText etMessage;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,7 +185,7 @@ public class RateDishActivity extends ActionBarActivity {
 
         @Override
         public void done(ParseException e) {
-            final boolean saved = e != null;
+            final boolean saved = (e != null);
             final String message = String.format("%s: %s %s",
                     prefix,
                     saved ? "SUCCESS." : "FAILED!",
@@ -192,7 +193,7 @@ public class RateDishActivity extends ActionBarActivity {
 
             Log.i(Constants.TAG, message);
 
-            if (e != null) {
+            if (!saved) {
                 e.printStackTrace();
             }
         }

@@ -1,11 +1,14 @@
 package com.projectspeedracer.thefoodapp.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.projectspeedracer.thefoodapp.R;
@@ -15,6 +18,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class DishesAdapter extends ArrayAdapter<Dish> {
+
+
 
 	public DishesAdapter(Context context, List<Dish> dishes) {
 		super(context, R.layout.item_dish, dishes);
@@ -32,8 +37,12 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 		final TextView tvName = (TextView) convertView.findViewById(R.id.tvMenuItemName);
 		tvName.setText(dish.getName());
 
-        /*final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
-        ratingBar.setOnTouchListener(new View.OnTouchListener() {
+        final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
+        tvDishRating.setText(String.valueOf(dish.getStarAverage()));
+
+        final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
+        ratingBar.setRating(dish.getStarAverage());
+        /*ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -42,7 +51,6 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
                 return true;
             }
         });
-
 */
 		final String image = dish.getImage();
 

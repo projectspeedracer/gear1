@@ -63,6 +63,13 @@
                 android:text="5.5"
                 android:id="@+id/tvDishRating"/>
 
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dishRatingBarAggrigated"
+                android:numStars="3"
+                android:isIndicator="true"/>
+
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

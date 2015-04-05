@@ -20,7 +20,9 @@ import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.activities.RateDishActivity;
 import com.projectspeedracer.thefoodapp.adapters.DishesAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.utils.Constants;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,8 +79,38 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 }
 
                 Log.i(Constants.TAG, String.format("Found %s dishes", dishes.size()));
-
                 dishesAdapter.addAll(dishes);
+                for (final Dish dish: dishes) {
+                    FoodAppUtils.getAllPostsForDish(dish, new FindCallback<Rating>() {
+
+                        @Override
+                        public void done(List<Rating> ratings, ParseException e) {
+                            int totalStars = 0;
+                            if (e != null) {
+                                e.printStackTrace();
+                                return;
+                            }
+                            if (ratings.size() > 0) {
+
+                                for (Rating r : ratings) {
+                                    totalStars += r.getStars();
+                                }
+                                float average = (float)totalStars / (float)ratings.size();
+                                if (average < 1 && average > 3) {
+                                    Log.e(Constants.TAG, "Something fishy about average - " + average);
+                                    average = 2;
+                                }
+                                Log.i(Constants.TAG, "Ratings for "+dish.getName()+" Total: "+totalStars+" num: "+ratings.size()+" Avg: "+average);
+                                dish.setStarAverage(average);
+                                dishesAdapter.notifyDataSetChanged();
+                            }
+                            else {
+                                Log.i(Constants.TAG, "No ratings for dish - "+dish.getName());
+                            }
+                        }
+                    });
+                }
+
             }
         });
 
@@ -99,6 +131,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         Intent i = new Intent(getActivity(), RateDishActivity.class);
         Log.v(TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
         i.putExtra("current_dish_id", dish.getObjectId());
+//        i.putExtra("current_dish", dish);
         getActivity().startActivity(i);
     }
 }
