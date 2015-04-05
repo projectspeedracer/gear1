@@ -2,7 +2,6 @@ package com.projectspeedracer.thefoodapp.models;
 
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
@@ -11,7 +10,6 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.projectspeedracer.thefoodapp.activities.IDishesFetchedCallback;
-import com.projectspeedracer.thefoodapp.utils.Action;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 

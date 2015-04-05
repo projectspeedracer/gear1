@@ -26,7 +26,7 @@ public class TheFoodApplication extends Application {
 
 	public static final float DEFAULT_SEARCH_DISTANCE = 10000*500.0f; // in feet
 
-	public static final Boolean isLocal = true; // true for testing
+	public static final Boolean isLocal = false; // true for testing
 
 	public static final int MAX_NUM_PLACES = 6;
 
