@@ -1,20 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:weightSum="1"
+    android:gravity="center_vertical"
+    android:id="@+id/userLayout"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
+    >
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/FramePhoto">
+        <ImageView
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/ivBanner"
+            android:background="@drawable/food"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/stencil"/>
+    </FrameLayout>
+
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:gravity="center_vertical"
-        android:id="@+id/userLayout"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="8dp"
+        android:orientation="vertical"
         >
+
         <FrameLayout
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -61,7 +84,7 @@
                 android:text="Distance"
                 android:id="@+id/tvRating" />
 
-        </LinearLayout>
+    </LinearLayout>
 
         <ImageView
             android:id="@+id/ivRatingImage"
@@ -70,6 +93,5 @@
             android:layout_margin="10dp"
             android:background="@drawable/good"
             />
-
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

@@ -69,12 +69,12 @@
                 android:layout_height="wrap_content" >
 
             <RatingBar
-                    android:layout_width="wrap_content"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/dishRatingBarAggrigated"
                     android:numStars="3"
                     android:isIndicator="true"
-                    style="?android:attr/ratingBarStyleSmall"/>
+                    style="@style/RatingBar"/>
             </LinearLayout>
 
             <TextView

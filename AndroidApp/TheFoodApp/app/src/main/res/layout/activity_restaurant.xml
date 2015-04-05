@@ -87,4 +87,9 @@
         android:background="@color/button"
         android:onClick="onOpenMenu"/>
     </RelativeLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_post_list">
+    </FrameLayout>
 </RelativeLayout>
