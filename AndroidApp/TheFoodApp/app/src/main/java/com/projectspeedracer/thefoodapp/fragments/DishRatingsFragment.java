@@ -39,22 +39,22 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
         Log.i("DishPost", "Will fetch posts for Dish -" + dishObjectId);
 
         // 1. Get Dish object
-        FoodAppUtils.getDishFromObjectID(dishObjectId, new GetCallback<Dish>() {
+        FoodAppUtils.fetchDish(dishObjectId, new GetCallback<Dish>() {
 
-            @Override
-            public void done(Dish dish, ParseException e) {
-                if (e != null) {
-                    final String errorText = "Failed to query dish for ID - " + dishObjectId;
+	        @Override
+	        public void done(Dish dish, ParseException e) {
+		        if (e != null) {
+			        final String errorText = "Failed to query dish for ID - " + dishObjectId;
 
-                    Log.e(Constants.TAG, errorText + ". " + e.getMessage());
-                    e.printStackTrace();
+			        Log.e(Constants.TAG, errorText + ". " + e.getMessage());
+			        e.printStackTrace();
 
-                    return;
-                }
+			        return;
+		        }
 
-                Log.i(Constants.TAG, String.format("Found %s dish", dish.getName()));
-                getDishRatings(dish);
-            }
+		        Log.i(Constants.TAG, String.format("Found %s dish", dish.getName()));
+		        getDishRatings(dish);
+	        }
         });
     }
 

@@ -14,8 +14,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -30,15 +28,6 @@ import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 public class RateDishActivity extends ActionBarActivity {
@@ -63,7 +52,7 @@ public class RateDishActivity extends ActionBarActivity {
 	    if (dish == null) {
 		    final String msg = "FAILED launching RatingDishActivity. Could not obtain the dish object.";
 		    LogToast(this, msg);
-		    finish();
+		    // TODO: finish(); - When the serialization works ok !!!
 	    }
 
         Log.i(TAG, "Rating Dish (" + dishObjectId + ") ...");
@@ -84,25 +73,24 @@ public class RateDishActivity extends ActionBarActivity {
         });
 
         // 1. Get Dish object
-        FoodAppUtils.getDishFromObjectID(dishObjectId, new GetCallback<ParseObject>() {
+        FoodAppUtils.fetchDish(dishObjectId, new GetCallback<Dish>() {
 
-            @Override
-            public void done(ParseObject dish, ParseException e) {
-                if (e != null) {
-                    final String errorText = "Failed to query dish for ID - "+dishObjectId;
+	        @Override
+	        public void done(Dish dish, ParseException e) {
+		        if (e != null) {
+			        final String errorText = "Failed to query dish for ID - " + dishObjectId;
 
-                    Log.e(TAG, errorText + ". " + e.getMessage());
-                    e.printStackTrace();
+			        Log.e(TAG, errorText + ". " + e.getMessage());
+			        e.printStackTrace();
 
-                    return;
-                }
+			        return;
+		        }
 
-                dishToRate = (Dish) dish;
+		        dishToRate = dish;
 
-                Log.i(TAG, String.format("Found %s dish", dishToRate.getName()));
-            }
+		        Log.i(TAG, String.format("Found %s dish", dishToRate.getName()));
+	        }
         });
-
     }
 
 	public static void LogToast(Context context, String message) {
@@ -126,16 +114,13 @@ public class RateDishActivity extends ActionBarActivity {
             return;
         }
 
-        // 2. Create Rating Post Obejct
+        // 2. Create Rating Post Object
 
         final RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBarDish);
-	    Float ratingNum = ratingBar.getRating();
+	    float ratingNum = ratingBar.getRating();
+	    final String rateMessage = etMessage.getText().toString();
 
-
-	    String rateMessage = etMessage.getText().toString();
-
-
-	    Log.i("Rate", "Ready to post for "+dishToRate.getName() + " Stars = "+ratingNum);
+	    Log.i(TAG, "Ready to post for " + dishToRate.getName() + " Stars = "+ratingNum);
 
 	    // 2.1 - Set rating
 	    final Rating rating = new Rating();
@@ -151,25 +136,28 @@ public class RateDishActivity extends ActionBarActivity {
         rating.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                Log.i(TAG, "Rating save callback: "
-                        + (e != null ? "FAILED!" : "SUCCESS")
-                        + " . Starts: " + rating.getStars() + " Comments: " + rating.getComments());
+	            final String msg = String.format("Rating save callback: %s. Stars: %s. Comments: %s",
+			            e != null ? "FAILED" : "SUCCESS",
+			            rating.getStars(),
+			            rating.getComments());
+
+	            Log.i(TAG, msg);
+
                 if (e != null) {
                     e.printStackTrace();
+	                return;
                 }
-                else {
-                    // add relations with Dish, Restaurant and User
-                    addRelations(rating);
-                }
+
+	            addRelations(rating);
             }
         });
 
 
         // 7. Save objects
-//        rating.saveInBackground();
+        // rating.saveInBackground();
     }
 
-    public void onPostRating(View v) {
+	public void onPostRating(View v) {
         postRating();
     }
 
@@ -197,32 +185,6 @@ public class RateDishActivity extends ActionBarActivity {
         user.saveInBackground(new ParseSaveCallback("User/Rating Update: ", info));
     }
 
-    class ParseSaveCallback implements SaveCallback {
-
-        private String prefix;
-        private String[] args;
-
-        public ParseSaveCallback(String prefix, String[] args) {
-            this.prefix = prefix;
-            this.args = args;
-        }
-
-        @Override
-        public void done(ParseException e) {
-            final boolean saved = (e == null) ? true:false;
-            final String message = String.format("%s: %s %s",
-                    prefix,
-                    saved ? "SUCCESS." : "FAILED!",
-                    Arrays.toString(args));
-
-            Log.i(TAG, message);
-
-            if (!saved) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -244,4 +206,31 @@ public class RateDishActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+	class ParseSaveCallback implements SaveCallback {
+
+		private String prefix;
+		private String[] args;
+
+		public ParseSaveCallback(String prefix, String[] args) {
+			this.prefix = prefix;
+			this.args = args;
+		}
+
+		@Override
+		public void done(ParseException e) {
+			final boolean saved = e == null;
+
+			final String message = String.format("%s: %s %s",
+					prefix,
+					saved ? "SUCCESS." : "FAILED!",
+					Arrays.toString(args));
+
+			Log.i(TAG, message);
+
+			if (!saved) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

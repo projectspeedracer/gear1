@@ -100,7 +100,7 @@ public class FoodAppUtils {
     }
 
 
-    public static void getDishFromObjectID(String dishObjectId, GetCallback<Dish> callback) {
+    public static void fetchDish(String dishObjectId, GetCallback<Dish> callback) {
         final ParseQuery<Dish> query = ParseQuery.getQuery(Dish.class);
         query.getInBackground(dishObjectId, callback);
     }
