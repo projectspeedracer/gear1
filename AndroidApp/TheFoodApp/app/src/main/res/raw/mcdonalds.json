@@ -1,0 +1,199 @@
+{
+    "html_attributions": [],
+    "result": {
+        "address_components": [
+            {
+                "long_name": "1249",
+                "short_name": "1249",
+                "types": [
+                    "street_number"
+                ]
+            },
+            {
+                "long_name": "Great Mall Drive",
+                "short_name": "Great Mall Dr",
+                "types": [
+                    "route"
+                ]
+            },
+            {
+                "long_name": "Milpitas",
+                "short_name": "Milpitas",
+                "types": [
+                    "locality",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "California",
+                "short_name": "CA",
+                "types": [
+                    "administrative_area_level_1",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "United States",
+                "short_name": "US",
+                "types": [
+                    "country",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "95035",
+                "short_name": "95035",
+                "types": [
+                    "postal_code"
+                ]
+            }
+        ],
+        "adr_address": "<span class='street-address'>1249 Great Mall Drive</span>, <span class='locality'>Milpitas</span>, <span class='region'>CA</span> <span class='postal-code'>95035</span>, <span class='country-name'>United States</span>",
+        "formatted_address": "1249 Great Mall Drive, Milpitas, CA 95035, United States",
+        "formatted_phone_number": "(408) 935-8225",
+        "geometry": {
+            "location": {
+                "lat": 37.412731,
+                "lng": -121.897766
+            }
+        },
+        "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
+        "id": "041b9813dfa9673b6260b89ed5b1233c33fcd823",
+        "international_phone_number": "+1 408-935-8225",
+        "name": "McDonald's",
+        "opening_hours": {
+            "open_now": true,
+            "periods": [
+                {
+                    "close": {
+                        "day": 1,
+                        "time": "0100"
+                    },
+                    "open": {
+                        "day": 0,
+                        "time": "0500"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 2,
+                        "time": "0100"
+                    },
+                    "open": {
+                        "day": 1,
+                        "time": "0500"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 3,
+                        "time": "0100"
+                    },
+                    "open": {
+                        "day": 2,
+                        "time": "0500"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 5,
+                        "time": "0000"
+                    },
+                    "open": {
+                        "day": 3,
+                        "time": "0500"
+                    }
+                },
+                {
+                    "close": {
+                        "day": 0,
+                        "time": "0000"
+                    },
+                    "open": {
+                        "day": 5,
+                        "time": "0500"
+                    }
+                }
+            ],
+            "weekday_text": [
+                "Monday: 5:00 am \u2013 1:00 am",
+                "Tuesday: 5:00 am \u2013 1:00 am",
+                "Wednesday: 5:00 am \u2013 12:00 am",
+                "Thursday: Open 24 hours",
+                "Friday: 5:00 am \u2013 12:00 am",
+                "Saturday: Open 24 hours",
+                "Sunday: 5:00 am \u2013 1:00 am"
+            ]
+        },
+        "photos": [
+            {
+                "height": 1600,
+                "html_attributions": [],
+                "photo_reference": "CnRnAAAAhFsj4mTiRQ_zptcPV5ZK5eBDM7IZbuUB87M1tRccbeggy_Z5hrPMqkr_T0MxYsL6tktP8SpmtAlztWhhw2oKGaDysH8s25XBNsWD0o4qv4Wxg_g3i3EOPd0Ss1axIBBF4wb4z5QMKmd6kGLLOm-OzBIQWQT3WGG67Mk9P1ks2HZKUBoUqsjmDr2IxUiKZSMkZq-5Sr24cA0",
+                "width": 2512
+            },
+            {
+                "height": 1600,
+                "html_attributions": [],
+                "photo_reference": "CnRnAAAA1uWNaBiKqpzaTL7P2Dv4sVUBPc0nIgPI6yHHe_DVhEfsLZDaT6WP4uwrjOxycQtLSZQv2lk1uQ5I8SBmwKki-txQBUndjINqicF9RYBMEnB8ZZ0DZtJwXznyh4dnVy0iyjkWjras65xDmlxLRXD50BIQ2RidZgaWQP8bT32xJDfcPBoUNxmgu_W5s1-JTeACUPsHtni8r2o",
+                "width": 2400
+            },
+            {
+                "height": 1600,
+                "html_attributions": [],
+                "photo_reference": "CnRnAAAAeB-0yN7x-nMaATTyizzjRSPmDdfNccQhQJSc0hYHtylJAcOgDE6IbRow2w1jc-oUZx81gHGEVxcRzoh7jOqDH0BZXGMx0ZEFkoVzCCbS4vtC0EzcjvJIPu6uj1jtghnLahKj6_HVblF-VW-xr12O5xIQMo7Gx4F5czed8mtfBgY_XxoU7_44LaIbGkBMg8bP9-jKtjybZ48",
+                "width": 2400
+            },
+            {
+                "height": 1600,
+                "html_attributions": [],
+                "photo_reference": "CnRnAAAAN6XXaPXISvVzrV1yoKTH8joYmbm39z-NLK9KoE2slaRB_EzO1ARyWtYAA7u-CSBvdcEg_GTmKNmLCvZC7MC5oCkTxTDAYuV2J--IDm06Vw3EMWuHXldONxsxrLyW4Iq0pEhaHx4Ukja7CObsxa_XKhIQi0d_iYiQEwQXWcmG3sshKxoUWooSMTpyF25vJHgMyRCRooBoo20",
+                "width": 2400
+            },
+            {
+                "height": 1600,
+                "html_attributions": [],
+                "photo_reference": "CnRnAAAAH1o5ndkBsScanvoVul3-AssBsIOIKhckQFVWNxMgvLWGPZrKZBvUB0opfM9RMKBzIeln-1QKr1RGzcDtropAy9ARbF6Mks0-PcJ0d3H6UV1N2Aw6_epIBAuJUtQA-M2w1Kl-cKbKid6v5I2yEQagHBIQD9cQDenMy7efN2vdkuIrEBoUMrZguht7mYmMfZfmpYCndYLITl0",
+                "width": 2400
+            },
+            {
+                "height": 540,
+                "html_attributions": [
+                    "From a Google User"
+                ],
+                "photo_reference": "CnRvAAAAft6Pbz2VBKf4fFQ12gRuGbcA29l6D5RiKEaqBpYKje-RQTBrZFswJ97g4P4CUhS4w0MmfsdKmUsOLEV5ARMBR7ss1kcuEze0nN_MRz0qujpj-32CudnEKQvhvOt3eMAPg456YFw8mmjGf-kC2xJT4RIQATi89HYnbKMlrz6NkaK44xoUXi89ET95aEWWC9TNEKBSnJEcyok",
+                "width": 960
+            }
+        ],
+        "place_id": "ChIJ-2Oez7XOj4AR0YIq0mqoK7U",
+        "price_level": 1,
+        "reference": "CmReAAAALT2d-b3TK1t9cOT7u4O1mnQytrtDeIhGmBTaLP4r7y8i32ix0hR3LcPIpuqPkMkROwC3duoDQWh2kdutJR-Q1rTtl7YS8v1eKKXDxEpuaMl8xXe9I2_5L8iVFvr7l8--EhCat05zfmeDKS834g4BAXE2GhS4YU3kUtXp-yREmGlxNsp8BnLITQ",
+        "reviews": [
+            {
+                "aspects": [
+                    {
+                        "rating": 3,
+                        "type": "overall"
+                    }
+                ],
+                "author_name": "A Google User",
+                "language": "en",
+                "rating": 5,
+                "text": "",
+                "time": 1318412027
+            }
+        ],
+        "scope": "GOOGLE",
+        "types": [
+            "restaurant",
+            "food",
+            "establishment"
+        ],
+        "url": "https://plus.google.com/110387571272333961905/about?hl=en-US",
+        "user_ratings_total": 1,
+        "utc_offset": -420,
+        "vicinity": "1249 Great Mall Drive, Milpitas",
+        "website": "http://www.mcdonalds.com/"
+    },
+    "status": "OK"
+}

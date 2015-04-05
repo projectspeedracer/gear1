@@ -219,7 +219,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	    onLocationChanged(location);
 
         if (TheFoodApplication.isLocal) {
-            listRestaurantFragment.loadDummy();
+            listRestaurantFragment.loadOfflineRestaurantsData();
         }
         else {
             listRestaurantFragment.loadRestaurantList("");
@@ -273,7 +273,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 		FoodAppUtils.emphasisMarker(marker, restaurant);
 
         // Animation not useful as this happens in background now
-//		dropPinEffect(marker);
+		// dropPinEffect(marker);
 		return marker;
 	}
 
@@ -333,13 +333,13 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 	}
 
 	public void showHideMap(MenuItem mi) {
-
-		FragmentTransaction ftMap = getSupportFragmentManager().beginTransaction();
-        FragmentTransaction ftList = getSupportFragmentManager().beginTransaction();
-//            ft.setCustomAnimations(android.R.anim.fade_in, R.animator.top_to_bottom_fragment);
-//            ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+		final FragmentTransaction ftMap = getSupportFragmentManager().beginTransaction();
 		ftMap.setCustomAnimations(R.animator.top_to_bottom_fragment, R.animator.bottom_to_top_fragment);
-        ftList.setCustomAnimations(R.animator.top_to_bottom_fragment, R.animator.bottom_to_top_fragment);
+
+		FragmentTransaction ftList = getSupportFragmentManager().beginTransaction();
+		ftList.setCustomAnimations(R.animator.top_to_bottom_fragment, R.animator.bottom_to_top_fragment);
+		//ft.setCustomAnimations(android.R.anim.fade_in, R.animator.top_to_bottom_fragment);
+		//ft.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
 
 		if (mapFragment.isHidden()) {
 			// Request is to show the map
@@ -356,7 +356,6 @@ public class PickRestaurantActivity extends ActionBarActivity implements
             ftMap.commit();
 			mi.setTitle(R.string.show_map);
 		}
-
 	}
 
 	@Override
