@@ -17,6 +17,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.projectspeedracer.thefoodapp.R;
@@ -35,7 +36,8 @@ import java.text.DecimalFormat;
 
 public class DishActivity extends ActionBarActivity {
 
-	private static final String TAG = Constants.TAG;
+	private static final String TAG                = Constants.TAG;
+	public static final  int    REQUEST_CODE_START = 1024;
 
 	private Dish   currentDish;
 	private String dishObjectId;
@@ -94,7 +96,7 @@ public class DishActivity extends ActionBarActivity {
 			}
 		});
 
-        //FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
+		//FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
 
         initializeRatingsFragment();
     }
@@ -157,7 +159,6 @@ public class DishActivity extends ActionBarActivity {
         startActivity(i);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -179,4 +180,21 @@ public class DishActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+	@Override
+	public void finish() {
+		if (currentDish != null) {
+			try {
+				final String json = Helpers.AsJson(currentDish);
+				final Intent data = new Intent();
+				data.putExtra("dish", json);
+				setResult(RESULT_OK, data);
+			} catch (JsonProcessingException e) {
+				FoodAppUtils.LogToast(this, "[DishActivity] ERROR! Failed to pass back dish details. " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+
+		super.finish();
+	}
 }

@@ -1,5 +1,6 @@
 package com.projectspeedracer.thefoodapp.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.android.internal.util.Predicate;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -29,6 +31,7 @@ import com.projectspeedracer.thefoodapp.utils.Transformer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -94,8 +97,35 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		    Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 	    }
 
-	    getActivity().startActivity(intent);
+	    startActivityForResult(intent, DishActivity.REQUEST_CODE_START);
     }
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == DishActivity.REQUEST_CODE_START) {
+			if (resultCode == Activity.RESULT_OK) {
+				final String json = data.getStringExtra("dish");
+				final Dish returnedDish = Helpers.FromJsonSafe(json, Dish.class);
+
+				if (returnedDish != null) {
+					final Dish match = Helpers.FindItem(dishes, new Predicate<Dish>() {
+						@Override
+						public boolean apply(Dish item) {
+							return item.getId().equals(returnedDish.getId());
+						}
+					});
+
+					if (match != null) {
+						match.update(returnedDish);
+						dishesAdapter.notifyDataSetChanged();
+					}
+				}
+
+				return;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 
 	@Override
 	public void onClick(View v) {

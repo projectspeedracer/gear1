@@ -13,6 +13,8 @@ import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 import com.projectspeedracer.thefoodapp.utils.ParseRelationNames;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -118,6 +120,15 @@ public class Dish extends DeserializableParseObject {
 	}
 
 	// region Serializable Getters and Setters
+
+	public String getId() {
+		final String id = getString(Fields.ID);
+		return StringUtils.isBlank(id) ? getObjectId() : id;
+	}
+
+	public void setId(String id) {
+		put(Fields.ID, id == null ? "" : id);
+	}
 
 	public String getName() {
 		return getString(Fields.NAME);

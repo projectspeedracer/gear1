@@ -2,12 +2,14 @@ package com.projectspeedracer.thefoodapp.utils;
 
 import android.location.Location;
 
+import com.android.internal.util.Predicate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.parse.ParseGeoPoint;
+import com.projectspeedracer.thefoodapp.models.Dish;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,7 +49,17 @@ public class Helpers {
 			throw new IllegalArgumentException(errorText);
 		}
 	}
-	
+
+	public static Dish FindItem(Collection<Dish> dishes, Predicate<Dish> predicate) {
+		for (Dish d : dishes) {
+			if (predicate.apply(d)) {
+				return d;
+			}
+		}
+
+		return null;
+	}
+
 	public static <T, G> Map<G, List<T>> GroupBy(Collection<T> items, Transformer<T, G> transformer) {
 		final Map<G, List<T>> map = new HashMap<>();
 
