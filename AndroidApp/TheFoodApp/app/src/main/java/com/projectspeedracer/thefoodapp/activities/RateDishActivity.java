@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ public class RateDishActivity extends ActionBarActivity {
 	private Restaurant restaurant;
 	private EditText etMessage;
 
+    private float selectedRating = 0.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,38 @@ public class RateDishActivity extends ActionBarActivity {
 		        Log.i(TAG, String.format("Found %s dish", dishToRate.getName()));
 	        }
         });
+
+        // click handlers for rating buttons
+        findViewById(R.id.ratingDishBad).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedRating = 1.0f;
+                ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad);
+                ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh_grey);
+                ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good_grey);
+            }
+        });
+        findViewById(R.id.ratingDishMeh).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedRating = 2.0f;
+                ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh);
+                ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad_grey);
+                ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good_grey);
+            }
+        });
+        findViewById(R.id.ratingDishGood).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedRating = 3.0f;
+                ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good);
+                ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh_grey);
+                ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad_grey);
+            }
+        });
+
+
+
     }
 
 	public static void LogToast(Context context, String message) {
@@ -116,8 +150,7 @@ public class RateDishActivity extends ActionBarActivity {
 
         // 2. Create Rating Post Object
 
-        final RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBarDish);
-	    float ratingNum = ratingBar.getRating();
+	    float ratingNum = selectedRating;
 	    final String rateMessage = etMessage.getText().toString();
 
 	    Log.i(TAG, "Ready to post for " + dishToRate.getName() + " Stars = "+ratingNum);

@@ -36,10 +36,13 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 		tvName.setText(dish.getName());
 
         final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
-        tvDishRating.setText(String.valueOf(dish.getAverageRating()));
+        tvDishRating.setText(String.valueOf(dish.getRatingDescription()));
 
-        final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
-        ratingBar.setRating(dish.getAverageRating());
+        final ImageView ratingIcon = (ImageView) convertView.findViewById(R.id.dishRatingBarIcon);
+        ratingIcon.setImageResource(dish.getRatingIconResID());
+
+        final TextView tvMenuItemDescription = (TextView) convertView.findViewById(R.id.tvMenuItemDescription);
+        tvMenuItemDescription.setText(dish.getDescription());
 
         /*ratingBar.setOnTouchListener(new View.OnTouchListener() {
             @Override

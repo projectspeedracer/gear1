@@ -1,12 +1,14 @@
 package com.projectspeedracer.thefoodapp.models;
 
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.parse.FindCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 import com.projectspeedracer.thefoodapp.utils.ParseRelationNames;
@@ -230,4 +232,30 @@ public class Dish extends DeserializableParseObject {
 		public static final String IMAGE_URL     = "imageUrl";
 		public static final String CREATED_AT    = "createdAt";
 	}
+
+    public String getRatingDescription() {
+        if (averageRating >= 2.5f) {
+            return "I loved it!";
+        } else if (averageRating >= 2f) {
+            return "It was excellent";
+        } else if (averageRating >= 1.5f) {
+            return "It was ok";
+        } else if (averageRating >= 1f) {
+            return "It was disappointing";
+        } else {
+            return "No information";
+        }
+    }
+
+    public int getRatingIconResID() {
+        if (averageRating >= 2.5f) {
+            return R.drawable.good;
+        } else if (averageRating >= 1.5f) {
+            return R.drawable.meh;
+        } else if (averageRating >= 1f) {
+            return R.drawable.bad;
+        } else {
+            return R.drawable.meh;
+        }
+    }
 }
