@@ -76,7 +76,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-		// TODO: Figure out a way to get the ratings of all dishes in one call !!!
+		/*// TODO: Figure out a way to get the ratings of all dishes in one call !!!
 		for (final Dish dish: dishes) {
 			dish.fetchRatings(new FindCallback<Rating>() {
 				@Override
@@ -95,7 +95,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 					dishesAdapter.notifyDataSetChanged();
 				}
 			});
-		}
+		}*/
 
         /*final ParseQuery<Dish> query = ParseQuery.getQuery(Dish.class);
         query.whereEqualTo(Dish.Fields.RESTAURANT_ID, TheFoodApplication.getCurrentRestaurant().getPlacesId());

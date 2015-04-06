@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class DishesAdapter extends ArrayAdapter<Dish> {
@@ -31,25 +32,19 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 		}
 
 		final Dish dish = getItem(position);
+        final double averageRating = dish.getAverageRating();
 
-		final TextView tvName = (TextView) convertView.findViewById(R.id.tvMenuItemName);
-		tvName.setText(dish.getName());
+        final TextView tvName = (TextView) convertView.findViewById(R.id.tvMenuItemName);
+        tvName.setText(dish.getName());
 
         final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
-        tvDishRating.setText(String.valueOf(dish.getAverageRating()));
+        final String ratingText = averageRating == 0
+            ? "0"
+            : new DecimalFormat("##.0").format(averageRating);
+        tvDishRating.setText(ratingText);
 
         final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
-        ratingBar.setRating(dish.getAverageRating());
-
-        /*ratingBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    Log.i("Rating", "Rating bar touched");
-                }
-                return true;
-            }
-        });*/
+        ratingBar.setRating((float) averageRating);
 
 		final String image = dish.getImage();
 

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.GetCallback;
@@ -22,25 +23,53 @@ import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
+import com.projectspeedracer.thefoodapp.utils.Helpers;
+
+import java.text.DecimalFormat;
 
 public class DishActivity extends ActionBarActivity {
 
-	Dish       dishToShow;
-	Restaurant restaurant;
-	String     dishObjectId;
+    private Dish currentDish;
+    private String dishObjectId;
+    private DishRatingsFragment dishRatingsFragment;
 
-	DishRatingsFragment dishRatingsFragment;
+    private final GetCallback<Dish> OnDishFetched = new GetCallback<Dish>() {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_dish);
+        @Override
+        public void done(Dish dish, ParseException e) {
+            if (e != null) {
+                final String errorText = "Failed to query dish for ID - " + dishObjectId;
+                Log.e(Constants.TAG, errorText + ". " + e.getMessage());
+                e.printStackTrace();
+                return;
+            }
 
-		dishObjectId = getIntent().getStringExtra("current_dish_id");
-		Log.i("RateDish", "Will Rate Dish -" + dishObjectId);
-		Toast.makeText(this, "Got dish - " + dishObjectId, Toast.LENGTH_SHORT).show();
+            if (currentDish == null) {
+                currentDish = dish;
+            }
 
-		restaurant = TheFoodApplication.getCurrentRestaurant();
+            currentDish.setAverageRating(dish.getAverageRating());
+
+            Log.i(Constants.TAG, String.format("Found %s dish", currentDish.getName()));
+            final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
+            double averageRating = currentDish.getAverageRating();
+            ratingBar.setRating((float) averageRating);
+
+            TextView tvDishRating = (TextView) findViewById(R.id.tvDishRating);
+            final String ratingText = averageRating == 0
+                    ? "0"
+                    : new DecimalFormat("##.0").format(averageRating);
+            tvDishRating.setText(ratingText);
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dish);
+
+        dishObjectId = getIntent().getStringExtra("current_dish_id");
+        FoodAppUtils.LogToast(getApplicationContext(), "Dish {" + dishObjectId + "}");
 
         final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
         ratingBar.setOnTouchListener(new View.OnTouchListener() {
@@ -48,59 +77,42 @@ public class DishActivity extends ActionBarActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     Log.i("Rating", "Rating bar touched");
-                    if (dishToShow == null){
+                    if (currentDish == null) {
                         return false;
                     }
-                    onRateDish(dishToShow);
+
+                    onRateDish(currentDish);
                 }
                 return true;
             }
         });
 
-        // 1. Get Dish object
-        FoodAppUtils.fetchDish(dishObjectId, new GetCallback<Dish>() {
+        //FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
 
-            @Override
-            public void done(Dish dish, ParseException e) {
-                if (e != null) {
-                    final String errorText = "Failed to query dish for ID - " + dishObjectId;
+        initializeRatingsFragment();
+    }
 
-                    Log.e(Constants.TAG, errorText + ". " + e.getMessage());
-                    e.printStackTrace();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
+    }
 
-                    return;
-                }
-
-                dishToShow = dish;
-
-                Log.i(Constants.TAG, String.format("Found %s dish", dish.getName()));
-                final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
-                ratingBar.setRating(dish.getAverageRating());
-            }
-        });
-
-
-		showDishPosts();
-	}
-
-    void onRateDish(Dish dish) {
-        Intent i = new Intent(this, RateDishActivity.class);
-        Log.v(Constants.TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
-        i.putExtra("current_dish_id", dish.getObjectId());
-//        i.putExtra("current_dish", dish);
-        startActivity(i);
+    private void initializeRatingsFragment() {
+        DishRatingsFragment dishRatingsFragment = DishRatingsFragment.newInstance(dishObjectId);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.flDishPosts, dishRatingsFragment);
+        ft.commit();
     }
 
 
-	private void showDishPosts() {
-		// get screen name
-
-		DishRatingsFragment dishRatingsFragment = DishRatingsFragment.newInstance(dishObjectId);
-
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.flDishPosts, dishRatingsFragment);
-        ft.commit();
+    private void onRateDish(Dish dish) {
+        Intent i = new Intent(this, RateDishActivity.class);
+        Log.v(Constants.TAG, "Rating dish - " + dish.getName() + " Id: " + dish.getObjectId());
+        i.putExtra("current_dish_id", dish.getObjectId());
+        //i.putExtra("current_dish", dish);
+        startActivity(i);
     }
 
 

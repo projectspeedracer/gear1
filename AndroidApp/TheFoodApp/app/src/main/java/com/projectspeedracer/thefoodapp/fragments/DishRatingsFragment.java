@@ -53,12 +53,12 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
 		        }
 
 		        Log.i(Constants.TAG, String.format("Found %s dish", dish.getName()));
-		        getDishRatings(dish);
+		        fetchDishRatings(dish);
 	        }
         });
     }
 
-    private void getDishRatings(final Dish dish) {
+    private void fetchDishRatings(final Dish dish) {
 	    final ParseRelation<Rating> relationDish = dish.getRelation(ParseRelationNames.DishToPosts);
 	    final ParseQuery<Rating> query = relationDish.getQuery();
 
@@ -79,6 +79,7 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
 			    }
 
 			    Log.i(Constants.TAG, "Ratings for "+dish.getName()+" num: "+ratings.size());
+                ratingsAdapter.clear();
 			    ratingsAdapter.addAll(ratings);
 		    }
 	    });

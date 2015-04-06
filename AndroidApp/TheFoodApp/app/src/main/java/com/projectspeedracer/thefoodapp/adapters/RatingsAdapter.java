@@ -14,6 +14,7 @@ import com.parse.ParseUser;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -29,6 +30,7 @@ public class RatingsAdapter extends ArrayAdapter<Rating> {
         super(context, R.layout.item_dish_post, ratings);
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
@@ -40,7 +42,7 @@ public class RatingsAdapter extends ArrayAdapter<Rating> {
             holder.ivRatingImage = (ImageView) convertView.findViewById(R.id.ivRatingImage);
             holder.tvComments = (TextView) convertView.findViewById(R.id.tvComments);
             holder.tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
-            holder.tvRating = (TextView) convertView.findViewById(R.id.tvRating);
+            holder.tvTimeAgo = (TextView) convertView.findViewById(R.id.tvTimeAgo);
             holder.ivDishImage = (ImageView) convertView.findViewById(R.id.ivDishImage);
             convertView.setTag(holder);
         }
@@ -53,17 +55,16 @@ public class RatingsAdapter extends ArrayAdapter<Rating> {
         //holder.ivDishImage.setImageResource(0);
 
         ParseUser user = rating.getUser();
+        String userName = "Harry Potter";
         if (user != null) {
-            String userName = user.get("appUserName").toString();
+            userName = user.get("appUserName").toString();
             holder.tvUserName.setText(userName);
         }
-        else {
-            holder.tvUserName.setText("Harry Potter");
-        }
+
 
         holder.tvComments.setText(rating.getComments());
 
-        holder.tvRating.setText(String.valueOf(rating.getStars()));
+        holder.tvTimeAgo.setText(FoodAppUtils.getRelativeTimeAgo(rating.getCreatedAt().toString()));
 
         holder.ivRatingImage.setImageResource(0);
         if (rating.getStars() > 2) {
@@ -79,6 +80,12 @@ public class RatingsAdapter extends ArrayAdapter<Rating> {
         final Dish dish = rating.getDish();
         final String image = (dish != null) ? dish.getImage() : null;
 
+        if (dish != null) {
+            String expressiveMessage = rating.generateExpression(userName);
+            holder.tvUserName.setText(expressiveMessage);
+        }
+
+
         if (StringUtils.isNotBlank(image)) {
             holder.ivDishImage.setImageResource(0);
 
@@ -93,7 +100,7 @@ public class RatingsAdapter extends ArrayAdapter<Rating> {
     public class ViewHolder {
         TextView tvUserName;
         TextView tvComments;
-        TextView tvRating;
+        TextView tvTimeAgo;
         ImageView ivRatingImage;
         ImageView ivDishImage;
     }

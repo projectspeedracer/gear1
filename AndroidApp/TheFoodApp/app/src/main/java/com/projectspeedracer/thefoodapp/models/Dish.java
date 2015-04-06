@@ -13,7 +13,6 @@ import com.projectspeedracer.thefoodapp.utils.ParseRelationNames;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @ParseClassName("Dishes")
@@ -23,9 +22,6 @@ public class Dish extends DeserializableParseObject {
 
 	@JsonIgnore
 	private List<Rating> ratings = new ArrayList<>();
-
-	@JsonIgnore
-	private float averageRating;
 
 	public Dish() {
 	}
@@ -86,7 +82,8 @@ public class Dish extends DeserializableParseObject {
 	}
 
 	private void updateAverageRating() {
-		this.averageRating = calculateAverageRating();
+        final double averageRating = calculateAverageRating();
+		setAverageRating(averageRating);
 	}
 
 	public void fetchRatings(FindCallback<Rating> callback) {
@@ -102,13 +99,12 @@ public class Dish extends DeserializableParseObject {
 		query.findInBackground(callback);
 	}
 
-	@JsonIgnore
-	public float getAverageRating() {
-		return averageRating;
+	public double getAverageRating() {
+        return getDouble(Fields.AVERAGE_RATING);
 	}
 
-	private void setAverageRating(float averageRating) {
-		this.averageRating = averageRating;
+	public void setAverageRating(double averageRating) {
+        put(Fields.AVERAGE_RATING, averageRating);
 	}
 
 	// region Serializable Getters and Setters
@@ -229,5 +225,6 @@ public class Dish extends DeserializableParseObject {
 		public static final String ENABLED       = "enabled";
 		public static final String IMAGE_URL     = "imageUrl";
 		public static final String CREATED_AT    = "createdAt";
-	}
+        public static final String AVERAGE_RATING = "averageRating";
+    }
 }

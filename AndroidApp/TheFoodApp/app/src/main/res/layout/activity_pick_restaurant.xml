@@ -4,9 +4,7 @@
     tools:context="com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity"
     android:focusableInTouchMode="true"
     android:background="@color/white"
-    android:paddingTop="20dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:paddingTop="20dp">
 
 
     <EditText

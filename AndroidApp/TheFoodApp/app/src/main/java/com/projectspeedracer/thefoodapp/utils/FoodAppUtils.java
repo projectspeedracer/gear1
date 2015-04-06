@@ -2,8 +2,12 @@ package com.projectspeedracer.thefoodapp.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -24,12 +28,20 @@ import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * Created by avkadam on 3/28/15.
  */
 public class FoodAppUtils {
+
+    public static void LogToast(Context context, String message) {
+        Log.e(Constants.TAG, message);
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
 
     public static String getShortDistance (Float distance) {
         Double distanceMi = distance * Constants.MILES_PER_METER; // converting to float
@@ -149,6 +161,109 @@ public class FoodAppUtils {
         // orderby CreatedAt
         // include repective User objects
         getAllDishesForRestaurant(callback);
+    }
+
+    public static String getRelativeTimeAgo(String rawJsonDate) {
+        String outRelativeDate ="";
+
+        //2015-04-03T07:50:39.851Z
+        //String parseFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'";
+
+        // Sat Apr 04 15:18:01 PDT 2015
+        String parseFormat = "EEE MMM dd HH:mm:ss ZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(parseFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+        String date_info[] = relativeDate.split("\\s+");
+        outRelativeDate = relativeDate;
+
+        //override 'outRelativeDate' if it can be shortened further
+        if (date_info[0].equals("Yesterday")){
+            outRelativeDate = "1d";
+        } else if (date_info.length > 1){
+            if (date_info[2].equals("ago")) {
+                outRelativeDate = date_info[0] + date_info[1].charAt(0);
+            }
+        }
+
+
+        return outRelativeDate;
+    }
+
+    private static final Random _rnd = new Random();
+
+    public static int GetRandomInt(int min, int max) {
+        return _rnd.nextInt((max - min) + 1) + min;
+    }
+
+    /**
+     * Returns a pseudo-random number between min and max, inclusive.
+     * The difference between min and max can be at most
+     * <code>Integer.MAX_VALUE - 1</code>.
+     *
+     * @param min Minimum value
+     * @param max Maximum value.  Must be greater than min.
+     * @return Integer between min and max, inclusive.
+     * @see java.util.Random#nextInt(int)
+     */
+    public static int randInt(int min, int max) {
+
+        // NOTE: Usually this should be a field rather than a method
+        // variable so that it is not re-seeded every call.
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
+    }
+
+    public static String extractExpressiveMessage(String []availabelMessages, String dishName) {
+        String selectedMessage;
+        int selectedIndex;
+        selectedIndex = randInt(0, availabelMessages.length-1);
+        selectedMessage = availabelMessages[selectedIndex];
+        return String.format(selectedMessage, dishName);
+    }
+
+    public static String getExpressionFromRating(int ratingStar, String dishName) {
+        // Harry potter loved guacamole
+        // Harry thought guac was awesome!!!
+
+        // Harry says tiramisu is not so good
+        // Harry says tiramisu was disappointing...
+
+        // Happy found cake to be okay
+
+        String goodMessage[] = {"loved %s",
+                                "%s was awesome!!!"};
+        String okayMessage[] = {"found %s to be okay...",
+                                "says %s is not bad"};
+        String badMessage[] = {"says %s is not so good",
+                               "says %s was disappointing"};
+        String expressiveMessage = String.format("says %s was okay...", dishName); // catchAll
+
+        if (ratingStar > 2) {
+            expressiveMessage = FoodAppUtils.extractExpressiveMessage(goodMessage, dishName);
+        }
+        else if (ratingStar > 1) {
+            expressiveMessage = FoodAppUtils.extractExpressiveMessage(okayMessage, dishName);
+        }
+        else {
+            expressiveMessage = FoodAppUtils.extractExpressiveMessage(badMessage, dishName);
+        }
+
+        return expressiveMessage;
     }
 
 
