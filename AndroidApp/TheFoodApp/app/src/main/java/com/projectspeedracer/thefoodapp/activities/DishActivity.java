@@ -80,8 +80,8 @@ public class DishActivity extends ActionBarActivity {
 			Log.e(TAG, "ERROR: " + ex.getMessage());
 		}
 
-		final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
-		ratingBar.setOnTouchListener(new View.OnTouchListener() {
+		final ImageView dishRatingBarIcon = (ImageView) findViewById(R.id.dishRatingBarIcon);
+        dishRatingBarIcon.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -104,9 +104,10 @@ public class DishActivity extends ActionBarActivity {
     private void setupViews() {
         String name = currentDish.getName();
         Log.i(Constants.TAG, String.format("Found %s dish", name));
-        final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
+        //final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
+        final ImageView dishRatingBarIcon = (ImageView) findViewById(R.id.dishRatingBarIcon);
         double averageRating = currentDish.getAverageRating();
-        ratingBar.setRating((float) averageRating);
+        dishRatingBarIcon.setImageResource(currentDish.getRatingIconResID());
 
         // Show rating
         TextView tvDishRating = (TextView) findViewById(R.id.tvDishRating);

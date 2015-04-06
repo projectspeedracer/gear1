@@ -24,13 +24,12 @@
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/ivBanner"
+                android:id="@+id/ivDishImage"
                 android:background="@drawable/food"/>
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/stencil"
-                android:id="@+id/ivDishImage" />
+                android:src="@drawable/stencil"/>
         </FrameLayout>
 
         <LinearLayout
@@ -38,7 +37,6 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:paddingLeft="15dp"
-            android:paddingRight="8dp"
             android:orientation="vertical"
             >
             <TextView
@@ -47,7 +45,7 @@
                 android:textStyle="bold"
                 android:text="The True Normand"
                 android:id="@+id/tvUserName"
-                android:textSize="16sp"/>
+                android:textSize="14sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
