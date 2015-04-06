@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.4.0"
+  },
+  "applications": {
+    "TheFoodApp": {
+      "applicationId": "boGeu7r7EGY2cQY0BRsMB8t6uEjuU6ihKa8M1CUn",
+      "masterKey": "baMzYU9yO4BG1INue2OcPv098nrUVAjL3sr3MVnP"
+    },
+    "_default": {
+      "link": "TheFoodApp"
+    }
+  }
+}
