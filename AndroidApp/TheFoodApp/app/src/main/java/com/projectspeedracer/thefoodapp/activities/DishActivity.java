@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,8 +81,8 @@ public class DishActivity extends ActionBarActivity {
 			Log.e(TAG, "ERROR: " + ex.getMessage());
 		}
 
-		final ImageView dishRatingBarIcon = (ImageView) findViewById(R.id.dishRatingBarIcon);
-        dishRatingBarIcon.setOnTouchListener(new View.OnTouchListener() {
+		final LinearLayout ratingDisplayBox = (LinearLayout) findViewById(R.id.ratingDisplayBox);
+        ratingDisplayBox.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -107,7 +108,7 @@ public class DishActivity extends ActionBarActivity {
         //final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
         final ImageView dishRatingBarIcon = (ImageView) findViewById(R.id.dishRatingBarIcon);
         double averageRating = currentDish.getAverageRating();
-        dishRatingBarIcon.setImageResource(currentDish.getRatingIconResID());
+        dishRatingBarIcon.setImageResource(currentDish.ratingIconResId());
 
         // Show rating
         TextView tvDishRating = (TextView) findViewById(R.id.tvDishRating);
