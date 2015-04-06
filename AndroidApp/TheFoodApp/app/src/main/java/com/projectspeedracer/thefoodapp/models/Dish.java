@@ -26,6 +26,22 @@ public class Dish extends DeserializableParseObject {
 	public Dish() {
 	}
 
+	public void update(Dish other) {
+		setName(other.getName());
+		setRestaurantId(other.getRestaurantId());
+		setCategory(other.getCategory());
+		setDescription(other.getDescription());
+		setImage(other.getImage());
+		setPrice(other.getPrice());
+		setAverageRating(other.getAverageRating());
+		setCalories(other.getCalories());
+		setGlutenFree(other.getGlutenFree());
+		setHalal(other.isHalal());
+		setVegan(other.isVegan());
+		setVegetarian(other.isVegetarian());
+		setEnabled(other.isEnabled());
+	}
+
 	public List<Rating> getRatings() {
 		return ratings;
 	}
@@ -81,11 +97,6 @@ public class Dish extends DeserializableParseObject {
 		return safeAverage;
 	}
 
-	private void updateAverageRating() {
-        final double averageRating = calculateAverageRating();
-		setAverageRating(averageRating);
-	}
-
 	public void fetchRatings(FindCallback<Rating> callback) {
 
 		final ParseRelation<Rating> relationDish = this.getRelation(ParseRelationNames.DishToPosts);
@@ -99,12 +110,9 @@ public class Dish extends DeserializableParseObject {
 		query.findInBackground(callback);
 	}
 
-	public double getAverageRating() {
-        return getDouble(Fields.AVERAGE_RATING);
-	}
-
-	public void setAverageRating(double averageRating) {
-        put(Fields.AVERAGE_RATING, averageRating);
+	private void updateAverageRating() {
+		final double averageRating = calculateAverageRating();
+		setAverageRating(averageRating);
 	}
 
 	// region Serializable Getters and Setters
@@ -148,6 +156,14 @@ public class Dish extends DeserializableParseObject {
 	public void setPrice(double price) {
 		Helpers.EnsurePositive(price, "Expected positive price value");
 		put(Fields.PRICE, price);
+	}
+
+	public double getAverageRating() {
+		return getDouble(Fields.AVERAGE_RATING);
+	}
+
+	public void setAverageRating(double averageRating) {
+		put(Fields.AVERAGE_RATING, averageRating);
 	}
 
 	public String getCalories() {
