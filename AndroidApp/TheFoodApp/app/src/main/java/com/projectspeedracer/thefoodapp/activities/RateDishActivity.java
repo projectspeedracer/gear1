@@ -2,6 +2,7 @@ package com.projectspeedracer.thefoodapp.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -28,6 +29,9 @@ import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.squareup.picasso.Picasso;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 
@@ -45,9 +49,7 @@ public class RateDishActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate_dish);
-
         final String dishObjectId = getIntent().getStringExtra("current_dish_id");
-
 	    /*final String json = getIntent().getStringExtra("dish");
 	    final Dish dish = Helpers.FromJsonSafe(json, Dish.class);
 
@@ -93,6 +95,25 @@ public class RateDishActivity extends ActionBarActivity {
 		        Log.i(TAG, String.format("Found %s dish", dishToRate.getName()));
 	        }
         });
+
+        // TODO: Inflate the layout - get this to work!
+        /*Inflating layout
+        String name = dishToRate.getName();
+        final String image = dishToRate.getImage();
+        if (StringUtils.isNotBlank(image)) {
+            final ImageView ivDish = (ImageView) findViewById(R.id.ivMenuItem);
+
+            ivDish.setImageResource(0);
+
+            Picasso.with(this)
+                    .load(image)
+                    .into(ivDish);
+        }
+        TextView tvMenuItemDescription = (TextView) findViewById(R.id.tvMenuItemDescription);
+        tvMenuItemDescription.setText(name);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(name);*/
 
         // click handlers for rating buttons
         findViewById(R.id.ratingDishBad).setOnClickListener(new View.OnClickListener() {
@@ -164,20 +185,20 @@ public class RateDishActivity extends ActionBarActivity {
         rating.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-	            final String msg = String.format("Rating save callback: %s. Stars: %s. Comments: %s",
-			            e != null ? "FAILED" : "SUCCESS",
-			            rating.getStars(),
-			            rating.getComments());
+                final String msg = String.format("Rating save callback: %s. Stars: %s. Comments: %s",
+                        e != null ? "FAILED" : "SUCCESS",
+                        rating.getStars(),
+                        rating.getComments());
 
-	            Log.i(TAG, msg);
+                Log.i(TAG, msg);
 
 
                 if (e != null) {
                     e.printStackTrace();
-	                return;
+                    return;
                 }
 
-	            addRelations(rating);
+                addRelations(rating);
                 finish();
             }
         });
