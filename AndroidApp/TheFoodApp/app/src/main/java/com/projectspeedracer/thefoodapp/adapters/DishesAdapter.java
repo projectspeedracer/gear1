@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.projectspeedracer.thefoodapp.R;
@@ -39,7 +38,7 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 
 
         final ImageView ratingIcon = (ImageView) convertView.findViewById(R.id.dishRatingBarIcon);
-        ratingIcon.setImageResource(dish.getRatingIconResID());
+        ratingIcon.setImageResource(dish.ratingIconResId());
 
         final TextView tvMenuItemDescription = (TextView) convertView.findViewById(R.id.tvMenuItemDescription);
         tvMenuItemDescription.setText(dish.getDescription());

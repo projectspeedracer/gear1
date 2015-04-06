@@ -138,11 +138,11 @@ public class Dish extends DeserializableParseObject {
 		put(Fields.NAME, name == null ? "???" : name);
 	}
 
-	public int getRestaurantId() {
-		return getInt(Fields.RESTAURANT_ID);
+	public String getRestaurantId() {
+		return getString(Fields.RESTAURANT_ID);
 	}
 
-	public void setRestaurantId(int restaurantId) {
+	public void setRestaurantId(String restaurantId) {
 		put(Fields.RESTAURANT_ID, restaurantId);
 	}
 
@@ -272,17 +272,21 @@ public class Dish extends DeserializableParseObject {
         }
     }*/
 
-    public int getRatingIconResID() {
+    public int ratingIconResId() {
         final double averageRating = getAverageRating();
+
         if (averageRating >= 2.5f) {
-            return R.drawable.good;
-        } else if (averageRating >= 1.5f) {
-            return R.drawable.meh;
-        } else if (averageRating >= 1f) {
-            return R.drawable.bad;
-        } else {
+	        return R.drawable.good;
+        }
+
+	    if (averageRating >= 1.5f) {
             return R.drawable.meh;
         }
-    }
 
+	    if (averageRating >= 1f) {
+            return R.drawable.bad;
+        }
+
+	    return R.drawable.meh;
+    }
 }
