@@ -4,7 +4,10 @@ import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+
+import org.apache.commons.lang3.StringUtils;
 
 @ParseClassName("Ratings")
 public class Rating extends ParseObject {
@@ -132,4 +135,32 @@ public class Rating extends ParseObject {
         public static final String USER       = "user";
         public static final String LOCATION   = "location";
 	}
+
+    private static final String[] GoodMsgSpec = {
+            " loved %s",
+            " %s was awesome!!!"
+    };
+
+    private static final String[] OkayMsgSpec = {
+            " found %s to be okay...",
+            " says %s is not bad"
+    };
+
+    private static final String[] BadMsgSpec = {
+            " says %s is not so good",
+            " says %s was disappointing"
+    };
+
+    private static String[] ChooseMessageSpec(int stars) {
+        if (stars > 2) { return GoodMsgSpec; }
+        if (stars > 1) { return OkayMsgSpec; }
+        return BadMsgSpec;
+    }
+
+    public String generateExpression(String userName) {
+        final String[] msgSpec = ChooseMessageSpec(getStars());
+        final int index = FoodAppUtils.GetRandomInt(0, msgSpec.length - 1);
+        final String expression = String.format(msgSpec[index], getDish().getName());
+        return (StringUtils.isNoneBlank(userName) ? userName : "") + expression;
+    }
 }

@@ -127,11 +127,6 @@ public class RateDishActivity extends ActionBarActivity {
 
     }
 
-	public static void LogToast(Context context, String message) {
-		Log.e(TAG, message);
-		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-	}
-
 	private  void postRating() {
         if (restaurant == null) {
             Toast.makeText(this, "Restaurant not selected!!!", Toast.LENGTH_SHORT).show();
@@ -176,12 +171,14 @@ public class RateDishActivity extends ActionBarActivity {
 
 	            Log.i(TAG, msg);
 
+
                 if (e != null) {
                     e.printStackTrace();
 	                return;
                 }
 
 	            addRelations(rating);
+                finish();
             }
         });
 

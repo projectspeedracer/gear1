@@ -24,12 +24,17 @@ public abstract class AbstractRatingsFragment extends Fragment {
 
 		setupViews(view);
 		// fetchTweets(FIRST_PAGE);
-		fetchPosts();
 
 		return view;
 	}
 
-	private void setupViews(View parent) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchPosts();
+    }
+
+    private void setupViews(View parent) {
 		ListView lvPosts = (ListView) parent.findViewById(R.id.lvPosts);
 		ArrayList<Rating> lPosts = new ArrayList<>();
 		ratingsAdapter = new RatingsAdapter(getActivity(), lPosts);

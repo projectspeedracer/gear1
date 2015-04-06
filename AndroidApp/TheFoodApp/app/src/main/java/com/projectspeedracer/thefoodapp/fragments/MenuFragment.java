@@ -76,77 +76,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-		// TODO: Figure out a way to get the ratings of all dishes in one call !!!
-		for (final Dish dish: dishes) {
-			dish.fetchRatings(new FindCallback<Rating>() {
-				@Override
-				public void done(List<Rating> ratings, ParseException e) {
-					if (e != null) {
-						e.printStackTrace();
-						return;
-					}
-
-					if (ratings.size() == 0) {
-						Log.i(TAG, "No ratings for dish - " + dish.getName());
-						return;
-					}
-
-					dish.setRatings(ratings);
-					dishesAdapter.notifyDataSetChanged();
-				}
-			});
-		}
-
-        /*final ParseQuery<Dish> query = ParseQuery.getQuery(Dish.class);
-        query.whereEqualTo(Dish.Fields.RESTAURANT_ID, TheFoodApplication.getCurrentRestaurant().getPlacesId());
-
-        query.findInBackground(new FindCallback<Dish>() {
-            @Override
-            public void done(List<Dish> dishes, ParseException e) {
-                if (e != null) {
-                    final String errorText = "Failed to query dishes";
-
-                    Log.e(Constants.TAG, errorText + ". " + e.getMessage());
-                    e.printStackTrace();
-
-                    Toast.makeText(getActivity(), errorText, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Log.i(Constants.TAG, String.format("Found %s dishes", dishes.size()));
-                dishesAdapter.addAll(dishes);
-
-	            final Map<String, List<Dish>> categoryGroup = Helpers.GroupBy(dishes, new Transformer<Dish, String>() {
-		            @Override
-		            public String transform(Dish item) {
-			            final String category = item.getCategory();
-			            return StringUtils.isBlank(category) ? Constants.DEFAULT_DISH_CATEGORY : category;
-		            }
-	            });
-
-                for (final Dish dish: dishes) {
-	                dish.fetchRatings(new FindCallback<Rating>() {
-		                @Override
-		                public void done(List<Rating> ratings, ParseException e) {
-			                if (e != null) {
-				                e.printStackTrace();
-				                return;
-			                }
-
-			                if (ratings.size() == 0) {
-				                Log.i(TAG, "No ratings for dish - " + dish.getName());
-				                return;
-			                }
-
-			                dish.setRatings(ratings);
-			                dishesAdapter.notifyDataSetChanged();
-		                }
-	                });
-                }
-
-            }
-        });*/
-
         return view;
     }
 
@@ -167,15 +96,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	    getActivity().startActivity(intent);
     }
-
-	void onShowDishDetails(Dish dish) {
-		//        Intent i = new Intent(getActivity(), RateDishActivity.class);
-		Intent i = new Intent(getActivity(), DishActivity.class);
-		Log.v(TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
-		i.putExtra("current_dish_id", dish.getObjectId());
-//        i.putExtra("current_dish", dish);
-		getActivity().startActivity(i);
-	}
 
 	@Override
 	public void onClick(View v) {

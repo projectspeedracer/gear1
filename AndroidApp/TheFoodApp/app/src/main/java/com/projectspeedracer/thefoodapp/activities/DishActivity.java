@@ -1,35 +1,65 @@
 package com.projectspeedracer.thefoodapp.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RatingBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.projectspeedracer.thefoodapp.R;
-import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
-import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
+import com.projectspeedracer.thefoodapp.utils.Helpers;
+
+import java.text.DecimalFormat;
 
 public class DishActivity extends ActionBarActivity {
 
-	Dish       dishToShow;
-	Restaurant restaurant;
-	String     dishObjectId;
+	private static final String TAG = Constants.TAG;
 
-	DishRatingsFragment dishRatingsFragment;
+	private Dish   currentDish;
+	private String dishObjectId;
+
+	private final GetCallback<Dish> OnDishFetched = new GetCallback<Dish>() {
+
+		@Override
+		public void done(Dish dish, ParseException e) {
+			if (e != null) {
+				final String errorText = "Failed to query dish for ID - " + dishObjectId;
+				Log.e(Constants.TAG, errorText + ". " + e.getMessage());
+				e.printStackTrace();
+				return;
+			}
+
+			if (currentDish == null) {
+				currentDish = dish;
+			} else {
+				currentDish.update(dish);
+			}
+
+			Log.i(Constants.TAG, String.format("Found %s dish", currentDish.getName()));
+			final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
+			double averageRating = currentDish.getAverageRating();
+			ratingBar.setRating((float) averageRating);
+
+			TextView tvDishRating = (TextView) findViewById(R.id.tvDishRating);
+			final String ratingText = averageRating == 0
+					? "0"
+					: new DecimalFormat("##.0").format(averageRating);
+			tvDishRating.setText(ratingText);
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,70 +67,58 @@ public class DishActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_dish);
 
 		dishObjectId = getIntent().getStringExtra("current_dish_id");
-		Log.i("RateDish", "Will Rate Dish -" + dishObjectId);
-		Toast.makeText(this, "Got dish - " + dishObjectId, Toast.LENGTH_SHORT).show();
+		FoodAppUtils.LogToast(getApplicationContext(), "Dish {" + dishObjectId + "}");
 
-		restaurant = TheFoodApplication.getCurrentRestaurant();
+		try {
+			final String json = getIntent().getStringExtra("dish");
+			final Dish dish = Helpers.FromJson(json, Dish.class);
+			Log.i(TAG, "WOW!" + dish.getName());
+		} catch (Exception ex) {
+			Log.e(TAG, "ERROR: " + ex.getMessage());
+		}
 
-        final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
-        ratingBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    Log.i("Rating", "Rating bar touched");
-                    if (dishToShow == null){
-                        return false;
-                    }
-                    onRateDish(dishToShow);
-                }
-                return true;
-            }
-        });
+		final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
+		ratingBar.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					Log.i("Rating", "Rating bar touched");
+					if (currentDish == null) {
+						return false;
+					}
 
-        // 1. Get Dish object
-        FoodAppUtils.fetchDish(dishObjectId, new GetCallback<Dish>() {
+					onRateDish(currentDish);
+				}
+				return true;
+			}
+		});
 
-            @Override
-            public void done(Dish dish, ParseException e) {
-                if (e != null) {
-                    final String errorText = "Failed to query dish for ID - " + dishObjectId;
+        //FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
 
-                    Log.e(Constants.TAG, errorText + ". " + e.getMessage());
-                    e.printStackTrace();
+        initializeRatingsFragment();
+    }
 
-                    return;
-                }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
+    }
 
-                dishToShow = dish;
-
-                Log.i(Constants.TAG, String.format("Found %s dish", dish.getName()));
-                final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
-                ratingBar.setRating(dish.getAverageRating());
-            }
-        });
-
-
-		showDishPosts();
-	}
-
-    void onRateDish(Dish dish) {
-        Intent i = new Intent(this, RateDishActivity.class);
-        Log.v(Constants.TAG, "Rating dish - "+dish.getName() + " Id: "+dish.getObjectId());
-        i.putExtra("current_dish_id", dish.getObjectId());
-//        i.putExtra("current_dish", dish);
-        startActivity(i);
+    private void initializeRatingsFragment() {
+        DishRatingsFragment dishRatingsFragment = DishRatingsFragment.newInstance(dishObjectId);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.flDishPosts, dishRatingsFragment);
+        ft.commit();
     }
 
 
-	private void showDishPosts() {
-		// get screen name
-
-		DishRatingsFragment dishRatingsFragment = DishRatingsFragment.newInstance(dishObjectId);
-
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.flDishPosts, dishRatingsFragment);
-        ft.commit();
+    private void onRateDish(Dish dish) {
+        Intent i = new Intent(this, RateDishActivity.class);
+        Log.v(Constants.TAG, "Rating dish - " + dish.getName() + " Id: " + dish.getObjectId());
+        i.putExtra("current_dish_id", dish.getObjectId());
+        //i.putExtra("current_dish", dish);
+        startActivity(i);
     }
 
 

@@ -15,7 +15,6 @@ import com.projectspeedracer.thefoodapp.utils.ParseRelationNames;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @ParseClassName("Dishes")
@@ -26,10 +25,23 @@ public class Dish extends DeserializableParseObject {
 	@JsonIgnore
 	private List<Rating> ratings = new ArrayList<>();
 
-	@JsonIgnore
-	private float averageRating;
-
 	public Dish() {
+	}
+
+	public void update(Dish other) {
+		setName(other.getName());
+		setRestaurantId(other.getRestaurantId());
+		setCategory(other.getCategory());
+		setDescription(other.getDescription());
+		setImage(other.getImage());
+		setPrice(other.getPrice());
+		setAverageRating(other.getAverageRating());
+		setCalories(other.getCalories());
+		setGlutenFree(other.getGlutenFree());
+		setHalal(other.isHalal());
+		setVegan(other.isVegan());
+		setVegetarian(other.isVegetarian());
+		setEnabled(other.isEnabled());
 	}
 
 	public List<Rating> getRatings() {
@@ -87,10 +99,6 @@ public class Dish extends DeserializableParseObject {
 		return safeAverage;
 	}
 
-	private void updateAverageRating() {
-		this.averageRating = calculateAverageRating();
-	}
-
 	public void fetchRatings(FindCallback<Rating> callback) {
 
 		final ParseRelation<Rating> relationDish = this.getRelation(ParseRelationNames.DishToPosts);
@@ -104,13 +112,9 @@ public class Dish extends DeserializableParseObject {
 		query.findInBackground(callback);
 	}
 
-	@JsonIgnore
-	public float getAverageRating() {
-		return averageRating;
-	}
-
-	private void setAverageRating(float averageRating) {
-		this.averageRating = averageRating;
+	private void updateAverageRating() {
+		final double averageRating = calculateAverageRating();
+		setAverageRating(averageRating);
 	}
 
 	// region Serializable Getters and Setters
@@ -154,6 +158,14 @@ public class Dish extends DeserializableParseObject {
 	public void setPrice(double price) {
 		Helpers.EnsurePositive(price, "Expected positive price value");
 		put(Fields.PRICE, price);
+	}
+
+	public double getAverageRating() {
+		return getDouble(Fields.AVERAGE_RATING);
+	}
+
+	public void setAverageRating(double averageRating) {
+		put(Fields.AVERAGE_RATING, averageRating);
 	}
 
 	public String getCalories() {
@@ -258,4 +270,5 @@ public class Dish extends DeserializableParseObject {
             return R.drawable.meh;
         }
     }
+    public static final String AVERAGE_RATING = "averageRating";
 }
