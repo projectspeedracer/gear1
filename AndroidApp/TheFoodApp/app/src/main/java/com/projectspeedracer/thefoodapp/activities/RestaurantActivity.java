@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.projectspeedracer.thefoodapp.R;
@@ -16,9 +17,12 @@ import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
 import com.projectspeedracer.thefoodapp.fragments.RestaurantRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
+import com.squareup.picasso.Picasso;
 
 public class RestaurantActivity extends ActionBarActivity {
-
+    public static String googlePlacesPhotoUriBase = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=250&key="
+            + TheFoodApplication.getGoogleApiKey()
+            + "&photoreference=";
     Restaurant restaurant;
 
     @Override
@@ -37,6 +41,20 @@ public class RestaurantActivity extends ActionBarActivity {
         TextView tvName = (TextView) findViewById(R.id.tvName);
         String name = restaurant.getName();
         tvName.setText(name);
+
+        TextView tvCuisine = (TextView) findViewById(R.id.tvCuisine);
+        String cuisine = restaurant.getCuisine();
+        tvCuisine.setText(cuisine);
+
+        TextView tvDescription = (TextView) findViewById(R.id.tvDescription);
+        String description = restaurant.getDescription();
+        tvDescription.setText(description);
+
+        ImageView ivBanner = (ImageView) findViewById(R.id.ivBanner);
+        String photoUrl = googlePlacesPhotoUriBase + restaurant.getPhotoId();
+        Picasso.with(this)
+                .load(photoUrl)
+                .into(ivBanner);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(name);

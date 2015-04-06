@@ -196,6 +196,14 @@ public class Restaurant extends ParseObject {
 		put(Fields.ICON_URL, iconUrl);
 	}
 
+    public String getCuisine() {
+        return getString(Fields.CUISINE);
+    }
+
+    public void setCuisine(String cuisine) {
+        put(Fields.CUISINE, cuisine);
+    }
+
 	// endregion
 
 	// region Inner Classes
@@ -213,6 +221,7 @@ public class Restaurant extends ParseObject {
 		public static final String ADDRESS           = "address";
 		public static final String PHOTO_ID          = "photo_id";
 		public static final String ICON_URL          = "icon_url";
+        public static final String CUISINE          = "Cuisine";
 		public static final String FORMATTED_ADDRESS = "formatted_address";
 	}
 
