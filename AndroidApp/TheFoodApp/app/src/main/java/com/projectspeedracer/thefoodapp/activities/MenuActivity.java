@@ -2,6 +2,7 @@ package com.projectspeedracer.thefoodapp.activities;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,6 +14,7 @@ import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.adapters.ViewPagerAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.SlidingTabLayout;
 
 import java.util.List;
@@ -30,9 +32,13 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 		final Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
 		setSupportActionBar(toolbar);
 
-		assert TheFoodApplication.getCurrentRestaurant() != null : "Current restaurant not set!";
+        Restaurant currentRestaurant = TheFoodApplication.getCurrentRestaurant();
+        assert currentRestaurant != null : "Current restaurant not set!";
 
-		TheFoodApplication.getCurrentRestaurant().fetchDishes(this);
+		currentRestaurant.fetchDishes(this);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(currentRestaurant.getName()+" Menu");
 	}
 
 	@Override

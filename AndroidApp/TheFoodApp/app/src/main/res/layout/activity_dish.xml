@@ -14,16 +14,6 @@
             android:background="@drawable/food"
             />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guacamole"
-            android:id="@+id/tvMenuItemName"
-            android:paddingLeft="10dp"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

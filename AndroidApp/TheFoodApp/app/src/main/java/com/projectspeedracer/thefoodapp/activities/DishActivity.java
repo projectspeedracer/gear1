@@ -4,23 +4,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
+import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.squareup.picasso.Picasso;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 
@@ -48,26 +57,18 @@ public class DishActivity extends ActionBarActivity {
 				currentDish.update(dish);
 			}
 
-			Log.i(Constants.TAG, String.format("Found %s dish", currentDish.getName()));
-			final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
-			double averageRating = currentDish.getAverageRating();
-			ratingBar.setRating((float) averageRating);
-
-			TextView tvDishRating = (TextView) findViewById(R.id.tvDishRating);
-			final String ratingText = averageRating == 0
-					? "0"
-					: new DecimalFormat("##.0").format(averageRating);
-			tvDishRating.setText(ratingText);
+            setupViews();
 		}
 	};
+            
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_dish);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dish);
 
-		dishObjectId = getIntent().getStringExtra("current_dish_id");
-		FoodAppUtils.LogToast(getApplicationContext(), "Dish {" + dishObjectId + "}");
+        dishObjectId = getIntent().getStringExtra("current_dish_id");
+        FoodAppUtils.LogToast(getApplicationContext(), "Dish {" + dishObjectId + "}");
 
 		try {
 			final String json = getIntent().getStringExtra("dish");
@@ -96,6 +97,41 @@ public class DishActivity extends ActionBarActivity {
         //FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
 
         initializeRatingsFragment();
+    }
+
+    private void setupViews() {
+        String name = currentDish.getName();
+        Log.i(Constants.TAG, String.format("Found %s dish", name));
+        final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);
+        double averageRating = currentDish.getAverageRating();
+        ratingBar.setRating((float) averageRating);
+
+        // Show rating
+        TextView tvDishRating = (TextView) findViewById(R.id.tvDishRating);
+        final String ratingText = averageRating == 0
+                ? "0"
+                : new DecimalFormat("##.0").format(averageRating);
+        tvDishRating.setText(ratingText);
+
+        // Show image
+        final String image = currentDish.getImage();
+        if (StringUtils.isNotBlank(image)) {
+            final ImageView ivDish = (ImageView) findViewById(R.id.ivMenuItem);
+
+            ivDish.setImageResource(0);
+
+            Picasso.with(this)
+                    .load(image)
+                    .into(ivDish);
+        }
+
+        // show description
+        TextView tvMenuItemDescription = (TextView) findViewById(R.id.tvMenuItemDescription);
+        tvMenuItemDescription.setText(name);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(name);
+
     }
 
     @Override

@@ -130,7 +130,7 @@ public class FoodAppUtils {
         ParseRelation<ParseObject> relationRestaurant = restaurant.getRelation("RestaurantToPosts");
         ParseQuery query = relationRestaurant.getQuery();
         // include respective User objects
-//        query.include(Rating.Fields.USER);
+        query.include(Rating.Fields.USER);
         query.include(Rating.Fields.DISH);
         //todo: add 7 days constraint !!!
 

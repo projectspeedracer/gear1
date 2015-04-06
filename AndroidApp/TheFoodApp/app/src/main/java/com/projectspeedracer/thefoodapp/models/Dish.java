@@ -243,9 +243,11 @@ public class Dish extends DeserializableParseObject {
 		public static final String ENABLED       = "enabled";
 		public static final String IMAGE_URL     = "imageUrl";
 		public static final String CREATED_AT    = "createdAt";
+        public static final String AVERAGE_RATING = "averageRating";
 	}
 
-    public String getRatingDescription() {
+    /*public String getRatingDescription() {
+        final double averageRating = getAverageRating();
         if (averageRating >= 2.5f) {
             return "I loved it!";
         } else if (averageRating >= 2f) {
@@ -257,9 +259,10 @@ public class Dish extends DeserializableParseObject {
         } else {
             return "No information";
         }
-    }
+    }*/
 
     public int getRatingIconResID() {
+        final double averageRating = getAverageRating();
         if (averageRating >= 2.5f) {
             return R.drawable.good;
         } else if (averageRating >= 1.5f) {
@@ -270,5 +273,5 @@ public class Dish extends DeserializableParseObject {
             return R.drawable.meh;
         }
     }
-    public static final String AVERAGE_RATING = "averageRating";
+
 }

@@ -37,8 +37,6 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
         final TextView tvName = (TextView) convertView.findViewById(R.id.tvMenuItemName);
         tvName.setText(dish.getName());
 
-        final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
-        tvDishRating.setText(String.valueOf(dish.getRatingDescription()));
 
         final ImageView ratingIcon = (ImageView) convertView.findViewById(R.id.dishRatingBarIcon);
         ratingIcon.setImageResource(dish.getRatingIconResID());
@@ -55,15 +53,16 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
                 return true;
             }
         });*/
-        /*
         final String ratingText = averageRating == 0
             ? "0"
             : new DecimalFormat("##.0").format(averageRating);
+        final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
         tvDishRating.setText(ratingText);
 
+/*
         final RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.dishRatingBarAggrigated);
         ratingBar.setRating((float) averageRating);
-        */
+*/
 
 		final String image = dish.getImage();
 

@@ -76,7 +76,7 @@ public class TheFoodApplication extends Application {
 		return DEFAULT_SEARCH_DISTANCE;
 	}
 
-	public static void storeCurrentRestaurant(final Restaurant restaurant, boolean chosen) {
+	public static void storeCurrentRestaurant(final Restaurant restaurant, boolean chosen, final SaveCallback callback) {
 
         currentRestaurant = restaurant;
 
@@ -85,6 +85,8 @@ public class TheFoodApplication extends Application {
            // Not saving in backend yet
            return;
        }
+
+        assert callback != null : "Save callback is null while saving restaurant!!!";
 
 
 		final ParseQuery<Restaurant> query = ParseQuery.getQuery(Restaurant.class);
@@ -118,22 +120,11 @@ public class TheFoodApplication extends Application {
 
 				if (restaurantExists) {
                     currentRestaurant = r;
+                    callback.done(null); // Fake it till you make it!!!
 					return;
 				}
 
-				restaurant.saveInBackground(new SaveCallback() {
-					@Override
-					public void done(ParseException e) {
-						final String msg = String.format("Restaurant save callback: %s. Name: %s. Id: %s",
-								e != null ? "FAILED!" : "SUCCESS",
-								restaurant.getName(),
-								restaurant.getPlacesId());
-
-						Log.i(Constants.TAG, msg);
-
-						// TODO: Remove progress overlay !!!
-					}
-				});
+				restaurant.saveInBackground(callback);
 			}
 		});
 	}

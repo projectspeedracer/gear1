@@ -41,6 +41,7 @@ public class RestaurantRatingsFragment extends AbstractRatingsFragment {
                 }
 
                 Log.i(Constants.TAG, "Ratings for " + restaurant.getName() + " num: " + ratings.size());
+                ratingsAdapter.clear();
                 ratingsAdapter.addAll(ratings);
             }
         });

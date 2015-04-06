@@ -138,7 +138,7 @@ public class Rating extends ParseObject {
 
     private static final String[] GoodMsgSpec = {
             " loved %s",
-            " %s was awesome!!!"
+            " says %s was awesome!!!"
     };
 
     private static final String[] OkayMsgSpec = {

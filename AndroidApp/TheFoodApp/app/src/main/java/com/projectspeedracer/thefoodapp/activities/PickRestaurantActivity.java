@@ -38,7 +38,9 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.adapters.CustomMarkerWindowAdapter;
@@ -290,8 +292,25 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 				? getString(R.string.enter_into) + " " + restaurant.getName()
 				: restaurant.getName()+" "+getString(R.string.get_closer));
 */
-        TheFoodApplication.storeCurrentRestaurant(restaurant, chosen); // Choose, store at backend
+        TheFoodApplication.storeCurrentRestaurant(restaurant, chosen,
+                                                  (chosen == false) ? null : RestaurantSaveCallback); // Choose, store at backend
     }
+
+    public final SaveCallback RestaurantSaveCallback = new SaveCallback() {
+        @Override
+        public void done(ParseException e) {
+            final String msg = String.format("Restaurant save callback: %s. Name: %s. Id: %s",
+                    e != null ? "FAILED!" : "SUCCESS",
+                    TheFoodApplication.getCurrentRestaurant().getName(),
+                    TheFoodApplication.getCurrentRestaurant().getPlacesId());
+
+            Log.i(Constants.TAG, msg);
+            // Start Activity only after saving a Restaurant successfully!!!
+            startActivity(new Intent(getApplicationContext(), RestaurantActivity.class));
+
+            // TODO: stop progress bar!!!
+        }
+    };
 
 	@Override
 	public void clearAllMarkers() {
@@ -387,7 +406,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 		}
 
 		restaurantSelected(restaurant, true);
-		startActivity(new Intent(this, RestaurantActivity.class));
+
 	}
 
 

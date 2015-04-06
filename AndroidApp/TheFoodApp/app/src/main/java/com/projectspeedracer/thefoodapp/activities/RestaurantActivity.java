@@ -2,6 +2,9 @@ package com.projectspeedracer.thefoodapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,16 +13,20 @@ import android.widget.TextView;
 
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
+import com.projectspeedracer.thefoodapp.fragments.RestaurantRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 
 public class RestaurantActivity extends ActionBarActivity {
 
     Restaurant restaurant;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
 
+        initializeRatingsFragment();
     }
 
     @Override
@@ -28,7 +35,19 @@ public class RestaurantActivity extends ActionBarActivity {
         restaurant = TheFoodApplication.getCurrentRestaurant();
 
         TextView tvName = (TextView) findViewById(R.id.tvName);
-        tvName.setText(restaurant.getName());
+        String name = restaurant.getName();
+        tvName.setText(name);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(name);
+    }
+
+    private void initializeRatingsFragment() {
+        RestaurantRatingsFragment restaurantRatingsFragment = RestaurantRatingsFragment.newInstance();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.flResturantPosts, restaurantRatingsFragment);
+        ft.commit();
     }
 
     @Override
