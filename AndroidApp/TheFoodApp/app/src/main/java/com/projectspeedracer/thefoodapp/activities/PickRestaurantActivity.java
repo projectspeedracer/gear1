@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
@@ -177,6 +178,8 @@ public class PickRestaurantActivity extends ActionBarActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_pick_restaurant, menu);
+
+
         return true;
     }
 
@@ -189,7 +192,8 @@ public class PickRestaurantActivity extends ActionBarActivity implements
                 showHideMap(item);
                 return true;
 
-            case R.id.action_settings:
+            case R.id.item_logout:
+                logOut(item);
                 return true;
 
             default:
@@ -197,11 +201,19 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
     }
 
-	/*
-	 * Called by Location Services when the request to connect the client
-	 * finishes successfully. At this point, you can request the current
-	 * location or start periodic updates
-	 */
+    private void logOut(MenuItem item) {
+        ParseUser.logOut();
+        // Start and intent for the dispatch activity
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    /*
+     * Called by Location Services when the request to connect the client
+     * finishes successfully. At this point, you can request the current
+     * location or start periodic updates
+     */
     @Override
     public void onConnected(Bundle bundle) {
 

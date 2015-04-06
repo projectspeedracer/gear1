@@ -8,6 +8,6 @@
         android:icon="@drawable/ic_show_map"
         android:onClick="showHideMap">
     </item>
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/item_logout" android:title="@string/action_settings"
+        app:showAsAction="always"/>
 </menu>

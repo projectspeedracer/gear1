@@ -20,6 +20,14 @@ public class SettingsActivity extends ActionBarActivity {
 
         setupViews();
     }
+    private void logOut(){
+        // Call the Parse log out method
+        ParseUser.logOut();
+        // Start and intent for the dispatch activity
+        Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
     private void setupViews() {
         // Set up the log out button click handler

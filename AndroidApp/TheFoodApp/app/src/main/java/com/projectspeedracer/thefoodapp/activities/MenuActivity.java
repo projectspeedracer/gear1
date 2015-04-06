@@ -1,5 +1,6 @@
 package com.projectspeedracer.thefoodapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.parse.ParseUser;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.adapters.ViewPagerAdapter;
@@ -49,14 +51,25 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		final int id = item.getItemId();
+        final int id = item.getItemId();
 
-		if (id == R.id.action_settings) {
-			return true;
-		}
+        switch (id) {
+            case R.id.item_logout:
+                logOut(item);
+                return true;
 
-		return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 	}
+
+    private void logOut(MenuItem item) {
+        ParseUser.logOut();
+        // Start and intent for the dispatch activity
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
 	@Override
 	public void onDishesFetched(List<Dish> dishes) {

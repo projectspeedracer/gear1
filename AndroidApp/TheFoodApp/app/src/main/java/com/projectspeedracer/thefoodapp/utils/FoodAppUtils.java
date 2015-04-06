@@ -101,8 +101,8 @@ public class FoodAppUtils {
 
 	    final boolean inRange = PlacesUtils.IsRestaurantInRange(restaurant, PickRestaurantActivity.mGoogleApiClient);
 	    final BitmapDescriptor markerIcon = BitmapDescriptorFactory.defaultMarker(inRange
-			    ? BitmapDescriptorFactory.HUE_GREEN
-			    : BitmapDescriptorFactory.HUE_RED);
+			    ? BitmapDescriptorFactory.HUE_ORANGE
+			    : BitmapDescriptorFactory.HUE_ORANGE);
 
 	    marker.setIcon(markerIcon);
 
