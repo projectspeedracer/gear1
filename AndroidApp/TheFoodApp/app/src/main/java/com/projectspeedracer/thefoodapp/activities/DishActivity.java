@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,8 @@ public class DishActivity extends ActionBarActivity {
 
 	private Dish   currentDish;
 	private String dishObjectId;
+
+    ProgressBar pb;
 
 	private final GetCallback<Dish> OnDishFetched = new GetCallback<Dish>() {
 
@@ -98,12 +101,17 @@ public class DishActivity extends ActionBarActivity {
 			}
 		});
 
-		//FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
+        pb = (ProgressBar) findViewById(R.id.progressBar);
+        FoodAppUtils.assignProgressBarStyle(this, pb);
+        pb.setVisibility(ProgressBar.VISIBLE);
 
         initializeRatingsFragment();
     }
 
     private void setupViews() {
+
+        pb.setVisibility(ProgressBar.GONE);
+
         String name = currentDish.getName();
         Log.i(Constants.TAG, String.format("Found %s dish", name));
         //final RatingBar ratingBar = (RatingBar) findViewById(R.id.dishRatingBarAggrigated);

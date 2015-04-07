@@ -25,6 +25,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.utils.Constants;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -75,6 +76,7 @@ public class LoginActivity extends ActionBarActivity {
 
         // get progress bar
         pb = (ProgressBar) findViewById(R.id.progressBarLogin);
+        FoodAppUtils.assignProgressBarStyle(this, pb);
 
         changeLoginState(LoginState.LOGIN_STATE_DONE);
     }
@@ -255,7 +257,7 @@ public class LoginActivity extends ActionBarActivity {
                 actionFbLoginButton.setEnabled(false);
                 break;
             case LOGIN_STATE_DONE:
-                pb.setVisibility(ProgressBar.INVISIBLE);
+                pb.setVisibility(ProgressBar.GONE);
                 actionTwitterLoginButton.setEnabled(true);
                 actionFbLoginButton.setEnabled(true);
                 break;

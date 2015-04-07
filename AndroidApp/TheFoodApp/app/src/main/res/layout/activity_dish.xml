@@ -59,6 +59,13 @@
         android:layout_marginTop="10dp"
         android:background="@color/white">
 
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:layout_gravity="center_horizontal|top"
+            android:indeterminate="true" />
     </FrameLayout>
 
 

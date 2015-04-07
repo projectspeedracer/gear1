@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -20,6 +21,7 @@ import com.projectspeedracer.thefoodapp.adapters.RestaurantsArrayAdapter;
 import com.projectspeedracer.thefoodapp.models.GPlacesResponse;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.PlacesUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +46,8 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 	private RestaurantPickListener  listener;
 	private ArrayList<Restaurant>   listRestaurants;
 
+    ProgressBar pb;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -54,6 +58,10 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 		listRestaurants = new ArrayList<>();
 		restaurantsAdapter = new RestaurantsArrayAdapter(getActivity(), listRestaurants);
 
+        pb = (ProgressBar) view.findViewById(R.id.progressBar);
+        FoodAppUtils.assignProgressBarStyle(getActivity(), pb);
+
+
 		final ListView lvResults = (ListView) view.findViewById(R.id.lvResults);
 		lvResults.setAdapter(restaurantsAdapter);
 		lvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -61,6 +69,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				final Restaurant restaurant = restaurantsAdapter.getItem(position);
 				Log.i(TAG, "Selected - " + restaurant.getName());
+                pb.setVisibility(ProgressBar.VISIBLE); // visible till we start next activity
 				listener.onPickRestaurant(restaurant);
 			}
 		});
@@ -69,6 +78,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 	}
 
 	public void loadRestaurantList(String searchText) {
+        pb.setVisibility(ProgressBar.VISIBLE);
 		final String searchQ = searchText.isEmpty() ? "restaurants" : searchText;
 
 		final Location location = PlacesUtils.GetCurrentLocation(PickRestaurantActivity.mGoogleApiClient);
@@ -113,6 +123,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 						handleSearchRespShort(response); // inline with Search response
 					} else {
 						Toast.makeText(getActivity(), "Error: " + response.getString("error_message"), Toast.LENGTH_SHORT).show();
+                        doneLoading();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -123,6 +134,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 				Toast.makeText(getActivity(), "Failed!!", Toast.LENGTH_SHORT).show();
+                doneLoading();
 			}
 		});
 	}
@@ -146,14 +158,9 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
                 listener.restaurantSelected(restaurant, false); // to show on Map
             }
 
-            // Use only if updateRestaurantShort() was used
-	        restaurantsAdapter.notifyDataSetChanged();
 
 
-            if (restaurantsAdapter.getItem(0) != null) {
-                // so that we keep nearest one selected on map
-                listener.restaurantSelected(restaurantsAdapter.getItem(0), false);
-            }
+            doneLoading();
 
             // We dont want to fetch details yet..
             //fetchUpdatePlaceDetails();
@@ -225,12 +232,9 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 					restaurant.update(gpr);
                     listener.restaurantSelected(restaurant, false);
 
-                    if (restaurantsAdapter.getItem(0) != null) {
-                        // Keep 1st one selected
-                        listener.restaurantSelected(restaurantsAdapter.getItem(0), false);
-                    }
-
-					restaurantsAdapter.notifyDataSetChanged();
+                    // we dont know if we are done with loading every restaurant,
+                    // but still, consider it done...
+                    doneLoading();
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -270,6 +274,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 	};
 
 	public void loadOfflineRestaurantsData() {
+        pb.setVisibility(ProgressBar.VISIBLE);
 		restaurantsAdapter.clear();
 
 		for (int rid : OfflineSourceIds) {
@@ -292,8 +297,18 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 			}
 		}
 
-		restaurantsAdapter.notifyDataSetChanged();
+        doneLoading();
 	}
+
+    private void doneLoading() {
+        pb.setVisibility(ProgressBar.GONE);
+        restaurantsAdapter.notifyDataSetChanged();
+
+        if (restaurantsAdapter.getItem(0) != null) {
+            // so that we keep nearest one selected on map
+            listener.restaurantSelected(restaurantsAdapter.getItem(0), false);
+        }
+    }
 
 	@Override
 	public void onClick(View v) {

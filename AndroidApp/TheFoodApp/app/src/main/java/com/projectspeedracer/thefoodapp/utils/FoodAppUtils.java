@@ -9,10 +9,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.internal.id;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
@@ -298,5 +301,9 @@ public class FoodAppUtils {
         a.startActivity(intent);
     }
 
-
+    public static void assignProgressBarStyle(Activity a, ProgressBar pb) {
+        pb.getIndeterminateDrawable().setColorFilter(
+                a.getResources().getColor(R.color.primary),
+                android.graphics.PorterDuff.Mode.SRC_IN);
+    }
 }

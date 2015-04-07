@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
@@ -27,6 +28,8 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 	public MenuActivity() {
 	}
 
+    ProgressBar pb;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,9 +45,19 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(currentRestaurant.getName()+" Menu");
+
+        pb = (ProgressBar) findViewById(R.id.progressBar);
+        FoodAppUtils.assignProgressBarStyle(this, pb);
+        pb.setVisibility(ProgressBar.VISIBLE);
 	}
 
-	@Override
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_menu, menu);
 		return true;
@@ -67,6 +80,8 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 
 	@Override
 	public void onDishesFetched(List<Dish> dishes) {
+
+        pb.setVisibility(ProgressBar.GONE);
 
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), dishes);
 
