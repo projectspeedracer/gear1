@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,13 +15,16 @@ import android.widget.TextView;
 
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.fragments.AbstractRatingsFragment;
 import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
 import com.projectspeedracer.thefoodapp.fragments.RestaurantRatingsFragment;
+import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
+import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.squareup.picasso.Picasso;
 
-public class RestaurantActivity extends ActionBarActivity {
+public class RestaurantActivity extends ActionBarActivity implements AbstractRatingsFragment.OnDishRatedListner {
     public static String googlePlacesPhotoUriBase = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=250&key="
             + TheFoodApplication.getGoogleApiKey()
             + "&photoreference=";
@@ -93,5 +97,11 @@ public class RestaurantActivity extends ActionBarActivity {
     public void onOpenMenu(View v) {
         Intent i = new Intent(RestaurantActivity.this, MenuActivity.class);
         startActivity(i);
+    }
+
+    @Override
+    public void onDishRated(Dish returnedDish) {
+        // nothing to do here.
+        Log.v(Constants.TAG, "Returned from rating a dish - "+ returnedDish.getName());
     }
 }

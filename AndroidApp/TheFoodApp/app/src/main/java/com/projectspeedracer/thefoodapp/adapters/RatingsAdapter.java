@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.parse.ParseUser;
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.fragments.AbstractRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
@@ -26,8 +27,12 @@ import java.util.List;
  * Created by avkadam on 4/4/15.
  */
 public class RatingsAdapter extends ArrayAdapter<Rating> {
-    public RatingsAdapter(Context context, List<Rating> ratings) {
+
+    AbstractRatingsFragment enclosingFragmen;
+
+    public RatingsAdapter(Context context, AbstractRatingsFragment fragment, List<Rating> ratings) {
         super(context, R.layout.item_dish_post, ratings);
+        enclosingFragmen = fragment;
     }
 
 
@@ -61,12 +66,16 @@ public class RatingsAdapter extends ArrayAdapter<Rating> {
             holder.tvUserName.setText(userName);
         }
 
+        final Dish dish = rating.getDish();
+
 
         holder.tvComments.setText(rating.getComments());
 
         holder.tvTimeAgo.setText(FoodAppUtils.getRelativeTimeAgo(rating.getCreatedAt().toString()));
 
         holder.ivRatingImage.setImageResource(0);
+        holder.ivRatingImage.setOnClickListener(enclosingFragmen);
+        holder.ivRatingImage.setTag(dish);
         if (rating.getStars() > 2) {
             holder.ivRatingImage.setImageResource(R.drawable.good);
         }
@@ -77,7 +86,7 @@ public class RatingsAdapter extends ArrayAdapter<Rating> {
             holder.ivRatingImage.setImageResource(R.drawable.bad);
         }
 
-        final Dish dish = rating.getDish();
+
         final String image = (dish != null) ? dish.getImage() : null;
 
         if (dish != null) {
