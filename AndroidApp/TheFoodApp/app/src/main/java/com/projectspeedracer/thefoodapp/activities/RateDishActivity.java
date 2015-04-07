@@ -108,6 +108,9 @@ public class RateDishActivity extends ActionBarActivity {
                 ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad);
                 ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh_grey);
                 ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good_grey);
+                //Add rate hints when
+                TextView tvRateHint = (TextView) findViewById(R.id.tvRateHint);
+                tvRateHint.setText("I didn' like it!");
             }
         });
         findViewById(R.id.ratingDishMeh).setOnClickListener(new View.OnClickListener() {
@@ -117,6 +120,8 @@ public class RateDishActivity extends ActionBarActivity {
                 ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh);
                 ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad_grey);
                 ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good_grey);
+                TextView tvRateHint = (TextView) findViewById(R.id.tvRateHint);
+                tvRateHint.setText("It was OK...");
             }
         });
         findViewById(R.id.ratingDishGood).setOnClickListener(new View.OnClickListener() {
@@ -126,6 +131,8 @@ public class RateDishActivity extends ActionBarActivity {
                 ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good);
                 ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh_grey);
                 ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad_grey);
+                TextView tvRateHint = (TextView) findViewById(R.id.tvRateHint);
+                tvRateHint.setText("It was delicious!");
             }
         });
 
@@ -150,6 +157,7 @@ public class RateDishActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Rate "+name);
+
     }
 
     private  void postRating() {
