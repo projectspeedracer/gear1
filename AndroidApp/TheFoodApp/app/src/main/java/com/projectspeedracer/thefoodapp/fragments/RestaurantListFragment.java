@@ -92,7 +92,7 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
         // eg. https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=37.4138286,-121.9033424&key=AIzaSyD6UJCC4Ey_VdaWqVB-AVEdur7_yu-cAyM&keyword=restaurants&rankby=distance
 		String places_search_q = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + locationQ +
 		                         "&key=" + TheFoodApplication.getGoogleApiKey() +
-		                         "&keyword=" + searchQ + "&rankby=distance"; // WORKS
+		                         "&keyword=" + searchQ + "&rankby=distance";
         places_search_q = places_search_q + "&type=food"; // Add type
 
 
@@ -142,20 +142,21 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
                 final JSONObject place = placeIds.getJSONObject(index);
                 final GPlacesResponse gpr = new GPlacesResponse(place);
                 final Restaurant restaurant = new Restaurant(gpr);
-                listRestaurants.add(restaurant);
+                listRestaurants.add(restaurant); // add to list, not adapter
+                listener.restaurantSelected(restaurant, false); // to show on Map
             }
 
             // Use only if updateRestaurantShort() was used
 	        restaurantsAdapter.notifyDataSetChanged();
 
-            // Use it here only if updateRestaurantShort() was used
+
             if (restaurantsAdapter.getItem(0) != null) {
-                // Keep 1st one selected
+                // so that we keep nearest one selected on map
                 listener.restaurantSelected(restaurantsAdapter.getItem(0), false);
             }
 
             // We dont want to fetch details yet..
-            //fetchUpdatePlaceDetails(); // not required if using Short() version
+            //fetchUpdatePlaceDetails();
         } catch (JSONException e) {
             e.printStackTrace();
         }

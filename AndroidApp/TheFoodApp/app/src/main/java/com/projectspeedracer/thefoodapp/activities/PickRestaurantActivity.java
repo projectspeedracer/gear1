@@ -517,11 +517,10 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 
     private void doSearch() {
         final String searchTerm = etSearch.getText().toString();
-	    if (StringUtils.isBlank(searchTerm)) { return; }
 
         final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
-        listRestaurantFragment.loadRestaurantList(searchTerm);
+        listRestaurantFragment.loadRestaurantList(searchTerm); // black searchTerm means nearby 'Restaurants'
     }
 
 	private void dropPinEffect(final Marker marker) {

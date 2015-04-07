@@ -110,11 +110,13 @@ public class FoodAppUtils {
 			    ? BitmapDescriptorFactory.HUE_ORANGE
 			    : BitmapDescriptorFactory.HUE_ORANGE);
 
+        float alpha = inRange ? 1 : 0.5f;
+
 	    marker.setIcon(markerIcon);
 
         marker.setTitle(restaurant.getName());
         marker.showInfoWindow();
-        marker.setAlpha(1);
+        marker.setAlpha(alpha);
     }
 
 
