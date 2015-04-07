@@ -92,28 +92,13 @@ public class RateDishActivity extends ActionBarActivity {
 
 		        dishToRate = dish;
 
+                setupViews();
+
 		        Log.i(TAG, String.format("Found %s dish", dishToRate.getName()));
 	        }
         });
 
-        // TODO: Inflate the layout - get this to work!
-        /*Inflating layout
-        String name = dishToRate.getName();
-        final String image = dishToRate.getImage();
-        if (StringUtils.isNotBlank(image)) {
-            final ImageView ivDish = (ImageView) findViewById(R.id.ivMenuItem);
 
-            ivDish.setImageResource(0);
-
-            Picasso.with(this)
-                    .load(image)
-                    .into(ivDish);
-        }
-        TextView tvMenuItemDescription = (TextView) findViewById(R.id.tvMenuItemDescription);
-        tvMenuItemDescription.setText(name);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(name);*/
 
         // click handlers for rating buttons
         findViewById(R.id.ratingDishBad).setOnClickListener(new View.OnClickListener() {
@@ -148,7 +133,26 @@ public class RateDishActivity extends ActionBarActivity {
 
     }
 
-	private  void postRating() {
+    private void setupViews() {
+        String name = dishToRate.getName();
+        final String image = dishToRate.getImage();
+        if (StringUtils.isNotBlank(image)) {
+            final ImageView ivDish = (ImageView) findViewById(R.id.ivMenuItem);
+
+            ivDish.setImageResource(0);
+
+            Picasso.with(this)
+                    .load(image)
+                    .into(ivDish);
+        }
+        TextView tvMenuItemDescription = (TextView) findViewById(R.id.tvMenuItemName);
+        tvMenuItemDescription.setText(name);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Rate "+name);
+    }
+
+    private  void postRating() {
         if (restaurant == null) {
             Toast.makeText(this, "Restaurant not selected!!!", Toast.LENGTH_SHORT).show();
             return;

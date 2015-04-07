@@ -39,6 +39,7 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
 
         final ImageView ratingIcon = (ImageView) convertView.findViewById(R.id.dishRatingBarIcon);
         ratingIcon.setImageResource(dish.ratingIconResId());
+        ratingIcon.setTag(dish);
 
         final TextView tvMenuItemDescription = (TextView) convertView.findViewById(R.id.tvMenuItemDescription);
         tvMenuItemDescription.setText(dish.getDescription());
@@ -52,10 +53,11 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
                 return true;
             }
         });*/
-        final String ratingText = averageRating == 0
-            ? "0"
-            : new DecimalFormat("##.0").format(averageRating);
+
         final TextView tvDishRating = (TextView) convertView.findViewById(R.id.tvDishRating);
+        final String ratingText = averageRating == 0
+                ? getContext().getString(R.string.no_ratings)
+                : new DecimalFormat("##.0").format(averageRating);
         tvDishRating.setText(ratingText);
 
 /*

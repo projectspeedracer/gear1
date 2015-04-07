@@ -17,6 +17,7 @@ import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.adapters.ViewPagerAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
+import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.SlidingTabLayout;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 
         switch (id) {
             case R.id.item_logout:
-                logOut(item);
+                FoodAppUtils.showSignOutDialog(this);
                 return true;
 
             default:
@@ -63,13 +64,6 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
         }
 	}
 
-    private void logOut(MenuItem item) {
-        ParseUser.logOut();
-        // Start and intent for the dispatch activity
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
 
 	@Override
 	public void onDishesFetched(List<Dish> dishes) {
@@ -93,6 +87,8 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 	}
 
 	public void onRatingClick(View view) {
-		Toast.makeText(this, "Touched Rating..", Toast.LENGTH_SHORT).show();
+        Dish dish = (Dish) view.getTag();
+		Toast.makeText(this, "Touched Rating for Dish - " + dish.getName(), Toast.LENGTH_SHORT).show();
+        // TODO: Show Rating page now.
 	}
 }

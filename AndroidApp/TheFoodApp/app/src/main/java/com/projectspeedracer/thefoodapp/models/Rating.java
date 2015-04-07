@@ -138,7 +138,8 @@ public class Rating extends ParseObject {
 
     private static final String[] GoodMsgSpec = {
             " loved %s",
-            " says %s was awesome!!!"
+            " says %s was awesome!!!",
+            " says %s was delicious!!!"
     };
 
     private static final String[] OkayMsgSpec = {
@@ -148,7 +149,8 @@ public class Rating extends ParseObject {
 
     private static final String[] BadMsgSpec = {
             " says %s is not so good",
-            " says %s was disappointing"
+            " says %s was disappointing",
+            " did not like %s"
     };
 
     private static String[] ChooseMessageSpec(int stars) {

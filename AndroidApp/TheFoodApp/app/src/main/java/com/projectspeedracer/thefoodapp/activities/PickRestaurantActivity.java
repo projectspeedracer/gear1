@@ -1,13 +1,18 @@
 package com.projectspeedracer.thefoodapp.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -45,6 +50,7 @@ import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.adapters.CustomMarkerWindowAdapter;
+import com.projectspeedracer.thefoodapp.fragments.PlateRateDialogFragment;
 import com.projectspeedracer.thefoodapp.fragments.RestaurantListFragment;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
@@ -193,7 +199,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
                 return true;
 
             case R.id.item_logout:
-                logOut(item);
+                FoodAppUtils.showSignOutDialog(this);
                 return true;
 
             default:
@@ -201,13 +207,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         }
     }
 
-    private void logOut(MenuItem item) {
-        ParseUser.logOut();
-        // Start and intent for the dispatch activity
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
+
 
     /*
      * Called by Location Services when the request to connect the client

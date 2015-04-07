@@ -3,8 +3,10 @@ package com.projectspeedracer.thefoodapp.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,10 +22,14 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.activities.LoginActivity;
 import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.fragments.AppDialogFragment;
+import com.projectspeedracer.thefoodapp.fragments.PlateRateDialogFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
@@ -264,6 +270,30 @@ public class FoodAppUtils {
         }
 
         return expressiveMessage;
+    }
+
+    public static void showSignOutDialog(FragmentActivity a) {
+        FragmentManager fm = a.getSupportFragmentManager();
+        if (ParseUser.getCurrentUser() == null) {
+            Log.e(Constants.TAG, "Request to sign out, user not signed in.");
+            FoodAppUtils.logOutConfirmed(a);
+            return;
+        }
+        String title = "Signed in as " + ParseUser.getCurrentUser().get("appUserName").toString();
+        String message = a.getString(R.string.sign_out_message);
+        PlateRateDialogFragment alertDialog =
+                PlateRateDialogFragment.newInstance(title, message, a.getString(R.string.sign_out_dialog_cmd));
+        alertDialog.show(fm, "fragment_alert");
+    }
+
+    // called from PlateRateDialogFragment after confirmation from user.
+    public static void logOutConfirmed(Activity a) {
+
+        ParseUser.logOut();
+        // Start and intent for the dispatch activity
+        Intent intent = new Intent(a, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        a.startActivity(intent);
     }
 
 

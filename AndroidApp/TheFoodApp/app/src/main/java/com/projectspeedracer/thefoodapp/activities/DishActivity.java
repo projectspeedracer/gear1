@@ -71,7 +71,8 @@ public class DishActivity extends ActionBarActivity {
         setContentView(R.layout.activity_dish);
 
         dishObjectId = getIntent().getStringExtra("current_dish_id");
-        FoodAppUtils.LogToast(getApplicationContext(), "Dish {" + dishObjectId + "}");
+//        FoodAppUtils.LogToast(getApplicationContext(), "Dish {" + dishObjectId + "}");
+        Log.i(Constants.TAG, "Dish {" + dishObjectId + "}");
 
 		try {
 			final String json = getIntent().getStringExtra("dish");
@@ -113,7 +114,7 @@ public class DishActivity extends ActionBarActivity {
         // Show rating
         TextView tvDishRating = (TextView) findViewById(R.id.tvDishRating);
         final String ratingText = averageRating == 0
-                ? "0"
+                ? getString(R.string.no_ratings_detailed_msg)
                 : new DecimalFormat("##.0").format(averageRating);
         tvDishRating.setText(ratingText);
 
@@ -131,7 +132,14 @@ public class DishActivity extends ActionBarActivity {
 
         // show description
         TextView tvMenuItemDescription = (TextView) findViewById(R.id.tvMenuItemDescription);
-        tvMenuItemDescription.setText(name);
+        String description = currentDish.getDescription();
+        if (StringUtils.isNoneBlank(description)){
+            tvMenuItemDescription.setText(description);
+        }
+        else {
+            // Show name if description is not available
+            tvMenuItemDescription.setText(name);
+        }
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(name);
@@ -170,17 +178,17 @@ public class DishActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        final int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Okay, we don't want to log out from here. So Menu is removed from XML
+        switch (id) {
+            case R.id.item_logout:
+                FoodAppUtils.showSignOutDialog(this);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
 	@Override
