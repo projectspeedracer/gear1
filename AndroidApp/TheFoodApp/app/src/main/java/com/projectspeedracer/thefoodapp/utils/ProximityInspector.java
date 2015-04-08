@@ -139,7 +139,7 @@ public class ProximityInspector implements GoogleApiClient.ConnectionCallbacks,
         Log.i(TAG, isInRange ? "User is still inside restaurant" : " User went out of this restaurant");
 
         if (!isInRange) {
-            Log.i(TAG, "Good bye user!!!");
+            Log.i(TAG, "Good bye user, see you again!!!");
             goodByeUser(restaurant);
         }
     }

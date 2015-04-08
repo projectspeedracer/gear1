@@ -139,8 +139,10 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 
     private void unsubscribeStaleChannels() {
         List<String> subscribedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
-        for (String channel: subscribedChannels) {
-            ParsePush.unsubscribeInBackground(channel);
+        if (subscribedChannels != null) {
+            for (String channel : subscribedChannels) {
+                ParsePush.unsubscribeInBackground(channel);
+            }
         }
     }
 
