@@ -19,6 +19,7 @@ import com.projectspeedracer.thefoodapp.adapters.ViewPagerAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
+import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
 import com.projectspeedracer.thefoodapp.utils.SlidingTabLayout;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 	}
 
     ProgressBar pb;
+    ProximityInspector proximityInspector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +53,6 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
         pb.setVisibility(ProgressBar.VISIBLE);
 	}
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,4 +103,18 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 		Toast.makeText(this, "Touched Rating for Dish - " + dish.getName(), Toast.LENGTH_SHORT).show();
         // TODO: Show Rating page now.
 	}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        proximityInspector = new ProximityInspector(this, this); // starts monitoring proximity
+    }
+
+    @Override
+    protected void onStop() {
+        if (proximityInspector != null) {
+            proximityInspector.stop();
+        }
+        super.onStop();
+    }
 }

@@ -19,9 +19,11 @@ import android.widget.Toast;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.models.Dish;
@@ -29,6 +31,7 @@ import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +47,8 @@ public class RateDishActivity extends ActionBarActivity {
 	private EditText etMessage;
 
     private float selectedRating = 0.0f;
+
+    ProximityInspector proximityInspector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +181,8 @@ public class RateDishActivity extends ActionBarActivity {
             return;
         }
 
+
+
         // 2. Create Rating Post Object
 
 	    float ratingNum = selectedRating;
@@ -194,6 +201,28 @@ public class RateDishActivity extends ActionBarActivity {
         rating.setRestaurant(restaurant);
         rating.setUser(ParseUser.getCurrentUser());
         rating.setLocation(restaurant.getLocation());
+
+/*
+        String channel = restaurant.getPlacesId();
+        ParsePush push = new ParsePush();
+        push.setChannel(channel);
+        String message = rating.generateExpression(ParseUser.getCurrentUser().get("appUserName").toString());
+        push.setMessage(message);
+        push.sendInBackground(new SendCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.e("PUSH", "success");
+                }
+                else {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Log.e("PUSH", "Sending out push notification to " + channel + " message: " + message);
+*/
+
+
         rating.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -210,7 +239,8 @@ public class RateDishActivity extends ActionBarActivity {
                     return;
                 }
 
-                addRelations(rating);
+                // let cloud code handle this
+//                addRelations(rating);
                 finish();
             }
         });
@@ -225,11 +255,13 @@ public class RateDishActivity extends ActionBarActivity {
     }
 
     private void addRelations(final Rating rating) {
+        ParseUser user = ParseUser.getCurrentUser();
 
         final String[] info = new String[] {
                 "Stars: " + rating.getStars(),
                 "Comments: " + rating.getComments()
         };
+
 
         // 4. Add Dish -> Post relation
         ParseRelation<ParseObject> relationDish = dishToRate.getRelation("DishToPosts");
@@ -242,7 +274,6 @@ public class RateDishActivity extends ActionBarActivity {
         restaurant.saveInBackground(new ParseSaveCallback("Restaurant/Rating Update: ", info));
 
         // 6. Add User -> Post relation
-        ParseUser user = ParseUser.getCurrentUser();
         ParseRelation<ParseObject> relationUser = user.getRelation("UserToPosts");
         relationUser.add(rating);
         user.saveInBackground(new ParseSaveCallback("User/Rating Update: ", info));
@@ -296,4 +327,20 @@ public class RateDishActivity extends ActionBarActivity {
 			}
 		}
 	}
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        proximityInspector = new ProximityInspector(this, this); // starts monitoring proximity
+    }
+
+
+    @Override
+    protected void onStop() {
+        if (proximityInspector != null) {
+            proximityInspector.stop();
+        }
+        super.onStop();
+    }
 }

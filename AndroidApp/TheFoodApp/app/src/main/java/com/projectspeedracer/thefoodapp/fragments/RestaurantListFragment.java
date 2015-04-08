@@ -315,7 +315,13 @@ public class RestaurantListFragment extends Fragment implements View.OnClickList
 
 	}
 
-	public interface RestaurantPickListener {
+    public void cancel() {
+        if (pb != null ) {
+            pb.setVisibility(ProgressBar.GONE);
+        }
+    }
+
+    public interface RestaurantPickListener {
 		public void restaurantSelected(Restaurant restaurant, boolean chosen);
 		public void clearAllMarkers();
         public void onPickRestaurant(Restaurant restaurant);
