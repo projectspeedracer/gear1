@@ -141,12 +141,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     public void onRatingClick(View view) {
 
         Dish dish = (Dish) view.getTag();
-		Toast.makeText(getActivity(), "Touched Rating for Dish - " + dish.getName(), Toast.LENGTH_SHORT).show();
+//		Toast.makeText(getActivity(), "Touched Rating for Dish - " + dish.getName(), Toast.LENGTH_SHORT).show();
         // TODO: Show Rating page now.
         Intent i = new Intent(getActivity(), RateDishActivity.class);
         Log.v(Constants.TAG, "[MenuActivity] Rating dish - " + dish.getName() + " Id: " + dish.getObjectId());
         i.putExtra("current_dish_id", dish.getObjectId());
         //i.putExtra("current_dish", dish);
-        startActivity(i);
+//        startActivity(i);
+        startActivityForResult(i, DishActivity.REQUEST_CODE_START);
 	}
 }

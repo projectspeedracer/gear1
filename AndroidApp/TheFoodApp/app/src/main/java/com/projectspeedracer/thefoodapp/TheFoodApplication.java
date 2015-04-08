@@ -1,8 +1,10 @@
 package com.projectspeedracer.thefoodapp;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -16,6 +18,7 @@ import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
+import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
 
 /**
  * Created by avkadam on 3/24/15.
@@ -31,6 +34,8 @@ public class TheFoodApplication extends Application {
 	public static final int MAX_NUM_PLACES = 6;
 
 	public static Restaurant currentRestaurant;
+
+    public static String subscribedChannel;
 
 	public TheFoodApplication() {
 	}

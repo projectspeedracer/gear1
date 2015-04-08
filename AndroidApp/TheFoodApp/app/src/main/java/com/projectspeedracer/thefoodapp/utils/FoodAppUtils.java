@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -128,27 +131,9 @@ public class FoodAppUtils {
         query.getInBackground(dishObjectId, callback);
     }
 
-    // Get list of all dishes from last 7 days
-    // Its really - getAllPostsForRestaurant
-    public static void getAllDishesForRestaurant(FindCallback callback) {
-        // orderby CreatedAt
-        // restrict to last 7 days
-        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
-        if (restaurant == null) {
-            Log.e(Constants.TAG, "getAllDishesForRestaurant: Restaurant not selected while getting Dish details");
-            return;
-        }
-        ParseRelation<ParseObject> relationRestaurant = restaurant.getRelation("RestaurantToPosts");
-        ParseQuery query = relationRestaurant.getQuery();
-        // include respective User objects
-        query.include(Rating.Fields.USER);
-        query.include(Rating.Fields.DISH);
-        //todo: add 7 days constraint !!!
+    // unused!!
+    public static void getAllDishesForRestaurant(int pageNum, FindCallback callback) {
 
-        // Recent first
-        query.orderByDescending("createdAt");
-
-        query.findInBackground(callback);
     }
 
     // Get list of Rating posts for a particular dish - For "Dish Details"
@@ -168,10 +153,30 @@ public class FoodAppUtils {
     }
 
     // Get list of Rating posts for current Restaurant - For "Restaurant Wall"
-    public static void getAllPostsForRestaurant(FindCallback callback) {
+    public static void getAllPostsForRestaurant(int pageNum, FindCallback callback) {
         // orderby CreatedAt
         // include repective User objects
-        getAllDishesForRestaurant(callback);
+
+        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
+        if (restaurant == null) {
+            Log.e(Constants.TAG, "getAllDishesForRestaurant: Restaurant not selected while getting Dish details");
+            return;
+        }
+        ParseRelation<ParseObject> relationRestaurant = restaurant.getRelation("RestaurantToPosts");
+        ParseQuery query = relationRestaurant.getQuery();
+        // include respective User objects
+        query.include(Rating.Fields.USER);
+        query.include(Rating.Fields.DISH);
+        //todo: add 7 days constraint !!!
+
+        //for pagination
+        query.setLimit(Constants.NUM_ITEMS_PER_QUERY);
+        query.setSkip((pageNum - 1) * Constants.NUM_ITEMS_PER_QUERY);
+
+        // Recent first
+        query.orderByDescending("createdAt");
+
+        query.findInBackground(callback);
     }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
@@ -291,6 +296,22 @@ public class FoodAppUtils {
         alertDialog.show(fm, "fragment_alert");
     }
 
+    public static void showGoodByeDialog(FragmentActivity a) {
+        FragmentManager fm = a.getSupportFragmentManager();
+        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
+        if (restaurant == null) {
+            Log.e(Constants.TAG, "Request to go out out restaurant, restaurant not selected.");
+            FoodAppUtils.logOutConfirmed(a);
+            return;
+        }
+
+        String title = "Coming out of " + restaurant.getName() + "?";
+        String message = a.getString(R.string.go_out_message);
+        PlateRateDialogFragment alertDialog =
+                PlateRateDialogFragment.newInstance(title, message, a.getString(R.string.go_out_dialog_cmd));
+        alertDialog.show(fm, "fragment_alert");
+    }
+
     // called from PlateRateDialogFragment after confirmation from user.
     public static void logOutConfirmed(Activity a) {
 
@@ -305,5 +326,11 @@ public class FoodAppUtils {
         pb.getIndeterminateDrawable().setColorFilter(
                 a.getResources().getColor(R.color.primary),
                 android.graphics.PorterDuff.Mode.SRC_IN);
+    }
+
+    public static boolean isNetworkAvailable(Context c) {
+        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }

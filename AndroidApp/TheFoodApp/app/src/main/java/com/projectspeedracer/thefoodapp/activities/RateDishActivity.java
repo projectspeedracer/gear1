@@ -21,9 +21,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.SendCallback;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.models.Dish;
@@ -32,6 +34,7 @@ import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +52,8 @@ public class RateDishActivity extends ActionBarActivity {
     String dishObjectId;
 
     private float selectedRating = 0.0f;
+
+    ProximityInspector proximityInspector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +118,9 @@ public class RateDishActivity extends ActionBarActivity {
                 ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad);
                 ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh_grey);
                 ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good_grey);
+                //Add rate hints when
+                TextView tvRateHint = (TextView) findViewById(R.id.tvRateHint);
+                tvRateHint.setText("I didn' like it!");
             }
         });
         findViewById(R.id.ratingDishMeh).setOnClickListener(new View.OnClickListener() {
@@ -122,6 +130,8 @@ public class RateDishActivity extends ActionBarActivity {
                 ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh);
                 ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad_grey);
                 ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good_grey);
+                TextView tvRateHint = (TextView) findViewById(R.id.tvRateHint);
+                tvRateHint.setText("It was OK...");
             }
         });
         findViewById(R.id.ratingDishGood).setOnClickListener(new View.OnClickListener() {
@@ -131,6 +141,8 @@ public class RateDishActivity extends ActionBarActivity {
                 ((ImageView) findViewById(R.id.ratingDishGood)).setImageResource(R.drawable.good);
                 ((ImageView) findViewById(R.id.ratingDishMeh)).setImageResource(R.drawable.meh_grey);
                 ((ImageView) findViewById(R.id.ratingDishBad)).setImageResource(R.drawable.bad_grey);
+                TextView tvRateHint = (TextView) findViewById(R.id.tvRateHint);
+                tvRateHint.setText("It was delicious!");
             }
         });
 
@@ -155,6 +167,7 @@ public class RateDishActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Rate "+name);
+
     }
 
     private  void postRating() {
@@ -172,6 +185,8 @@ public class RateDishActivity extends ActionBarActivity {
             Toast.makeText(this, "You are not signed in!!!", Toast.LENGTH_SHORT).show();
             return;
         }
+
+
 
         // 2. Create Rating Post Object
 
@@ -191,6 +206,28 @@ public class RateDishActivity extends ActionBarActivity {
         rating.setRestaurant(restaurant);
         rating.setUser(ParseUser.getCurrentUser());
         rating.setLocation(restaurant.getLocation());
+
+/*
+        String channel = restaurant.getPlacesId();
+        ParsePush push = new ParsePush();
+        push.setChannel(channel);
+        String message = rating.generateExpression(ParseUser.getCurrentUser().get("appUserName").toString());
+        push.setMessage(message);
+        push.sendInBackground(new SendCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.e("PUSH", "success");
+                }
+                else {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Log.e("PUSH", "Sending out push notification to " + channel + " message: " + message);
+*/
+
+
         rating.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -207,7 +244,10 @@ public class RateDishActivity extends ActionBarActivity {
                     return;
                 }
 
-                addRelations(rating);
+                Log.i(TAG, "Rating saved: " + rating.getObjectId());
+
+                // TODO ----> check before commit -> should we wait before fetching????
+                // TODO --> will cloud afterSave happen before this?
 
                 // Now fetch dish again and return the result to parent activity
                 FoodAppUtils.fetchDish(dishToRate.getObjectId(), OnDishFetched);
@@ -225,11 +265,13 @@ public class RateDishActivity extends ActionBarActivity {
     }
 
     private void addRelations(final Rating rating) {
+        ParseUser user = ParseUser.getCurrentUser();
 
         final String[] info = new String[] {
                 "Stars: " + rating.getStars(),
                 "Comments: " + rating.getComments()
         };
+
 
         // 4. Add Dish -> Post relation
         ParseRelation<ParseObject> relationDish = dishToRate.getRelation("DishToPosts");
@@ -242,7 +284,6 @@ public class RateDishActivity extends ActionBarActivity {
         restaurant.saveInBackground(new ParseSaveCallback("Restaurant/Rating Update: ", info));
 
         // 6. Add User -> Post relation
-        ParseUser user = ParseUser.getCurrentUser();
         ParseRelation<ParseObject> relationUser = user.getRelation("UserToPosts");
         relationUser.add(rating);
         user.saveInBackground(new ParseSaveCallback("User/Rating Update: ", info));
@@ -337,4 +378,19 @@ public class RateDishActivity extends ActionBarActivity {
         }
     };
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        proximityInspector = new ProximityInspector(this, this); // starts monitoring proximity
+    }
+
+
+    @Override
+    protected void onStop() {
+        if (proximityInspector != null) {
+            proximityInspector.stop();
+        }
+        super.onStop();
+    }
 }

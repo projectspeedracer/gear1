@@ -30,27 +30,27 @@ public class RestaurantRatingsFragment extends AbstractRatingsFragment {
 
     // Override specific methods here...
     @Override
-    public void fetchPosts() {
+    public void fetchPosts(int pageNum) {
         // Fetch posts for a Restaurant
 
-        Log.i("RestaurantPost", "Will fetch posts for Restaurant -");
+        Log.i("RestaurantPost", "Will fetch posts for Restaurant. Page " + pageNum);
 
         Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
-        getRestaurantPosts(restaurant);
+        getRestaurantPosts(pageNum, restaurant);
     }
 
-    private void getRestaurantPosts(final Restaurant restaurant) {
-        FoodAppUtils.getAllPostsForRestaurant(new FindCallback<Rating>() {
+    private void getRestaurantPosts(final int pageNum, final Restaurant restaurant) {
+        FoodAppUtils.getAllPostsForRestaurant(pageNum, new FindCallback<Rating>() {
 
             @Override
             public void done(List<Rating> ratings, ParseException e) {
+                sdRefresh.setRefreshing(false);
                 if (e != null) {
                     e.printStackTrace();
                     return;
                 }
 
-                Log.i(Constants.TAG, "Ratings for " + restaurant.getName() + " num: " + ratings.size());
-                ratingsAdapter.clear();
+                Log.i(Constants.TAG, "Ratings for " + restaurant.getName() + " ("+pageNum+ ")"+" num: " + ratings.size());
                 ratingsAdapter.addAll(ratings);
             }
         });

@@ -28,6 +28,9 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
 
 	public static final String DISH_OBJECT_ID = "dish_object_id";
 
+    private Dish currentDish;
+
+
 	public static DishRatingsFragment newInstance (String dishObjectId) {
         final Bundle args = new Bundle();
 	    args.putString(DISH_OBJECT_ID, dishObjectId);
@@ -39,31 +42,40 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
     }
 
     @Override
-    public void fetchPosts() {
+    public void fetchPosts(final int pageNum) {
         final String dishObjectId = getArguments().getString("dish_object_id");
         Log.i("DishPost", "Will fetch posts for Dish -" + dishObjectId);
 
-        // 1. Get Dish object
-        FoodAppUtils.fetchDish(dishObjectId, new GetCallback<Dish>() {
+        if (pageNum == FIRST_PAGE) {
+            // 1. Get Dish object
+            FoodAppUtils.fetchDish(dishObjectId, new GetCallback<Dish>() {
 
-	        @Override
-	        public void done(Dish dish, ParseException e) {
-		        if (e != null) {
-			        final String errorText = "Failed to query dish for ID - " + dishObjectId;
+                @Override
+                public void done(Dish dish, ParseException e) {
+                    if (e != null) {
+                        final String errorText = "Failed to query dish for ID - " + dishObjectId;
 
-			        Log.e(Constants.TAG, errorText + ". " + e.getMessage());
-			        e.printStackTrace();
+                        Log.e(Constants.TAG, errorText + ". " + e.getMessage());
+                        e.printStackTrace();
 
-			        return;
-		        }
+                        return;
+                    }
 
-		        Log.i(Constants.TAG, String.format("Found %s dish", dish.getName()));
-		        fetchDishRatings(dish);
-	        }
-        });
+                    currentDish = dish;
+
+                    Log.i(Constants.TAG, String.format("Found %s dish", dish.getName()));
+                    fetchDishRatings(dish, pageNum);
+                }
+            });
+        }
+        else {
+            // use existing dish
+            Log.i(Constants.TAG, String.format("Fetching page %d for %s dish", pageNum, currentDish.getName()));
+            fetchDishRatings(currentDish, pageNum);
+        }
     }
 
-    private void fetchDishRatings(final Dish dish) {
+    private void fetchDishRatings(final Dish dish, final int pageNum) {
 	    final ParseRelation<Rating> relationDish = dish.getRelation(ParseRelationNames.DishToPosts);
 	    final ParseQuery<Rating> query = relationDish.getQuery();
 
@@ -72,19 +84,24 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
 	    query.include(Rating.Fields.DISH);
 	    query.orderByDescending("createdAt");
 
+        //for pagination
+        query.setLimit(Constants.NUM_ITEMS_PER_QUERY);
+        query.setSkip((pageNum - 1) * Constants.NUM_ITEMS_PER_QUERY);
+
 	    // TODO: add 7 days constraint !!!
 
 	    query.findInBackground(new FindCallback<Rating>() {
 
 		    @Override
 		    public void done(List<Rating> ratings, ParseException e) {
+                sdRefresh.setRefreshing(false);
 			    if (e != null) {
 				    e.printStackTrace();
 				    return;
 			    }
 
-			    Log.i(Constants.TAG, "Ratings for "+dish.getName()+" num: "+ratings.size());
-                ratingsAdapter.clear();
+                Log.i(Constants.TAG, "Ratings for " + dish.getName() + " ("+pageNum+ ")"+" num: " + ratings.size());
+
 			    ratingsAdapter.addAll(ratings);
 		    }
 	    });
@@ -124,4 +141,10 @@ public class DishRatingsFragment extends AbstractRatingsFragment {
         //i.putExtra("current_dish", dish);
         startActivity(i);
     }*/
+
+    @Override
+    void OnClickDish(Dish dish) {
+        // We don't want to do anything in DishActivity.
+        Log.i(Constants.TAG, "Ignoring item click from dish lists");
+    }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Rate Plate</string>
+    <string name="app_name">Plate Rate</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">X</string>
     <string name="title_activity_feeds">FeedsActivity</string>
@@ -33,5 +33,7 @@
     <string name="no_ratings_detailed_msg">No Ratings. Be the first one to rate</string>
     <string name="no_ratings">-</string>
     <string name="sign_out_message">Are you sure you want to sign out?</string>
+    <string name="go_out_message">Come out of this restaurant</string>
     <string name="sign_out_dialog_cmd">Sign Out</string>
+    <string name="go_out_dialog_cmd">Go out of restaurant</string>
 </resources>

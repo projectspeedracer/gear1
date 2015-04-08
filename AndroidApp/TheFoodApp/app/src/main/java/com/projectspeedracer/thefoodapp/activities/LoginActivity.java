@@ -9,7 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookRequestError;
@@ -47,8 +49,8 @@ public class LoginActivity extends ActionBarActivity {
     enum LoginState {LOGIN_STATE_STARTED, LOGIN_STATE_DONE};
 
     ProgressBar pb;
-    Button actionFbLoginButton;
-    Button actionTwitterLoginButton;
+    LinearLayout actionFbLoginButton;
+    LinearLayout actionTwitterLoginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +62,14 @@ public class LoginActivity extends ActionBarActivity {
 
     private void setupViews() {
         // Set up the submit button click handler
-        actionFbLoginButton = (Button) findViewById(R.id.action_fb_login_button);
+        actionFbLoginButton = (LinearLayout) findViewById(R.id.action_fb_login_button);
         actionFbLoginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 onFacebookLoginButtonClicked();
             }
         });
 
-        actionTwitterLoginButton = (Button) findViewById(R.id.action_tw_login_button);
+        actionTwitterLoginButton = (LinearLayout) findViewById(R.id.action_tw_login_button);
         actionTwitterLoginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 onTwitterLoginButtonClicked();
