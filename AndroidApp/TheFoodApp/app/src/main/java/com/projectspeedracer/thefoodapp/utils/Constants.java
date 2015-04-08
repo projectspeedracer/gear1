@@ -8,4 +8,5 @@ public class Constants {
 	public static final int    METERS_PER_KILOMETER  = 1000;
 	public static final double MILES_PER_METER       = 0.000621371192;
 	public static final String DEFAULT_DISH_CATEGORY = "MAIN";
+    public static final int    NUM_ITEMS_PER_QUERY   = 15;
 }
