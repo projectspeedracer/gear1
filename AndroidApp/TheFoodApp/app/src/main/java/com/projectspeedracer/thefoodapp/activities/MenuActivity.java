@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.adapters.ViewPagerAdapter;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
+import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
 import com.projectspeedracer.thefoodapp.utils.SlidingTabLayout;
@@ -98,11 +100,6 @@ public class MenuActivity extends ActionBarActivity implements IDishesFetchedCal
 		tabs.setViewPager(pager);
 	}
 
-	public void onRatingClick(View view) {
-        Dish dish = (Dish) view.getTag();
-		Toast.makeText(this, "Touched Rating for Dish - " + dish.getName(), Toast.LENGTH_SHORT).show();
-        // TODO: Show Rating page now.
-	}
 
     @Override
     protected void onResume() {

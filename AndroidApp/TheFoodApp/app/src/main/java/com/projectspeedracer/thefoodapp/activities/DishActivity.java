@@ -1,5 +1,6 @@
 package com.projectspeedracer.thefoodapp.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -19,11 +20,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.internal.util.Predicate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
+import com.projectspeedracer.thefoodapp.fragments.AbstractRatingsFragment;
 import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
@@ -37,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 
-public class DishActivity extends ActionBarActivity {
+public class DishActivity extends ActionBarActivity implements AbstractRatingsFragment.OnDishRatedListner {
 
 	private static final String TAG                = Constants.TAG;
 	public static final  int    REQUEST_CODE_START = 1024;
@@ -48,6 +51,7 @@ public class DishActivity extends ActionBarActivity {
     ProgressBar pb;
     ProximityInspector proximityInspector;
 
+/*
 	private final GetCallback<Dish> OnDishFetched = new GetCallback<Dish>() {
 
 		@Override
@@ -68,23 +72,26 @@ public class DishActivity extends ActionBarActivity {
             setupViews();
 		}
 	};
-            
+*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dish);
 
-        dishObjectId = getIntent().getStringExtra("current_dish_id");
+//        dishObjectId = getIntent().getStringExtra("current_dish_id");
 //        FoodAppUtils.LogToast(getApplicationContext(), "Dish {" + dishObjectId + "}");
-        Log.i(Constants.TAG, "Dish {" + dishObjectId + "}");
+//        Log.i(Constants.TAG, "Dish {" + dishObjectId + "}");
 
 		try {
 			final String json = getIntent().getStringExtra("dish");
 			final Dish dish = Helpers.FromJson(json, Dish.class);
 			Log.i(TAG, "WOW!" + dish.getName());
+            currentDish = dish;
+            dishObjectId = dish.getId();
 		} catch (Exception ex) {
-			Log.e(TAG, "ERROR: " + ex.getMessage());
+			FoodAppUtils.LogToast(this, "ERROR: " + ex.getMessage());
 		}
 
 		final LinearLayout ratingDisplayBox = (LinearLayout) findViewById(R.id.ratingDisplayBox);
@@ -108,6 +115,8 @@ public class DishActivity extends ActionBarActivity {
         pb.setVisibility(ProgressBar.VISIBLE);
 
         initializeRatingsFragment();
+
+        setupViews();
     }
 
     private void setupViews() {
@@ -159,8 +168,9 @@ public class DishActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
+//        FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
         proximityInspector = new ProximityInspector(this, this); // starts monitoring proximity
+
     }
 
     private void initializeRatingsFragment() {
@@ -174,11 +184,34 @@ public class DishActivity extends ActionBarActivity {
 
     private void onRateDish(Dish dish) {
         Intent i = new Intent(this, RateDishActivity.class);
-        Log.v(Constants.TAG, "Rating dish - " + dish.getName() + " Id: " + dish.getObjectId());
-        i.putExtra("current_dish_id", dish.getObjectId());
+        String objectId = dish.getId();
+        Log.v(Constants.TAG, "Rating dish - " + dish.getName() + " Id: " + objectId);
+        i.putExtra("current_dish_id", objectId);
         //i.putExtra("current_dish", dish);
-        startActivity(i);
+        startActivityForResult(i, DishActivity.REQUEST_CODE_START);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == DishActivity.REQUEST_CODE_START) {
+            if (resultCode == Activity.RESULT_OK) {
+                final String json = data.getStringExtra("dish");
+                final Dish returnedDish = Helpers.FromJsonSafe(json, Dish.class);
+
+                if (returnedDish != null) {
+                    currentDish.update(returnedDish);
+                    setupViews();
+                }
+                else {
+                    FoodAppUtils.LogToast(this, "[DishActivity] Returned dish is null");
+                }
+
+                return;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -204,6 +237,7 @@ public class DishActivity extends ActionBarActivity {
 
 	@Override
 	public void finish() {
+        // Give the dish to parent activity
 		if (currentDish != null) {
 			try {
 				final String json = Helpers.AsJson(currentDish);
@@ -219,6 +253,11 @@ public class DishActivity extends ActionBarActivity {
 		super.finish();
 	}
 
+    @Override
+    public void onDishRated(Dish returnedDish) {
+        currentDish.update(returnedDish);
+        setupViews();
+    }
 
     @Override
     protected void onStop() {

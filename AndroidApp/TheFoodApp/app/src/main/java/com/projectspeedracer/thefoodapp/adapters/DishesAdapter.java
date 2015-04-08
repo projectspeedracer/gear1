@@ -1,6 +1,7 @@
 package com.projectspeedracer.thefoodapp.adapters;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.projectspeedracer.thefoodapp.R;
+import com.projectspeedracer.thefoodapp.fragments.MenuFragment;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.squareup.picasso.Picasso;
 
@@ -19,8 +21,11 @@ import java.util.List;
 
 public class DishesAdapter extends ArrayAdapter<Dish> {
 
-	public DishesAdapter(Context context, List<Dish> dishes) {
+    MenuFragment enclosingFragment;
+
+	public DishesAdapter(Context context, MenuFragment fragment, List<Dish> dishes) {
 		super(context, R.layout.item_dish, dishes);
+        enclosingFragment = fragment;
 	}
 
 	@Override
@@ -40,6 +45,7 @@ public class DishesAdapter extends ArrayAdapter<Dish> {
         final ImageView ratingIcon = (ImageView) convertView.findViewById(R.id.dishRatingBarIcon);
         ratingIcon.setImageResource(dish.ratingIconResId());
         ratingIcon.setTag(dish);
+        ratingIcon.setOnClickListener(enclosingFragment);
 
         final TextView tvMenuItemDescription = (TextView) convertView.findViewById(R.id.tvMenuItemDescription);
         tvMenuItemDescription.setText(dish.getDescription());

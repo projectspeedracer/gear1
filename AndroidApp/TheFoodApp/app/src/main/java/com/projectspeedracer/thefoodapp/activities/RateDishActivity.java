@@ -1,6 +1,7 @@
 package com.projectspeedracer.thefoodapp.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +17,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -29,6 +31,7 @@ import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.models.Dish;
 import com.projectspeedracer.thefoodapp.models.Rating;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
+import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
 import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
@@ -46,6 +49,8 @@ public class RateDishActivity extends ActionBarActivity {
 	private Restaurant restaurant;
 	private EditText etMessage;
 
+    String dishObjectId;
+
     private float selectedRating = 0.0f;
 
     ProximityInspector proximityInspector;
@@ -54,7 +59,7 @@ public class RateDishActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rate_dish);
-        final String dishObjectId = getIntent().getStringExtra("current_dish_id");
+        dishObjectId = getIntent().getStringExtra("current_dish_id");
 	    /*final String json = getIntent().getStringExtra("dish");
 	    final Dish dish = Helpers.FromJsonSafe(json, Dish.class);
 
@@ -87,7 +92,7 @@ public class RateDishActivity extends ActionBarActivity {
 	        @Override
 	        public void done(Dish dish, ParseException e) {
 		        if (e != null) {
-			        final String errorText = "Failed to query dish for ID - " + dishObjectId;
+			        final String errorText = "[RateDish]Failed to query dish for ID - " + dishObjectId;
 
 			        Log.e(TAG, errorText + ". " + e.getMessage());
 			        e.printStackTrace();
@@ -239,9 +244,13 @@ public class RateDishActivity extends ActionBarActivity {
                     return;
                 }
 
-                // let cloud code handle this
-//                addRelations(rating);
-                finish();
+                Log.i(TAG, "Rating saved: " + rating.getObjectId());
+
+                // TODO ----> check before commit -> should we wait before fetching????
+                // TODO --> will cloud afterSave happen before this?
+
+                // Now fetch dish again and return the result to parent activity
+                FoodAppUtils.fetchDish(dishToRate.getObjectId(), OnDishFetched);
             }
         });
 
@@ -249,6 +258,7 @@ public class RateDishActivity extends ActionBarActivity {
         // 7. Save objects
         // rating.saveInBackground();
     }
+
 
 	public void onPostRating(View v) {
         postRating();
@@ -327,6 +337,46 @@ public class RateDishActivity extends ActionBarActivity {
 			}
 		}
 	}
+
+    @Override
+    public void finish() {
+        // Give the dish to parent activity
+        if (dishToRate != null) {
+            try {
+                final String json = Helpers.AsJson(dishToRate);
+                final Intent data = new Intent();
+                data.putExtra("dish", json);
+                setResult(RESULT_OK, data);
+            } catch (JsonProcessingException e) {
+                FoodAppUtils.LogToast(this, "[RateDishActivity] ERROR! Failed to pass back dish details. " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        super.finish();
+    }
+
+    // Once fetched, return it to caller...
+    private final GetCallback<Dish> OnDishFetched = new GetCallback<Dish>() {
+
+        @Override
+        public void done(Dish dish, ParseException e) {
+            if (e != null) {
+                final String errorText = "[RateDish] Failed to query dish for ID - " + dishObjectId;
+                Log.e(Constants.TAG, errorText + ". " + e.getMessage());
+                e.printStackTrace();
+                return;
+            }
+
+            if (dishToRate == null) {
+                dishToRate = dish;
+            } else {
+                dishToRate.update(dish);
+            }
+
+            finish();
+        }
+    };
 
 
     @Override

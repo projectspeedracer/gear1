@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,7 +22,7 @@ import com.projectspeedracer.thefoodapp.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedsActivity extends ActionBarActivity {
+public class FeedsActivity extends ActionBarActivity implements View.OnClickListener {
 
 	private List<Dish> dishes = new ArrayList<>();
 	private DishesAdapter dishesAdapter;
@@ -35,7 +36,7 @@ public class FeedsActivity extends ActionBarActivity {
 
 		// TODO: Show progress overlay !!!
 
-		dishesAdapter = new DishesAdapter(getApplicationContext(), dishes);
+//		dishesAdapter = new DishesAdapter(getApplicationContext(), this, dishes);
 
 		final ListView lvDishes = (ListView) findViewById(R.id.lvDishes);
 		lvDishes.setAdapter(dishesAdapter);
@@ -96,5 +97,10 @@ public class FeedsActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
