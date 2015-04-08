@@ -2,22 +2,26 @@ package com.projectspeedracer.thefoodapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.ParsePush;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.TheFoodApplication;
 import com.projectspeedracer.thefoodapp.fragments.DishRatingsFragment;
 import com.projectspeedracer.thefoodapp.fragments.RestaurantRatingsFragment;
 import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
+import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
 import com.squareup.picasso.Picasso;
 
 public class RestaurantActivity extends ActionBarActivity {
@@ -26,13 +30,26 @@ public class RestaurantActivity extends ActionBarActivity {
             + "&photoreference=";
     Restaurant restaurant;
 
+    ProximityInspector proximityInspector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
 
         initializeRatingsFragment();
+
+        restaurant = TheFoodApplication.getCurrentRestaurant();
+
+        //TODO: Subscribe to this restaurant's channel
+        String channel = restaurant.getPlacesId();
+        ParsePush.subscribeInBackground(channel);
+        TheFoodApplication.subscribedChannel = channel;
+
+        Log.e("[PUSH]", "subscribing to " + channel);
     }
+
+
 
     @Override
     protected void onResume() {
@@ -59,6 +76,17 @@ public class RestaurantActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(name);
+
+
+        proximityInspector = new ProximityInspector(this, this); // starts monitoring proximity
+    }
+
+    @Override
+    protected void onStop() {
+        if (proximityInspector != null) {
+            proximityInspector.stop();
+        }
+        super.onStop();
     }
 
     private void initializeRatingsFragment() {

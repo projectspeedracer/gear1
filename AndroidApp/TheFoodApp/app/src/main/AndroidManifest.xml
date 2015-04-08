@@ -79,7 +79,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".adapters.CustomParsePushBroadcastReceiver"
+            android:name="com.projectspeedracer.thefoodapp.adapters.CustomParsePushBroadcastReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />

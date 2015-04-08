@@ -45,6 +45,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.projectspeedracer.thefoodapp.R;
@@ -61,6 +63,7 @@ import com.projectspeedracer.thefoodapp.utils.PlacesUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PickRestaurantActivity extends ActionBarActivity implements
@@ -130,6 +133,15 @@ public class PickRestaurantActivity extends ActionBarActivity implements
         ft.replace(R.id.listFragmentHolder, listRestaurantFragment);
         ft.hide(mapFragment);
         ft.commit();
+
+        unsubscribeStaleChannels();
+    }
+
+    private void unsubscribeStaleChannels() {
+        List<String> subscribedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
+        for (String channel: subscribedChannels) {
+            ParsePush.unsubscribeInBackground(channel);
+        }
     }
 
     @Override
@@ -154,6 +166,11 @@ public class PickRestaurantActivity extends ActionBarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
+        //check if user is subscribed to any restaurant, if so, unsubscribe..
+        if (TheFoodApplication.subscribedChannel != null) {
+            ParsePush.unsubscribeInBackground(TheFoodApplication.subscribedChannel);
+        }
 
         // Checks the last saved location to show cached data if it's available.
         // TODO: use lastLocation
@@ -414,6 +431,7 @@ public class PickRestaurantActivity extends ActionBarActivity implements
 
 		if (!PlacesUtils.IsRestaurantInRange(restaurant, mGoogleApiClient)) {
 			Toast.makeText(this, restaurant.getName() +" is not in range. Get closer to enter.", Toast.LENGTH_SHORT).show();
+            listRestaurantFragment.cancel();
 			return;
 		}
 

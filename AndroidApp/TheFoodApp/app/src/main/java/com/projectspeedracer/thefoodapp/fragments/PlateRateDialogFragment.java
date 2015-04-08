@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.parse.ParseUser;
 import com.projectspeedracer.thefoodapp.R;
 import com.projectspeedracer.thefoodapp.activities.LoginActivity;
+import com.projectspeedracer.thefoodapp.activities.PickRestaurantActivity;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 
@@ -53,6 +54,10 @@ public class PlateRateDialogFragment extends DialogFragment {
                 // on success
                 if (okayActionMsg.equals(getString(R.string.sign_out_dialog_cmd))) {
                     FoodAppUtils.logOutConfirmed(getActivity());
+                } else if (okayActionMsg.equals(getString(R.string.go_out_dialog_cmd))) {
+                    dialog.dismiss();
+                    // Start over!!
+                    getActivity().startActivity(new Intent(getActivity(), PickRestaurantActivity.class));
                 }
                 else {
                     Log.e(Constants.TAG, "Unsupported action in dialog box: "+okayActionMsg);
@@ -65,6 +70,11 @@ public class PlateRateDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                if (okayActionMsg.equals(getString(R.string.go_out_dialog_cmd))) {
+                    dialog.dismiss();
+                    // Start over!!
+                    getActivity().startActivity(new Intent(getActivity(), PickRestaurantActivity.class));
+                }
             }
         });
 

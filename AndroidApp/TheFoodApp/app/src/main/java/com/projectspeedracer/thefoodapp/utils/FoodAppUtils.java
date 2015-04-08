@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Message;
@@ -292,6 +293,22 @@ public class FoodAppUtils {
         String message = a.getString(R.string.sign_out_message);
         PlateRateDialogFragment alertDialog =
                 PlateRateDialogFragment.newInstance(title, message, a.getString(R.string.sign_out_dialog_cmd));
+        alertDialog.show(fm, "fragment_alert");
+    }
+
+    public static void showGoodByeDialog(FragmentActivity a) {
+        FragmentManager fm = a.getSupportFragmentManager();
+        Restaurant restaurant = TheFoodApplication.getCurrentRestaurant();
+        if (restaurant == null) {
+            Log.e(Constants.TAG, "Request to go out out restaurant, restaurant not selected.");
+            FoodAppUtils.logOutConfirmed(a);
+            return;
+        }
+
+        String title = "Coming out of " + restaurant.getName() + "?";
+        String message = a.getString(R.string.go_out_message);
+        PlateRateDialogFragment alertDialog =
+                PlateRateDialogFragment.newInstance(title, message, a.getString(R.string.go_out_dialog_cmd));
         alertDialog.show(fm, "fragment_alert");
     }
 

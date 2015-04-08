@@ -30,6 +30,7 @@ import com.projectspeedracer.thefoodapp.models.Restaurant;
 import com.projectspeedracer.thefoodapp.utils.Constants;
 import com.projectspeedracer.thefoodapp.utils.FoodAppUtils;
 import com.projectspeedracer.thefoodapp.utils.Helpers;
+import com.projectspeedracer.thefoodapp.utils.ProximityInspector;
 import com.squareup.picasso.Picasso;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,7 @@ public class DishActivity extends ActionBarActivity {
 	private String dishObjectId;
 
     ProgressBar pb;
+    ProximityInspector proximityInspector;
 
 	private final GetCallback<Dish> OnDishFetched = new GetCallback<Dish>() {
 
@@ -158,6 +160,7 @@ public class DishActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         FoodAppUtils.fetchDish(dishObjectId, OnDishFetched);
+        proximityInspector = new ProximityInspector(this, this); // starts monitoring proximity
     }
 
     private void initializeRatingsFragment() {
@@ -215,4 +218,13 @@ public class DishActivity extends ActionBarActivity {
 
 		super.finish();
 	}
+
+
+    @Override
+    protected void onStop() {
+        if (proximityInspector != null) {
+            proximityInspector.stop();
+        }
+        super.onStop();
+    }
 }
